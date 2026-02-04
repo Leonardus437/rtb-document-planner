@@ -1,7 +1,7 @@
 // API Configuration
 const CONFIG = {
-    // Production - Update with your Render backend URL
-    API_URL: 'https://rtb-document-planner-api.onrender.com'
+    // Railway Production Backend
+    API_URL: 'https://web-production-df3e5.up.railway.app'
 };
 
 // Export for use in other files
