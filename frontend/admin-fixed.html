@@ -493,18 +493,6 @@
                 </div>
             </div>
             
-            <div class="stat-card premium">
-                <div class="stat-header">
-                    <div class="stat-content">
-                        <h3>Premium Users</h3>
-                        <div class="number" id="premiumUsers">-</div>
-                    </div>
-                    <div class="stat-icon">
-                        <i class="fas fa-crown"></i>
-                    </div>
-                </div>
-            </div>
-            
             <div class="stat-card documents">
                 <div class="stat-header">
                     <div class="stat-content">
@@ -520,11 +508,23 @@
             <div class="stat-card downloads">
                 <div class="stat-header">
                     <div class="stat-content">
-                        <h3>Total Downloads</h3>
-                        <div class="number" id="totalDownloads">-</div>
+                        <h3>Session Plans</h3>
+                        <div class="number" id="totalPlans">-</div>
                     </div>
                     <div class="stat-icon">
-                        <i class="fas fa-download"></i>
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="stat-card downloads">
+                <div class="stat-header">
+                    <div class="stat-content">
+                        <h3>Schemes of Work</h3>
+                        <div class="number" id="totalSchemes">-</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-clipboard-list"></i>
                     </div>
                 </div>
             </div>
@@ -603,9 +603,9 @@
                 if (statsResponse.ok) {
                     const stats = await statsResponse.json();
                     document.getElementById('totalUsers').textContent = stats.total_users;
-                    document.getElementById('premiumUsers').textContent = stats.premium_users;
                     document.getElementById('totalDocuments').textContent = stats.total_session_plans + stats.total_schemes;
-                    document.getElementById('totalDownloads').textContent = stats.total_downloads;
+                    document.getElementById('totalPlans').textContent = stats.total_session_plans;
+                    document.getElementById('totalSchemes').textContent = stats.total_schemes;
                 }
                 
                 await loadUsers();
@@ -647,7 +647,7 @@
                             <th>Phone</th>
                             <th>Email</th>
                             <th>Institution</th>
-                            <th>Status</th>
+                            <th>Role</th>
                             <th>Documents</th>
                             <th>Actions</th>
                         </tr>
@@ -660,8 +660,8 @@
                                 <td>${user.email || '-'}</td>
                                 <td>${user.institution || '-'}</td>
                                 <td>
-                                    <span class="badge ${user.role === 'admin' ? 'badge-admin' : user.is_premium ? 'badge-premium' : 'badge-free'}">
-                                        ${user.role === 'admin' ? '<i class="fas fa-shield-alt"></i> Admin' : user.is_premium ? '<i class="fas fa-crown"></i> Premium' : '<i class="fas fa-user"></i> Free'}
+                                    <span class="badge ${user.role === 'admin' ? 'badge-admin' : 'badge-free'}">
+                                        ${user.role === 'admin' ? '<i class="fas fa-shield-alt"></i> Admin' : '<i class="fas fa-user"></i> Teacher'}
                                     </span>
                                 </td>
                                 <td id="docs-${user.phone}">
@@ -670,14 +670,9 @@
                                 <td>
                                     <div class="user-actions">
                                         ${user.role !== 'admin' ? `
-                                            <button onclick="togglePremium('${user.phone}', ${!user.is_premium})" 
-                                                    class="btn btn-sm ${user.is_premium ? 'btn-warning' : 'btn-success'}">
-                                                <i class="fas fa-${user.is_premium ? 'user' : 'crown'}"></i>
-                                                ${user.is_premium ? 'Remove' : 'Premium'}
-                                            </button>
                                             <button onclick="deleteUser('${user.phone}', '${user.name}')" 
                                                     class="btn btn-sm btn-danger">
-                                                <i class="fas fa-trash"></i>
+                                                <i class="fas fa-trash"></i> Delete
                                             </button>
                                         ` : '<span style="color: #94a3b8; font-size: 0.75rem;">Protected</span>'}
                                     </div>
@@ -772,28 +767,6 @@
             if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
             if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
             return `${Math.floor(diff / 86400)}d ago`;
-        }
-        
-        async function togglePremium(phone, isPremium) {
-            try {
-                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(phone)}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        is_premium: isPremium,
-                        session_plans_limit: isPremium ? 999 : 2,
-                        schemes_limit: isPremium ? 999 : 2
-                    })
-                });
-                
-                if (response.ok) {
-                    await refreshData();
-                } else {
-                    alert('Failed to update user');
-                }
-            } catch (error) {
-                alert('Error: ' + error.message);
-            }
         }
         
         async function deleteUser(phone, name) {
