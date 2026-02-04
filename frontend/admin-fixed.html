@@ -273,6 +273,9 @@
             window.location.href = 'login.html?type=admin';
         }
         
+        // Get API URL from config
+        const API_BASE = CONFIG?.API_URL || 'http://localhost:5000';
+        
         // Set admin name
         document.getElementById('adminName').textContent = session.name;
         
