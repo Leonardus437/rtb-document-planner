@@ -8,6 +8,7 @@ class SessionPlan(Base):
     __tablename__ = "session_plans"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_phone = Column(String(50))
     sector = Column(String(255))
     sub_sector = Column(String(255))
     trade = Column(String(255))
@@ -41,6 +42,7 @@ class SchemeOfWork(Base):
     __tablename__ = "schemes_of_work"
 
     id = Column(Integer, primary_key=True, index=True)
+    user_phone = Column(String(50))
     # Institutional
     province = Column(String(255))
     district = Column(String(255))
@@ -141,6 +143,11 @@ class User(Base):
     institution = Column(String(255))
     password = Column(String(255), nullable=False)
     role = Column(String(50), default='user')
+    is_premium = Column(Boolean, default=False)
+    session_plans_limit = Column(Integer, default=2)
+    schemes_limit = Column(Integer, default=2)
+    session_plans_downloaded = Column(Integer, default=0)
+    schemes_downloaded = Column(Integer, default=0)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), onupdate=func.now())
     
