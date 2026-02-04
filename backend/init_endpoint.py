@@ -31,7 +31,10 @@ def initialize_production_database(secret_key: str, db: Session = Depends(get_da
             email="admin@rtb.gov.rw",
             institution="Rwanda Technical Board",
             password="admin123",
-            role="admin"
+            role="admin",
+            is_premium=True,
+            session_plans_limit=999,
+            schemes_limit=999
         )
         db.add(admin)
         
@@ -82,7 +85,10 @@ def initialize_production_database(secret_key: str, db: Session = Depends(get_da
                 email=teacher_data["email"],
                 institution=teacher_data["institution"],
                 password=teacher_data["password"],
-                role="user"
+                role="user",
+                is_premium=False,
+                session_plans_limit=2,
+                schemes_limit=2
             )
             db.add(teacher)
         
