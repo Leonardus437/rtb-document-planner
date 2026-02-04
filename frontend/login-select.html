@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB Document Planner - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 500px;
+            padding: 3rem;
+        }
+        
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            text-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+        }
+        
+        .login-options {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        
+        .login-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            text-decoration: none;
+            display: block;
+        }
+        
+        .login-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+        
+        .login-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .teacher-card i {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .admin-card i {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-card h2 {
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-card p {
+            color: #64748b;
+            font-size: 0.9rem;
+            margin: 0;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+    </style>
+</head>
+<body>
+    <a href="index.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back to Home
+    </a>
+    
+    <div class="container">
+        <h1><i class="fas fa-sign-in-alt"></i> Welcome Back</h1>
+        <p>Choose your login type to access RTB Document Planner</p>
+        
+        <div class="login-options">
+            <a href="login.html?type=teacher" class="login-card teacher-card">
+                <i class="fas fa-chalkboard-teacher"></i>
+                <h2>Teacher Login</h2>
+                <p>Access session plans and schemes of work creation tools</p>
+            </a>
+            
+            <a href="login.html?type=admin" class="login-card admin-card">
+                <i class="fas fa-shield-alt"></i>
+                <h2>Administrator Login</h2>
+                <p>Manage users, view statistics, and system administration</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <title>RTB Document Planner - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .login-container {
+            background: white;
+            border-radius: 1rem;
+            padding: 3rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 400px;
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        
+        .login-header i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+        
+        .teacher-login i {
+            background: linear-gradient(135deg, #10b981, #059669);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .admin-login i {
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .login-header h1 {
+            color: #1e293b;
+            font-size: 1.75rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        
+        .login-header p {
+            color: #64748b;
+            font-size: 0.9rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #334155;
+        }
+        
+        input {
+            width: 100%;
+            padding: 0.875rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: all 0.3s;
+        }
+        
+        input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+        }
+        
+        .login-btn {
+            width: 100%;
+            padding: 0.875rem;
+            background: linear-gradient(135deg, #6366f1, #4f46e5);
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 1rem;
+        }
+        
+        .login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(99, 102, 241, 0.3);
+        }
+        
+        .login-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .register-link {
+            text-align: center;
+            margin-top: 1rem;
+        }
+        
+        .register-link a {
+            color: #6366f1;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        
+        .back-btn {
+            position: absolute;
+            top: 2rem;
+            left: 2rem;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .back-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        
+        .error-message {
+            background: #fee2e2;
+            color: #991b1b;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 0.875rem;
+            display: none;
+        }
+        
+        .demo-credentials {
+            background: #f0f9ff;
+            border: 1px solid #0ea5e9;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            font-size: 0.875rem;
+        }
+        
+        .demo-credentials h4 {
+            color: #0369a1;
+            margin-bottom: 0.5rem;
+        }
+        
+        .demo-credentials p {
+            color: #0369a1;
+            margin: 0.25rem 0;
+        }
+    </style>
+</head>
+<body>
+    <a href="login-select.html" class="back-btn">
+        <i class="fas fa-arrow-left"></i> Back
+    </a>
+    
+    <div class="login-container">
+        <div class="login-header" id="loginHeader">
+            <i class="fas fa-chalkboard-teacher"></i>
+            <h1 id="loginTitle">Teacher Login</h1>
+            <p id="loginSubtitle">Sign in to create session plans and schemes</p>
+        </div>
+        
+        <div class="error-message" id="errorMessage"></div>
+        
+        <form id="loginForm">
+            <div class="form-group">
+                <label for="phone"><i class="fas fa-phone"></i> Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="+250XXXXXXXXX" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="password"><i class="fas fa-lock"></i> Password</label>
+                <input type="password" id="password" name="password" placeholder="Enter your password" required>
+            </div>
+            
+            <button type="submit" class="login-btn" id="loginBtn">
+                <i class="fas fa-sign-in-alt"></i> Sign In
+            </button>
+        </form>
+        
+        <div class="register-link" id="registerLink">
+            <p>Don't have an account? <a href="register.html">Register here</a></p>
+        </div>
+    </div>
+    
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        // Get API URL from config
+        const API_URL = CONFIG?.API_URL || 'http://localhost:5000';
+        
+        // Get login type from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const loginType = urlParams.get('type') || 'teacher';
+        
+        // Update UI based on login type
+        const loginHeader = document.getElementById('loginHeader');
+        const loginTitle = document.getElementById('loginTitle');
+        const loginSubtitle = document.getElementById('loginSubtitle');
+        const registerLink = document.getElementById('registerLink');
+        
+        if (loginType === 'admin') {
+            loginHeader.className = 'login-header admin-login';
+            loginHeader.innerHTML = '<i class="fas fa-shield-alt"></i>';
+            loginTitle.textContent = 'Administrator Login';
+            loginSubtitle.textContent = 'Access admin panel and user management';
+            registerLink.style.display = 'none';
+        }
+        
+        // Handle form submission
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const phone = document.getElementById('phone').value;
+            const password = document.getElementById('password').value;
+            const loginBtn = document.getElementById('loginBtn');
+            const errorMessage = document.getElementById('errorMessage');
+            
+            console.log('Login attempt:', phone);
+            console.log('API URL:', API_URL);
+            
+            // Reset error message
+            errorMessage.style.display = 'none';
+            
+            // Disable button and show loading
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing In...';
+            
+            try {
+                const url = `${API_URL}/users/login`;
+                console.log('Fetching:', url);
+                
+                const response = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ phone, password })
+                });
+                
+                console.log('Response status:', response.status);
+                const responseText = await response.text();
+                console.log('Response body:', responseText);
+                
+                if (response.ok) {
+                    const userData = JSON.parse(responseText);
+                    
+                    // Check if user role matches login type
+                    if (loginType === 'admin' && userData.role !== 'admin') {
+                        throw new Error('Access denied. Admin credentials required.');
+                    }
+                    
+                    // Store session
+                    localStorage.setItem('rtb_session', JSON.stringify(userData));
+                    
+                    // Redirect based on role
+                    if (userData.role === 'admin') {
+                        window.location.href = 'admin-fixed.html';
+                    } else {
+                        window.location.href = 'index.html';
+                    }
+                } else {
+                    let error;
+                    try {
+                        error = JSON.parse(responseText);
+                    } catch {
+                        error = { detail: responseText || 'Login failed' };
+                    }
+                    console.error('Login error:', error);
+                    throw new Error(error.detail || 'Login failed');
+                }
+            } catch (error) {
+                console.error('Catch error:', error);
+                errorMessage.textContent = error.message;
+                errorMessage.style.display = 'block';
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Sign In';
+            }
+        });
+    </script>
+</body>
+</html>
