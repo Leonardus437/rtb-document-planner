@@ -171,20 +171,79 @@ def get_users(db: Session = Depends(get_db)):
 
 @app.get("/stats")
 def get_stats(db: Session = Depends(get_db)):
-    total_users = db.query(models.User).count()
+    total_users = db.query(models.User).filter(models.User.role == "user").count()
+    premium_users = db.query(models.User).filter(models.User.is_premium == True).count()
     total_plans = db.query(models.SessionPlan).count()
     total_schemes = db.query(models.SchemeOfWork).count()
     
     return {
         "total_users": total_users,
+        "premium_users": premium_users,
         "total_session_plans": total_plans,
-        "total_schemes": total_schemes
+        "total_schemes": total_schemes,
+        "total_downloads": total_plans + total_schemes
+    }
+
+@app.get("/admin/recent-activity")
+def get_recent_activity(limit: int = 10, db: Session = Depends(get_db)):
+    plans = db.query(models.SessionPlan).order_by(models.SessionPlan.created_at.desc()).limit(limit).all()
+    schemes = db.query(models.SchemeOfWork).order_by(models.SchemeOfWork.created_at.desc()).limit(limit).all()
+    
+    activities = []
+    for plan in plans:
+        activities.append({
+            "type": "session_plan",
+            "user_phone": plan.user_phone,
+            "title": plan.topic,
+            "created_at": plan.created_at.isoformat() if plan.created_at else None
+        })
+    for scheme in schemes:
+        activities.append({
+            "type": "scheme",
+            "user_phone": scheme.user_phone,
+            "title": scheme.module_name,
+            "created_at": scheme.created_at.isoformat() if scheme.created_at else None
+        })
+    
+    activities.sort(key=lambda x: x["created_at"] or "", reverse=True)
+    return activities[:limit]
+
+@app.get("/admin/user-documents/{phone}")
+def get_user_documents(phone: str, db: Session = Depends(get_db)):
+    plans = db.query(models.SessionPlan).filter(models.SessionPlan.user_phone == phone).all()
+    schemes = db.query(models.SchemeOfWork).filter(models.SchemeOfWork.user_phone == phone).all()
+    
+    return {
+        "session_plans": len(plans),
+        "schemes": len(schemes),
+        "total": len(plans) + len(schemes)
     }
 
 @app.delete("/user-limits/{phone}")
 def remove_endpoint(phone: str):
     raise HTTPException(status_code=404, detail="Endpoint removed")
 
-@app.put("/users/{user_id}/premium")
-def remove_premium_endpoint(user_id: int):
-    raise HTTPException(status_code=404, detail="Endpoint removed")
+@app.put("/users/{phone}")
+def update_user(phone: str, update: dict, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.phone == phone).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    
+    for key, value in update.items():
+        if hasattr(user, key):
+            setattr(user, key, value)
+    
+    db.commit()
+    return {"message": "User updated successfully"}
+
+@app.delete("/users/{phone}")
+def delete_user(phone: str, db: Session = Depends(get_db)):
+    user = db.query(models.User).filter(models.User.phone == phone).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+    if user.role == "admin":
+        raise HTTPException(status_code=403, detail="Cannot delete admin user")
+    
+    db.delete(user)
+    db.commit()
+    return {"message": "User deleted successfully"}

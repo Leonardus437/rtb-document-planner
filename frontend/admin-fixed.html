@@ -12,23 +12,34 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
         
         .header {
-            background: white;
+            background: rgba(255,255,255,0.95);
+            backdrop-filter: blur(10px);
             padding: 1.5rem 2rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
         
         .header h1 {
             color: #1e293b;
             font-size: 1.5rem;
             font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+        
+        .header h1 i {
+            color: #667eea;
         }
         
         .header-actions {
@@ -37,8 +48,17 @@
             align-items: center;
         }
         
-        .btn {
+        .admin-badge {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
             padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        
+        .btn {
+            padding: 0.625rem 1.25rem;
             border: none;
             border-radius: 0.5rem;
             font-weight: 600;
@@ -48,11 +68,18 @@
             align-items: center;
             gap: 0.5rem;
             transition: all 0.3s;
+            font-size: 0.875rem;
         }
         
         .btn-primary {
-            background: #6366f1;
+            background: #667eea;
             color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #5568d3;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
         }
         
         .btn-secondary {
@@ -60,81 +87,208 @@
             color: #334155;
         }
         
+        .btn-secondary:hover {
+            background: #cbd5e1;
+        }
+        
         .btn-danger {
             background: #ef4444;
             color: white;
         }
         
+        .btn-danger:hover {
+            background: #dc2626;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn-warning {
+            background: #f59e0b;
+            color: white;
+        }
+        
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
         }
         
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.5rem;
             margin-bottom: 2rem;
         }
         
         .stat-card {
             background: white;
-            padding: 1.5rem;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.3s;
         }
         
-        .stat-card h3 {
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+        }
+        
+        .stat-card.users::before { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .stat-card.premium::before { background: linear-gradient(90deg, #f59e0b, #d97706); }
+        .stat-card.documents::before { background: linear-gradient(90deg, #10b981, #059669); }
+        .stat-card.downloads::before { background: linear-gradient(90deg, #8b5cf6, #7c3aed); }
+        
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.75rem;
+        }
+        
+        .stat-card.users .stat-icon {
+            background: linear-gradient(135deg, #667eea20, #764ba220);
+            color: #667eea;
+        }
+        
+        .stat-card.premium .stat-icon {
+            background: linear-gradient(135deg, #f59e0b20, #d9770620);
+            color: #f59e0b;
+        }
+        
+        .stat-card.documents .stat-icon {
+            background: linear-gradient(135deg, #10b98120, #05966920);
+            color: #10b981;
+        }
+        
+        .stat-card.downloads .stat-icon {
+            background: linear-gradient(135deg, #8b5cf620, #7c3aed20);
+            color: #8b5cf6;
+        }
+        
+        .stat-content h3 {
             color: #64748b;
             font-size: 0.875rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
-        .stat-card .number {
+        .stat-content .number {
             color: #1e293b;
-            font-size: 2rem;
+            font-size: 2.5rem;
             font-weight: 700;
-            margin-bottom: 0.25rem;
+            line-height: 1;
         }
         
-        .stat-card .icon {
-            font-size: 1.5rem;
-            margin-bottom: 1rem;
-        }
-        
-        .users-card { border-left: 4px solid #6366f1; }
-        .users-card .icon { color: #6366f1; }
-        
-        .premium-card { border-left: 4px solid #f59e0b; }
-        .premium-card .icon { color: #f59e0b; }
-        
-        .documents-card { border-left: 4px solid #10b981; }
-        .documents-card .icon { color: #10b981; }
-        
-        .downloads-card { border-left: 4px solid #8b5cf6; }
-        .downloads-card .icon { color: #8b5cf6; }
-        
-        .users-section {
+        .tabs {
             background: white;
-            border-radius: 0.75rem;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-            overflow: hidden;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .tab-buttons {
+            display: flex;
+            gap: 1rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .tab-btn {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            color: #64748b;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .tab-btn.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
         }
         
         .section-header {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e2e8f0;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-bottom: 1.5rem;
         }
         
         .section-header h2 {
             color: #1e293b;
             font-size: 1.25rem;
             font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .search-box {
+            position: relative;
+            width: 300px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 0.75rem 1rem 0.75rem 2.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.3s;
+        }
+        
+        .search-box input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .search-box i {
+            position: absolute;
+            left: 1rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
         }
         
         .users-table {
@@ -144,31 +298,42 @@
         
         .users-table th,
         .users-table td {
-            padding: 1rem 1.5rem;
+            padding: 1rem;
             text-align: left;
             border-bottom: 1px solid #e2e8f0;
         }
         
         .users-table th {
             background: #f8fafc;
-            color: #374151;
+            color: #475569;
             font-weight: 600;
             font-size: 0.875rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         
         .users-table td {
             color: #64748b;
         }
         
+        .users-table tbody tr {
+            transition: background 0.2s;
+        }
+        
+        .users-table tbody tr:hover {
+            background: #f8fafc;
+        }
+        
         .badge {
-            padding: 0.25rem 0.75rem;
+            padding: 0.375rem 0.875rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             font-weight: 600;
+            display: inline-block;
         }
         
         .badge-premium {
-            background: #fef3c7;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
             color: #92400e;
         }
         
@@ -178,20 +343,8 @@
         }
         
         .badge-admin {
-            background: #ddd6fe;
+            background: linear-gradient(135deg, #ddd6fe, #c4b5fd);
             color: #5b21b6;
-        }
-        
-        .loading {
-            text-align: center;
-            padding: 2rem;
-            color: #64748b;
-        }
-        
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #64748b;
         }
         
         .user-actions {
@@ -200,16 +353,122 @@
         }
         
         .btn-sm {
-            padding: 0.25rem 0.5rem;
+            padding: 0.375rem 0.75rem;
             font-size: 0.75rem;
+        }
+        
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .activity-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.75rem;
+            border-left: 4px solid #667eea;
+        }
+        
+        .activity-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            flex-shrink: 0;
+        }
+        
+        .activity-icon.session {
+            background: linear-gradient(135deg, #10b98120, #05966920);
+            color: #10b981;
+        }
+        
+        .activity-icon.scheme {
+            background: linear-gradient(135deg, #8b5cf620, #7c3aed20);
+            color: #8b5cf6;
+        }
+        
+        .activity-content {
+            flex: 1;
+        }
+        
+        .activity-content h4 {
+            color: #1e293b;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        .activity-content p {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+        
+        .activity-time {
+            color: #94a3b8;
+            font-size: 0.75rem;
+            white-space: nowrap;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: #667eea;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: #64748b;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #cbd5e1;
+        }
+        
+        .refresh-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            color: #10b981;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        
+        .pulse {
+            animation: pulse 2s ease-in-out infinite;
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <h1><i class="fas fa-shield-alt"></i> RTB Admin Dashboard</h1>
+        <h1>
+            <i class="fas fa-shield-alt"></i>
+            RTB Admin Dashboard
+        </h1>
         <div class="header-actions">
-            <span id="adminName">Administrator</span>
+            <div class="admin-badge">
+                <i class="fas fa-crown"></i>
+                <span id="adminName">Administrator</span>
+            </div>
             <a href="index.html" class="btn btn-secondary">
                 <i class="fas fa-home"></i> Home
             </a>
@@ -222,43 +481,103 @@
     <div class="container">
         <!-- Statistics -->
         <div class="stats-grid">
-            <div class="stat-card users-card">
-                <div class="icon"><i class="fas fa-users"></i></div>
-                <h3>Total Users</h3>
-                <div class="number" id="totalUsers">-</div>
+            <div class="stat-card users">
+                <div class="stat-header">
+                    <div class="stat-content">
+                        <h3>Total Users</h3>
+                        <div class="number" id="totalUsers">-</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                </div>
             </div>
             
-            <div class="stat-card premium-card">
-                <div class="icon"><i class="fas fa-crown"></i></div>
-                <h3>Premium Users</h3>
-                <div class="number" id="premiumUsers">-</div>
+            <div class="stat-card premium">
+                <div class="stat-header">
+                    <div class="stat-content">
+                        <h3>Premium Users</h3>
+                        <div class="number" id="premiumUsers">-</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-crown"></i>
+                    </div>
+                </div>
             </div>
             
-            <div class="stat-card documents-card">
-                <div class="icon"><i class="fas fa-file-alt"></i></div>
-                <h3>Total Documents</h3>
-                <div class="number" id="totalDocuments">-</div>
+            <div class="stat-card documents">
+                <div class="stat-header">
+                    <div class="stat-content">
+                        <h3>Total Documents</h3>
+                        <div class="number" id="totalDocuments">-</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                </div>
             </div>
             
-            <div class="stat-card downloads-card">
-                <div class="icon"><i class="fas fa-download"></i></div>
-                <h3>Total Downloads</h3>
-                <div class="number" id="totalDownloads">-</div>
+            <div class="stat-card downloads">
+                <div class="stat-header">
+                    <div class="stat-content">
+                        <h3>Total Downloads</h3>
+                        <div class="number" id="totalDownloads">-</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-download"></i>
+                    </div>
+                </div>
             </div>
         </div>
         
-        <!-- Users Management -->
-        <div class="users-section">
-            <div class="section-header">
-                <h2><i class="fas fa-users-cog"></i> User Management</h2>
-                <button onclick="refreshUsers()" class="btn btn-primary">
-                    <i class="fas fa-refresh"></i> Refresh
+        <!-- Tabs Section -->
+        <div class="tabs">
+            <div class="tab-buttons">
+                <button class="tab-btn active" onclick="switchTab('users')">
+                    <i class="fas fa-users"></i> User Management
+                </button>
+                <button class="tab-btn" onclick="switchTab('activity')">
+                    <i class="fas fa-clock"></i> Recent Activity
                 </button>
             </div>
             
-            <div id="usersContent">
-                <div class="loading">
-                    <i class="fas fa-spinner fa-spin"></i> Loading users...
+            <!-- Users Tab -->
+            <div id="usersTab" class="tab-content active">
+                <div class="section-header">
+                    <h2><i class="fas fa-users-cog"></i> Manage Users</h2>
+                    <div style="display: flex; gap: 1rem; align-items: center;">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="userSearch" placeholder="Search users..." onkeyup="filterUsers()">
+                        </div>
+                        <button onclick="refreshData()" class="btn btn-primary">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="usersContent">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading users...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Activity Tab -->
+            <div id="activityTab" class="tab-content">
+                <div class="section-header">
+                    <h2><i class="fas fa-history"></i> Recent Activity</h2>
+                    <div class="refresh-indicator pulse">
+                        <i class="fas fa-circle"></i> Live Updates
+                    </div>
+                </div>
+                
+                <div id="activityContent">
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Loading activity...</p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -267,22 +586,19 @@
     <script src="config.js"></script>
     <script src="auth.js"></script>
     <script>
-        // Check admin authentication
         const session = getCurrentSession();
         if (!session || session.role !== 'admin') {
             window.location.href = 'login.html?type=admin';
         }
         
-        // Get API URL from config
         const API_BASE = CONFIG?.API_URL || 'http://localhost:5000';
-        
-        // Set admin name
         document.getElementById('adminName').textContent = session.name;
         
-        // Load dashboard data
+        let allUsers = [];
+        let refreshInterval;
+        
         async function loadDashboard() {
             try {
-                // Load statistics
                 const statsResponse = await fetch(`${API_BASE}/stats`);
                 if (statsResponse.ok) {
                     const stats = await statsResponse.json();
@@ -292,8 +608,8 @@
                     document.getElementById('totalDownloads').textContent = stats.total_downloads;
                 }
                 
-                // Load users
                 await loadUsers();
+                await loadActivity();
             } catch (error) {
                 console.error('Error loading dashboard:', error);
             }
@@ -301,18 +617,17 @@
         
         async function loadUsers() {
             const usersContent = document.getElementById('usersContent');
-            usersContent.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading users...</div>';
             
             try {
                 const response = await fetch(`${API_BASE}/users/`);
                 if (response.ok) {
-                    const users = await response.json();
-                    displayUsers(users);
+                    allUsers = await response.json();
+                    displayUsers(allUsers);
                 } else {
                     throw new Error('Failed to load users');
                 }
             } catch (error) {
-                usersContent.innerHTML = '<div class="empty-state">Error loading users</div>';
+                usersContent.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading users</p></div>';
             }
         }
         
@@ -320,7 +635,7 @@
             const usersContent = document.getElementById('usersContent');
             
             if (users.length === 0) {
-                usersContent.innerHTML = '<div class="empty-state">No users found</div>';
+                usersContent.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>No users found</p></div>';
                 return;
             }
             
@@ -330,9 +645,10 @@
                         <tr>
                             <th>Name</th>
                             <th>Phone</th>
+                            <th>Email</th>
                             <th>Institution</th>
-                            <th>Type</th>
-                            <th>Downloads</th>
+                            <th>Status</th>
+                            <th>Documents</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
@@ -341,25 +657,29 @@
                             <tr>
                                 <td><strong>${user.name}</strong></td>
                                 <td>${user.phone}</td>
+                                <td>${user.email || '-'}</td>
                                 <td>${user.institution || '-'}</td>
                                 <td>
                                     <span class="badge ${user.role === 'admin' ? 'badge-admin' : user.is_premium ? 'badge-premium' : 'badge-free'}">
-                                        ${user.role === 'admin' ? 'Admin' : user.is_premium ? 'Premium' : 'Free'}
+                                        ${user.role === 'admin' ? '<i class="fas fa-shield-alt"></i> Admin' : user.is_premium ? '<i class="fas fa-crown"></i> Premium' : '<i class="fas fa-user"></i> Free'}
                                     </span>
                                 </td>
-                                <td>
-                                    ${user.session_plans_downloaded + user.schemes_downloaded} 
-                                    / ${user.is_premium ? '∞' : (user.session_plans_limit + user.schemes_limit)}
+                                <td id="docs-${user.phone}">
+                                    <i class="fas fa-spinner fa-spin"></i>
                                 </td>
                                 <td>
                                     <div class="user-actions">
                                         ${user.role !== 'admin' ? `
                                             <button onclick="togglePremium('${user.phone}', ${!user.is_premium})" 
-                                                    class="btn btn-sm ${user.is_premium ? 'btn-secondary' : 'btn-primary'}">
+                                                    class="btn btn-sm ${user.is_premium ? 'btn-warning' : 'btn-success'}">
                                                 <i class="fas fa-${user.is_premium ? 'user' : 'crown'}"></i>
-                                                ${user.is_premium ? 'Remove Premium' : 'Make Premium'}
+                                                ${user.is_premium ? 'Remove' : 'Premium'}
                                             </button>
-                                        ` : ''}
+                                            <button onclick="deleteUser('${user.phone}', '${user.name}')" 
+                                                    class="btn btn-sm btn-danger">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        ` : '<span style="color: #94a3b8; font-size: 0.75rem;">Protected</span>'}
                                     </div>
                                 </td>
                             </tr>
@@ -369,15 +689,96 @@
             `;
             
             usersContent.innerHTML = tableHTML;
+            
+            // Load document counts for each user
+            users.forEach(user => loadUserDocuments(user.phone));
+        }
+        
+        async function loadUserDocuments(phone) {
+            try {
+                const response = await fetch(`${API_BASE}/admin/user-documents/${encodeURIComponent(phone)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    const cell = document.getElementById(`docs-${phone}`);
+                    if (cell) {
+                        cell.innerHTML = `
+                            <span style="color: #10b981;"><i class="fas fa-file-alt"></i> ${data.session_plans}</span> / 
+                            <span style="color: #8b5cf6;"><i class="fas fa-book"></i> ${data.schemes}</span>
+                        `;
+                    }
+                }
+            } catch (error) {
+                const cell = document.getElementById(`docs-${phone}`);
+                if (cell) cell.innerHTML = '-';
+            }
+        }
+        
+        async function loadActivity() {
+            const activityContent = document.getElementById('activityContent');
+            
+            try {
+                const response = await fetch(`${API_BASE}/admin/recent-activity?limit=20`);
+                if (response.ok) {
+                    const activities = await response.json();
+                    displayActivity(activities);
+                } else {
+                    throw new Error('Failed to load activity');
+                }
+            } catch (error) {
+                activityContent.innerHTML = '<div class="empty-state"><i class="fas fa-exclamation-circle"></i><p>Error loading activity</p></div>';
+            }
+        }
+        
+        function displayActivity(activities) {
+            const activityContent = document.getElementById('activityContent');
+            
+            if (activities.length === 0) {
+                activityContent.innerHTML = '<div class="empty-state"><i class="fas fa-clock"></i><p>No recent activity</p></div>';
+                return;
+            }
+            
+            const activityHTML = `
+                <div class="activity-list">
+                    ${activities.map(activity => `
+                        <div class="activity-item">
+                            <div class="activity-icon ${activity.type === 'session_plan' ? 'session' : 'scheme'}">
+                                <i class="fas fa-${activity.type === 'session_plan' ? 'file-alt' : 'book'}"></i>
+                            </div>
+                            <div class="activity-content">
+                                <h4>${activity.title}</h4>
+                                <p>
+                                    <i class="fas fa-user"></i> ${activity.user_phone} created a 
+                                    ${activity.type === 'session_plan' ? 'Session Plan' : 'Scheme of Work'}
+                                </p>
+                            </div>
+                            <div class="activity-time">
+                                ${formatTime(activity.created_at)}
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            
+            activityContent.innerHTML = activityHTML;
+        }
+        
+        function formatTime(timestamp) {
+            if (!timestamp) return 'Just now';
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+            
+            if (diff < 60) return 'Just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            return `${Math.floor(diff / 86400)}d ago`;
         }
         
         async function togglePremium(phone, isPremium) {
             try {
                 const response = await fetch(`${API_BASE}/users/${encodeURIComponent(phone)}`, {
                     method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
+                    headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         is_premium: isPremium,
                         session_plans_limit: isPremium ? 999 : 2,
@@ -386,28 +787,71 @@
                 });
                 
                 if (response.ok) {
-                    await loadUsers(); // Refresh users list
-                    await loadDashboard(); // Refresh stats
+                    await refreshData();
                 } else {
                     alert('Failed to update user');
                 }
             } catch (error) {
-                alert('Error updating user: ' + error.message);
+                alert('Error: ' + error.message);
             }
         }
         
-        function refreshUsers() {
-            loadUsers();
+        async function deleteUser(phone, name) {
+            if (!confirm(`Delete user "${name}"?\n\nThis will permanently remove the user and all their documents.`)) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(phone)}`, {
+                    method: 'DELETE'
+                });
+                
+                if (response.ok) {
+                    await refreshData();
+                } else {
+                    alert('Failed to delete user');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+            }
+        }
+        
+        function filterUsers() {
+            const search = document.getElementById('userSearch').value.toLowerCase();
+            const filtered = allUsers.filter(user => 
+                user.name.toLowerCase().includes(search) ||
+                user.phone.includes(search) ||
+                (user.email && user.email.toLowerCase().includes(search)) ||
+                (user.institution && user.institution.toLowerCase().includes(search))
+            );
+            displayUsers(filtered);
+        }
+        
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(tab + 'Tab').classList.add('active');
+        }
+        
+        async function refreshData() {
+            await loadDashboard();
         }
         
         function logoutAdmin() {
-            if (confirm('Are you sure you want to logout?')) {
+            if (confirm('Logout from admin dashboard?')) {
                 localStorage.removeItem('rtb_session');
                 window.location.href = 'login.html?type=admin';
             }
         }
         
-        // Load dashboard on page load
+        // Auto-refresh every 30 seconds
+        refreshInterval = setInterval(() => {
+            loadDashboard();
+        }, 30000);
+        
+        // Initial load
         loadDashboard();
     </script>
 </body>
