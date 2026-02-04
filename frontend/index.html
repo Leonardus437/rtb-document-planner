@@ -269,13 +269,6 @@
         })();
     </script>
     <script>
-        // Check authentication before allowing access
-        const session = getCurrentSession();
-        if (!session) {
-            window.location.href = 'login.html';
-        }
-    </script>
-    <script>
         // Show user menu and subscription status
         const session = getCurrentSession();
         const userMenu = document.getElementById('userMenu');
