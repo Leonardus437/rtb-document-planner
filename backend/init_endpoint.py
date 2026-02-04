@@ -9,7 +9,7 @@ import models
 
 router = APIRouter()
 
-@router.post("/init-production-db")
+@router.get("/init-production-db")
 def initialize_production_database(secret_key: str, db: Session = Depends(get_database)):
     """Initialize production database with admin and demo accounts"""
     
