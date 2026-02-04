@@ -23,6 +23,10 @@ app.include_router(init_router)
 from reset_endpoint import router as reset_router
 app.include_router(reset_router)
 
+# Import migrate endpoint
+from migrate_endpoint import router as migrate_router
+app.include_router(migrate_router)
+
 # Mount static files for frontend
 if os.path.exists("../frontend"):
     app.mount("/static", StaticFiles(directory="../frontend"), name="static")
