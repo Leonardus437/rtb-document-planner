@@ -19,6 +19,10 @@ app = FastAPI(title="RTB Document Planner API")
 from init_endpoint import router as init_router
 app.include_router(init_router)
 
+# Import reset endpoint
+from reset_endpoint import router as reset_router
+app.include_router(reset_router)
+
 # Mount static files for frontend
 if os.path.exists("../frontend"):
     app.mount("/static", StaticFiles(directory="../frontend"), name="static")
