@@ -15,6 +15,10 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="RTB Document Planner API")
 
+# Import init endpoint
+from init_endpoint import router as init_router
+app.include_router(init_router)
+
 # Mount static files for frontend
 if os.path.exists("../frontend"):
     app.mount("/static", StaticFiles(directory="../frontend"), name="static")
