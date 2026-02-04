@@ -4,13 +4,13 @@ One-time database initialization endpoint for production
 from fastapi import APIRouter, HTTPException, Depends
 from sqlalchemy.orm import Session
 from datetime import datetime
-from database import get_db
+from database import get_database
 import models
 
 router = APIRouter()
 
 @router.post("/init-production-db")
-def initialize_production_database(secret_key: str, db: Session = Depends(get_db)):
+def initialize_production_database(secret_key: str, db: Session = Depends(get_database)):
     """Initialize production database with admin and demo accounts"""
     
     # Simple security check
