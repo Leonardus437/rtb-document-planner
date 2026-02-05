@@ -4,7 +4,7 @@ echo RTB Document Planner - Deploy Prep
 echo ========================================
 echo.
 
-set /p BACKEND_URL="Enter your Render backend URL (e.g., https://rtb-planner-backend.onrender.com): "
+set /p BACKEND_URL="Enter your Railway backend URL (e.g., https://web-production-df3e5.up.railway.app): "
 
 if "%BACKEND_URL%"=="" (
     echo ERROR: Backend URL is required
