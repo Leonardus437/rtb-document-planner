@@ -1,11 +1,23 @@
 services:
+  # PostgreSQL Database
+  - type: pserv
+    name: rtb-planner-db
+    plan: free
+    region: oregon
+    ipAllowList: []
+
+  # Backend API
   - type: web
-    name: rtb-document-planner-api
+    name: rtb-planner-backend
     env: python
     region: oregon
     plan: free
     buildCommand: pip install -r backend/requirements.txt
-    startCommand: cd backend && uvicorn main:app --host 0.0.0.0 --port $PORT
+    startCommand: cd backend && python init_database.py && uvicorn main:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: "3.11.0"
+      - key: DATABASE_URL
+        fromDatabase:
+          name: rtb-planner-db
+          property: connectionString

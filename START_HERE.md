@@ -1,53 +1,75 @@
-# ⚠️ IMMEDIATE ACTION REQUIRED
+# 🚀 DEPLOY YOUR RTB DOCUMENT PLANNER NOW!
 
-## Your Issue: Python Not Found
+## Quick Start (5 Minutes)
 
-You need to install Python first!
-
----
-
-## 🚀 QUICK FIX (5 minutes)
-
-### Step 1: Install Python
-1. Go to: **https://www.python.org/downloads/**
-2. Click **"Download Python 3.12"** (big yellow button)
-3. Run the installer
-4. ⚠️ **CHECK THE BOX**: ☑️ "Add Python to PATH"
-5. Click **"Install Now"**
-6. Wait 2-3 minutes
-
-### Step 2: Verify Python
-1. Double-click: **`check_python.bat`**
-2. Should show: "Python is installed"
-
-### Step 3: Install RTB System
-1. Double-click: **`install.bat`**
-2. Wait for installation
-3. Should show: "Installation Complete!"
-
-### Step 4: Start System
-1. Double-click: **`start_rtb_system.bat`**
-2. Browser opens automatically
-3. Done! 🎉
-
----
-
-## 📋 Files to Run (In Order)
-
-```
-1. check_python.bat    ← Check if Python works
-2. install.bat         ← Install dependencies
-3. start_rtb_system.bat ← Start the system
+### 1️⃣ Run Deployment Script
+```bash
+deploy.bat
 ```
 
+### 2️⃣ Create GitHub Repository
+- Go to: https://github.com/new
+- Name: `rtb-planner`
+- Create repository
+
+### 3️⃣ Push Code
+```bash
+git remote add origin https://github.com/YOUR_USERNAME/rtb-planner.git
+git push -u origin main
+```
+
+### 4️⃣ Deploy Backend (Railway)
+1. Visit: https://railway.app
+2. Sign in with GitHub
+3. Click: **New Project** → **Deploy from GitHub repo**
+4. Select: `rtb-planner`
+5. Click: **Deploy Now**
+6. Add Database: Click **+ New** → **Database** → **PostgreSQL**
+7. ⏰ Wait 3-5 minutes
+8. ✅ Copy your backend URL (Settings → Domains)
+
+### 5️⃣ Update Frontend
+```bash
+prepare_deploy.bat
+# Enter your backend URL when prompted
+git push origin main
+```
+
+### 6️⃣ Deploy Frontend (Cloudflare)
+1. Visit: https://dash.cloudflare.com
+2. **Workers & Pages** → **Create** → **Pages**
+3. Connect GitHub
+4. Select: `rtb-planner`
+5. Build output: `frontend`
+6. Click: **Save and Deploy**
+7. ⏰ Wait 2-3 minutes
+8. ✅ Done!
+
+## 🎉 Your App is LIVE!
+
+- **Frontend**: https://rtb-planner.pages.dev
+- **Backend**: https://rtb-planner-backend.up.railway.app
+- **Database**: PostgreSQL on Railway
+- **Cost**: FREE ($5/month Railway credit)
+
+## 📱 Share with Teachers
+
+"Visit https://rtb-planner.pages.dev to create professional RTB session plans and schemes of work!"
+
+## 🔐 Admin Access
+
+- Phone: +250789751597
+- Password: admin123
+
+## 📚 Need Help?
+
+- **Full Guide**: DEPLOY_NOW.md
+- **Checklist**: DEPLOYMENT_CHECKLIST.txt
+- **Troubleshooting**: DEPLOYMENT_GUIDE.md
+
 ---
 
-## ❓ Need Help?
+© 2026 Official RTB Document Planner | Developed for TVET Excellence
+**DEVELOPED BY Trainer Leon**
 
-Read: **`PYTHON_FIX.md`** for detailed instructions
-
----
-
-**Download Python**: https://www.python.org/downloads/
-
-**Remember**: Check ☑️ "Add Python to PATH" during installation!
+Made with ❤️ for TVET Excellence in Rwanda 🇷🇼
