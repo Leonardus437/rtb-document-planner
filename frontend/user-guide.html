@@ -6,7 +6,7 @@
     <title>User Guide - Session Plans & Schemes of Work Generator</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -14,216 +14,227 @@
             font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             padding: 2rem;
+            overflow: hidden;
         }
         
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        .guide-container {
+            max-width: 900px;
+            width: 100%;
             background: white;
-            border-radius: 1.5rem;
+            border-radius: 2rem;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.3);
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
         }
         
         .header {
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: white;
-            padding: 3rem 2rem;
+            padding: 2.5rem 2rem;
             text-align: center;
+            position: relative;
         }
         
         .header h1 {
-            font-size: 2.5rem;
+            font-size: 1.75rem;
+            font-weight: 700;
             margin-bottom: 0.5rem;
         }
         
         .header p {
-            font-size: 1.25rem;
-            opacity: 0.9;
+            opacity: 0.95;
+            font-size: 1rem;
         }
         
-        .lang-toggle {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin-top: 2rem;
-        }
-        
-        .lang-btn {
-            padding: 0.75rem 2rem;
-            border: 2px solid white;
-            background: transparent;
-            color: white;
-            border-radius: 2rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .lang-btn.active {
-            background: white;
-            color: #667eea;
-        }
-        
-        .content {
-            padding: 3rem 2rem;
-        }
-        
-        .section {
-            margin-bottom: 3rem;
-        }
-        
-        .section h2 {
-            color: #1e293b;
-            font-size: 1.75rem;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-        
-        .section h2 i {
-            color: #667eea;
-        }
-        
-        .video-container {
-            position: relative;
-            padding-bottom: 56.25%;
-            height: 0;
-            overflow: hidden;
-            border-radius: 1rem;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-            margin-bottom: 2rem;
-            background: #f1f5f9;
-        }
-        
-        .video-placeholder {
+        .progress-bar {
             position: absolute;
-            top: 0;
+            bottom: 0;
             left: 0;
+            height: 4px;
+            background: rgba(255,255,255,0.3);
             width: 100%;
+        }
+        
+        .progress-fill {
             height: 100%;
+            background: white;
+            transition: width 0.4s ease;
+        }
+        
+        .step-indicator {
             display: flex;
-            flex-direction: column;
+            justify-content: center;
+            gap: 0.5rem;
+            padding: 1.5rem 2rem;
+            background: #f8fafc;
+        }
+        
+        .step-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #cbd5e1;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        
+        .step-dot.active {
+            background: #667eea;
+            transform: scale(1.3);
+        }
+        
+        .content-area {
+            padding: 3rem 2.5rem;
+            min-height: 400px;
+            position: relative;
+        }
+        
+        .step-content {
+            display: none;
+            animation: fadeIn 0.5s;
+        }
+        
+        .step-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .step-title {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .step-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 1rem;
+            display: flex;
             align-items: center;
             justify-content: center;
+            color: white;
+            font-size: 1.75rem;
+        }
+        
+        .step-description {
             color: #64748b;
+            font-size: 1.125rem;
+            line-height: 1.8;
+            margin-bottom: 2rem;
         }
         
-        .video-placeholder i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            color: #667eea;
-        }
-        
-        .steps {
+        .feature-list {
             display: grid;
-            gap: 1.5rem;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
         
-        .step {
+        .feature-item {
             display: flex;
-            gap: 1.5rem;
-            padding: 1.5rem;
+            align-items: start;
+            gap: 1rem;
+            padding: 1.25rem;
             background: #f8fafc;
             border-radius: 1rem;
             border-left: 4px solid #667eea;
         }
         
-        .step-number {
-            width: 48px;
-            height: 48px;
+        .feature-icon {
+            width: 40px;
+            height: 40px;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            border-radius: 50%;
+            border-radius: 0.75rem;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 700;
-            font-size: 1.25rem;
+            color: white;
             flex-shrink: 0;
         }
         
-        .step-content h3 {
+        .feature-text h4 {
             color: #1e293b;
-            margin-bottom: 0.5rem;
-            font-size: 1.25rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
         }
         
-        .step-content p {
+        .feature-text p {
             color: #64748b;
-            line-height: 1.6;
+            font-size: 0.9rem;
         }
         
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 1.5rem;
-        }
-        
-        .feature-card {
-            padding: 1.5rem;
+        .navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 2rem 2.5rem;
             background: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .nav-btn {
+            padding: 1rem 2rem;
+            border: none;
             border-radius: 1rem;
-            text-align: center;
-        }
-        
-        .feature-card i {
-            font-size: 2.5rem;
-            color: #667eea;
-            margin-bottom: 1rem;
-        }
-        
-        .feature-card h4 {
-            color: #1e293b;
-            margin-bottom: 0.5rem;
-        }
-        
-        .feature-card p {
-            color: #64748b;
-            font-size: 0.875rem;
-        }
-        
-        .cta-section {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 3rem 2rem;
-            text-align: center;
-            border-radius: 1rem;
-            margin-top: 3rem;
-        }
-        
-        .cta-section h2 {
-            color: white;
-            margin-bottom: 1rem;
-        }
-        
-        .btn {
-            display: inline-flex;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
             align-items: center;
             gap: 0.75rem;
-            padding: 1rem 2rem;
+        }
+        
+        .nav-btn:disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+        
+        .btn-prev {
             background: white;
             color: #667eea;
-            border: none;
-            border-radius: 0.75rem;
-            font-weight: 700;
-            font-size: 1.125rem;
-            cursor: pointer;
-            text-decoration: none;
-            transition: all 0.3s;
-            margin-top: 1rem;
+            border: 2px solid #667eea;
         }
         
-        .btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        .btn-prev:hover:not(:disabled) {
+            background: #667eea;
+            color: white;
+            transform: translateX(-5px);
         }
         
-        .back-btn {
-            position: fixed;
+        .btn-next {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-next:hover:not(:disabled) {
+            transform: translateX(5px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-finish {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+        }
+        
+        .btn-finish:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
+        }
+        
+        .back-home {
+            position: absolute;
             top: 2rem;
             left: 2rem;
             background: white;
@@ -232,7 +243,7 @@
             border-radius: 2rem;
             text-decoration: none;
             font-weight: 600;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
             gap: 0.5rem;
@@ -240,251 +251,357 @@
             z-index: 1000;
         }
         
-        .back-btn:hover {
+        .back-home:hover {
             transform: translateX(-5px);
         }
         
-        .lang-content {
-            display: none;
+        .lang-switch {
+            position: absolute;
+            top: 2rem;
+            right: 2rem;
+            display: flex;
+            gap: 0.5rem;
+            z-index: 1000;
         }
         
-        .lang-content.active {
-            display: block;
+        .lang-btn {
+            padding: 0.75rem 1.25rem;
+            background: white;
+            color: #667eea;
+            border: 2px solid white;
+            border-radius: 2rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .lang-btn.active {
+            background: #667eea;
+            color: white;
+        }
+        
+        .welcome-screen {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .welcome-icon {
+            font-size: 5rem;
+            color: #667eea;
+            margin-bottom: 1.5rem;
+        }
+        
+        .final-screen {
+            text-align: center;
+            padding: 2rem 0;
+        }
+        
+        .success-icon {
+            font-size: 5rem;
+            color: #10b981;
+            margin-bottom: 1.5rem;
         }
         
         @media (max-width: 768px) {
             body { padding: 1rem; }
-            .header h1 { font-size: 1.75rem; }
-            .content { padding: 2rem 1rem; }
-            .back-btn { top: 1rem; left: 1rem; }
+            .header h1 { font-size: 1.5rem; }
+            .content-area { padding: 2rem 1.5rem; }
+            .step-title { font-size: 1.5rem; }
+            .navigation { padding: 1.5rem; }
+            .back-home, .lang-switch { position: static; margin: 1rem; }
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-btn">
-        <i class="fas fa-arrow-left"></i> Back to Home
+    <a href="index.html" class="back-home">
+        <i class="fas fa-arrow-left"></i> Home
     </a>
     
-    <div class="container">
+    <div class="lang-switch">
+        <button class="lang-btn active" onclick="switchLang('en')">EN</button>
+        <button class="lang-btn" onclick="switchLang('rw')">RW</button>
+    </div>
+    
+    <div class="guide-container">
         <div class="header">
-            <h1><i class="fas fa-book-open"></i> User Guide / Umuyobozi w'Abakoresha</h1>
-            <p>Learn how to use Session Plans & Schemes of Work Generator</p>
-            
-            <div class="lang-toggle">
-                <button class="lang-btn active" onclick="switchLanguage('en')">
-                    <i class="fas fa-globe"></i> English
-                </button>
-                <button class="lang-btn" onclick="switchLanguage('rw')">
-                    <i class="fas fa-globe"></i> Kinyarwanda
-                </button>
+            <h1><i class="fas fa-graduation-cap"></i> <span id="header-title">User Guide</span></h1>
+            <p id="header-subtitle">Step-by-step guide to create professional documents</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
             </div>
         </div>
         
-        <div class="content">
-            <!-- English Content -->
-            <div id="en-content" class="lang-content active">
-                <div class="section">
-                    <h2><i class="fas fa-list-ol"></i> Getting Started</h2>
-                    <div class="steps">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <h3>Register Your Account</h3>
-                                <p>Click "Register" button on the home page. Fill in your name, phone number, email, and institution. Create a secure password and click "Register".</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <h3>Login to Your Dashboard</h3>
-                                <p>Use your phone number and password to login. You'll be redirected to your personal dashboard where you can create documents.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <div class="step-content">
-                                <h3>Create Session Plan</h3>
-                                <p>Click "Session Plan" button. Follow the 4-step wizard: Basic Info, Course Details, Learning Content, and Review. Fill all required fields and click "Generate Document".</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">4</div>
-                            <div class="step-content">
-                                <h3>Create Scheme of Work</h3>
-                                <p>Click "Scheme of Work" button. Complete the 4-step wizard: Institution Info, Module Details, Term Content (3 terms), and Review. Generate your professional scheme.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">5</div>
-                            <div class="step-content">
-                                <h3>Download Your Documents</h3>
-                                <p>After generation, click "Download DOCX" to save your professional RTB-compliant document. Documents are in Microsoft Word format ready to print or edit.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="section">
-                    <h2><i class="fas fa-star"></i> Key Features</h2>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <i class="fas fa-file-word"></i>
-                            <h4>Professional DOCX</h4>
-                            <p>Generate RTB-compliant documents in Microsoft Word format</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-check-circle"></i>
-                            <h4>RTB Standards</h4>
-                            <p>All documents follow official Rwanda Technical Board formatting</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-image"></i>
-                            <h4>Logo Upload</h4>
-                            <p>Add RTB and school logos to your documents</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-bolt"></i>
-                            <h4>Fast Generation</h4>
-                            <p>Create documents in minutes instead of hours</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-book"></i>
-                            <h4>Smart References</h4>
-                            <p>Automatic APA references based on your topic</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-infinity"></i>
-                            <h4>Unlimited Access</h4>
-                            <p>Create unlimited session plans and schemes</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cta-section">
-                    <h2>Ready to Start?</h2>
-                    <p>Create your first RTB-compliant document now!</p>
-                    <a href="index.html" class="btn">
-                        <i class="fas fa-rocket"></i> Go to Dashboard
-                    </a>
-                </div>
-            </div>
-            
-            <!-- Kinyarwanda Content -->
-            <div id="rw-content" class="lang-content">
-                <div class="section">
-                    <h2><i class="fas fa-list-ol"></i> Intango</h2>
-                    <div class="steps">
-                        <div class="step">
-                            <div class="step-number">1</div>
-                            <div class="step-content">
-                                <h3>Iyandikishe Konti Yawe</h3>
-                                <p>Kanda buto ya "Register" ku rupapuro rw'itangiriro. Uzuza amazina yawe, nimero ya telefoni, imeri, n'ikigo. Kora ijambo ry'ibanga rikomeye ukande "Register".</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">2</div>
-                            <div class="step-content">
-                                <h3>Injira kuri Dashboard Yawe</h3>
-                                <p>Koresha nimero ya telefoni n'ijambo ry'ibanga kugira ngo winjire. Uzajyanwa ku rupapuro rwawe bwite aho ushobora gukora inyandiko.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">3</div>
-                            <div class="step-content">
-                                <h3>Kora Session Plan</h3>
-                                <p>Kanda buto ya "Session Plan". Kurikiza intambwe 4: Amakuru y'ibanze, Ibisobanuro by'Isomo, Ibigize Kwiga, na Review. Uzuza ibisabwa byose ukande "Generate Document".</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">4</div>
-                            <div class="step-content">
-                                <h3>Kora Scheme of Work</h3>
-                                <p>Kanda buto ya "Scheme of Work". Soza intambwe 4: Amakuru y'Ikigo, Ibisobanuro bya Module, Ibigize Amaherezo 3, na Review. Kora scheme yawe yuzuye.</p>
-                            </div>
-                        </div>
-                        
-                        <div class="step">
-                            <div class="step-number">5</div>
-                            <div class="step-content">
-                                <h3>Pakurura Inyandiko Zawe</h3>
-                                <p>Nyuma yo gukora, kanda "Download DOCX" kugira ngo ubike inyandiko yawe yuzuye ikurikije amahame ya RTB. Inyandiko ziri muri format ya Microsoft Word ziteguye gucapwa cyangwa guhindurwa.</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="section">
-                    <h2><i class="fas fa-star"></i> Ibiranga Sisitemu</h2>
-                    <div class="features-grid">
-                        <div class="feature-card">
-                            <i class="fas fa-file-word"></i>
-                            <h4>DOCX Yuzuye</h4>
-                            <p>Kora inyandiko zikurikije RTB muri format ya Microsoft Word</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-check-circle"></i>
-                            <h4>Amahame ya RTB</h4>
-                            <p>Inyandiko zose zikurikiza imiterere yemewe na Rwanda Technical Board</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-image"></i>
-                            <h4>Ohereza Ikirango</h4>
-                            <p>Ongeraho ibirango bya RTB n'ishuri kuri inyandiko zawe</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-bolt"></i>
-                            <h4>Gukora Byihuse</h4>
-                            <p>Kora inyandiko mu minota aho kuba amasaha</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-book"></i>
-                            <h4>Ibitabo Byiza</h4>
-                            <p>Ibitabo bya APA bikora byonyine ukurikije insanganyamatsiko yawe</p>
-                        </div>
-                        
-                        <div class="feature-card">
-                            <i class="fas fa-infinity"></i>
-                            <h4>Ntago Bigarukira</h4>
-                            <p>Kora session plans na schemes zitabarika</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="cta-section">
-                    <h2>Witeguye Gutangira?</h2>
-                    <p>Kora inyandiko yawe ya mbere ikurikije RTB ubu!</p>
-                    <a href="index.html" class="btn">
-                        <i class="fas fa-rocket"></i> Jya kuri Dashboard
-                    </a>
-                </div>
-            </div>
+        <div class="step-indicator" id="stepIndicator"></div>
+        
+        <div class="content-area" id="contentArea"></div>
+        
+        <div class="navigation">
+            <button class="nav-btn btn-prev" id="prevBtn" onclick="prevStep()">
+                <i class="fas fa-arrow-left"></i> <span id="prev-text">Previous</span>
+            </button>
+            <button class="nav-btn btn-next" id="nextBtn" onclick="nextStep()">
+                <span id="next-text">Next</span> <i class="fas fa-arrow-right"></i>
+            </button>
         </div>
     </div>
     
     <script>
-        function switchLanguage(lang) {
-            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-            document.querySelectorAll('.lang-content').forEach(content => content.classList.remove('active'));
+        let currentStep = 0;
+        let currentLang = 'en';
+        
+        const content = {
+            en: {
+                headerTitle: 'User Guide',
+                headerSubtitle: 'Step-by-step guide to create professional documents',
+                prevText: 'Previous',
+                nextText: 'Next',
+                finishText: 'Start Creating',
+                steps: [
+                    {
+                        icon: 'fa-hand-wave',
+                        title: 'Welcome to RTB Document Generator',
+                        description: 'This powerful tool helps Rwandan TVET teachers create professional Session Plans and Schemes of Work in minutes. Follow this guide to master the system.',
+                        features: [
+                            { icon: 'fa-check-circle', title: '100% RTB Compliant', text: 'All documents follow official Rwanda Technical Board standards' },
+                            { icon: 'fa-infinity', title: 'Completely Free Forever', text: 'No hidden fees, no premium plans, accessible to all teachers' },
+                            { icon: 'fa-bolt', title: 'Lightning Fast', text: 'Generate documents in minutes instead of hours' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-user-plus',
+                        title: 'Step 1: Register Your Account',
+                        description: 'Create your free account to start generating documents.',
+                        features: [
+                            { icon: 'fa-envelope', title: 'Use Your Email', text: 'Register with your institutional or personal email address' },
+                            { icon: 'fa-lock', title: 'Secure Password', text: 'Create a strong password to protect your account' },
+                            { icon: 'fa-school', title: 'Institution Name', text: 'Enter your TVET institution name for document headers' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-sign-in-alt',
+                        title: 'Step 2: Login to Dashboard',
+                        description: 'Access your personal workspace where all the magic happens.',
+                        features: [
+                            { icon: 'fa-tachometer-alt', title: 'Personal Dashboard', text: 'Clean interface with two main options: Session Plan and Scheme of Work' },
+                            { icon: 'fa-history', title: 'Always Available', text: 'Login anytime from any device to create documents' },
+                            { icon: 'fa-shield-alt', title: 'Secure Access', text: 'Your account and data are protected' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-chalkboard-teacher',
+                        title: 'Step 3: Create Session Plan',
+                        description: 'Generate RTB-compliant session plans with our 4-step wizard.',
+                        features: [
+                            { icon: 'fa-info-circle', title: 'Basic Information', text: 'Enter trainer name, module, unit, and session details' },
+                            { icon: 'fa-book', title: 'Course Details', text: 'Add learning outcomes, duration, and facilitation technique' },
+                            { icon: 'fa-lightbulb', title: 'Learning Content', text: 'System generates SMART objectives, activities, and references' },
+                            { icon: 'fa-download', title: 'Download DOCX', text: 'Get professional Word document ready to print' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-clipboard-list',
+                        title: 'Step 4: Create Scheme of Work',
+                        description: 'Build comprehensive schemes covering entire academic terms.',
+                        features: [
+                            { icon: 'fa-building', title: 'Institution Info', text: 'Add school name, department, and module details' },
+                            { icon: 'fa-calendar-alt', title: 'Three Terms', text: 'Plan content for Term 1, Term 2, and Term 3' },
+                            { icon: 'fa-table', title: '9-Column Format', text: 'Official RTB layout with all required sections' },
+                            { icon: 'fa-file-word', title: 'Professional Output', text: 'Bookman Old Style 12pt, landscape orientation' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-star',
+                        title: 'Key Features You\'ll Love',
+                        description: 'Everything you need for professional TVET documentation.',
+                        features: [
+                            { icon: 'fa-image', title: 'Logo Upload', text: 'Add RTB and school logos to your documents' },
+                            { icon: 'fa-magic', title: 'Auto-Generated Content', text: 'Smart objectives, activities, and APA references' },
+                            { icon: 'fa-users', title: '6 Facilitation Techniques', text: 'Choose from demonstration, discussion, project-based, and more' },
+                            { icon: 'fa-mobile-alt', title: 'Works Everywhere', text: 'Access from computer, tablet, or smartphone' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-rocket',
+                        title: 'You\'re Ready to Start!',
+                        description: 'Join thousands of Rwandan TVET teachers creating professional documents effortlessly. Click below to begin your journey.',
+                        features: [
+                            { icon: 'fa-heart', title: 'Made for Teachers', text: 'Designed specifically for TVET excellence in Rwanda' },
+                            { icon: 'fa-globe', title: 'Always Online', text: 'Backend hosted on Railway, frontend on Cloudflare' },
+                            { icon: 'fa-gift', title: 'No Limits', text: 'Create unlimited documents, forever free' }
+                        ]
+                    }
+                ]
+            },
+            rw: {
+                headerTitle: 'Umuyobozi w\'Abakoresha',
+                headerSubtitle: 'Intambwe ku ntambwe zo gukora inyandiko zuzuye',
+                prevText: 'Ibanze',
+                nextText: 'Komeza',
+                finishText: 'Tangira Gukora',
+                steps: [
+                    {
+                        icon: 'fa-hand-wave',
+                        title: 'Murakaza Neza kuri RTB Document Generator',
+                        description: 'Iyi sisitemu ikomeye ifasha abarimu ba TVET mu Rwanda gukora Session Plans na Schemes of Work mu minota. Kurikira ubu buyobozi kugira ngo umenye sisitemu neza.',
+                        features: [
+                            { icon: 'fa-check-circle', title: '100% Ikurikije RTB', text: 'Inyandiko zose zikurikiza amahame yemewe na Rwanda Technical Board' },
+                            { icon: 'fa-infinity', title: 'Ntago Bigarukira Iteka', text: 'Nta mafaranga ahishwe, nta premium, abarimu bose barayibona' },
+                            { icon: 'fa-bolt', title: 'Byihuse Cyane', text: 'Kora inyandiko mu minota aho kuba amasaha' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-user-plus',
+                        title: 'Intambwe 1: Iyandikishe Konti',
+                        description: 'Fungura konti yawe kubusa kugira ngo utangire gukora inyandiko.',
+                        features: [
+                            { icon: 'fa-envelope', title: 'Koresha Imeri Yawe', text: 'Iyandikishe ukoresheje imeri y\'ikigo cyangwa iyawe bwite' },
+                            { icon: 'fa-lock', title: 'Ijambo ry\'Ibanga Rikomeye', text: 'Kora ijambo ry\'ibanga rikomeye kugira ngo urinde konti yawe' },
+                            { icon: 'fa-school', title: 'Izina ry\'Ikigo', text: 'Andika izina ry\'ikigo cya TVET kugira ngo rigaragare ku nyandiko' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-sign-in-alt',
+                        title: 'Intambwe 2: Injira kuri Dashboard',
+                        description: 'Injira ku rupapuro rwawe bwite aho byose bikorwa.',
+                        features: [
+                            { icon: 'fa-tachometer-alt', title: 'Dashboard Yawe', text: 'Interface isukuye ifite amahitamo abiri: Session Plan na Scheme of Work' },
+                            { icon: 'fa-history', title: 'Igihe Cyose', text: 'Injira igihe cyose ukoresheje igikoresho icyo ari cyo cyose' },
+                            { icon: 'fa-shield-alt', title: 'Umutekano Mwiza', text: 'Konti yawe n\'amakuru yawe birinzwe' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-chalkboard-teacher',
+                        title: 'Intambwe 3: Kora Session Plan',
+                        description: 'Kora session plans zikurikije RTB ukoresheje intambwe 4.',
+                        features: [
+                            { icon: 'fa-info-circle', title: 'Amakuru y\'Ibanze', text: 'Andika amazina y\'umwarimu, module, unit, na session' },
+                            { icon: 'fa-book', title: 'Ibisobanuro by\'Isomo', text: 'Ongeraho intego zo kwiga, igihe, n\'uburyo bwo kwigisha' },
+                            { icon: 'fa-lightbulb', title: 'Ibigize Kwiga', text: 'Sisitemu ikora intego SMART, ibikorwa, n\'ibitabo' },
+                            { icon: 'fa-download', title: 'Pakurura DOCX', text: 'Bona inyandiko ya Word yuzuye iteguye gucapwa' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-clipboard-list',
+                        title: 'Intambwe 4: Kora Scheme of Work',
+                        description: 'Kora schemes zuzuye zikubiyemo amaherezo yose y\'ishuri.',
+                        features: [
+                            { icon: 'fa-building', title: 'Amakuru y\'Ikigo', text: 'Ongeraho izina ry\'ishuri, ishami, na module' },
+                            { icon: 'fa-calendar-alt', title: 'Amaherezo Atatu', text: 'Tegura ibigize Igihembwe 1, 2, na 3' },
+                            { icon: 'fa-table', title: 'Format y\'Inkingi 9', text: 'Imiterere yemewe na RTB ifite ibice byose bisabwa' },
+                            { icon: 'fa-file-word', title: 'Inyandiko Yuzuye', text: 'Bookman Old Style 12pt, landscape orientation' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-star',
+                        title: 'Ibiranga Uzakunda',
+                        description: 'Ibintu byose ukeneye mu nyandiko za TVET.',
+                        features: [
+                            { icon: 'fa-image', title: 'Ohereza Ikirango', text: 'Ongeraho ibirango bya RTB n\'ishuri kuri inyandiko' },
+                            { icon: 'fa-magic', title: 'Ibikora Byonyine', text: 'Intego SMART, ibikorwa, n\'ibitabo bya APA' },
+                            { icon: 'fa-users', title: 'Uburyo 6 bwo Kwigisha', text: 'Hitamo muri demonstration, discussion, project-based, n\'ibindi' },
+                            { icon: 'fa-mobile-alt', title: 'Ikora Ahantu Hose', text: 'Injira ukoresheje mudasobwa, tableti, cyangwa telefoni' }
+                        ]
+                    },
+                    {
+                        icon: 'fa-rocket',
+                        title: 'Witeguye Gutangira!',
+                        description: 'Jya ku barimu b\'ibihumbi ba TVET mu Rwanda bakora inyandiko zuzuye byoroshye. Kanda hasi kugira ngo utangire urugendo rwawe.',
+                        features: [
+                            { icon: 'fa-heart', title: 'Yakoze ku Barimu', text: 'Yakozwe ku barimu ba TVET mu Rwanda' },
+                            { icon: 'fa-globe', title: 'Igihe Cyose Online', text: 'Backend kuri Railway, frontend kuri Cloudflare' },
+                            { icon: 'fa-gift', title: 'Ntago Bigarukira', text: 'Kora inyandiko zitabarika, kubusa iteka' }
+                        ]
+                    }
+                ]
+            }
+        };
+        
+        function renderStep() {
+            const lang = content[currentLang];
+            const step = lang.steps[currentStep];
+            const totalSteps = lang.steps.length;
             
-            event.target.classList.add('active');
-            document.getElementById(lang + '-content').classList.add('active');
+            // Update progress
+            const progress = ((currentStep + 1) / totalSteps) * 100;
+            document.getElementById('progressBar').style.width = progress + '%';
+            
+            // Update step indicators
+            const indicatorHTML = lang.steps.map((_, i) => 
+                `<div class="step-dot ${i === currentStep ? 'active' : ''}" onclick="goToStep(${i})"></div>`
+            ).join('');
+            document.getElementById('stepIndicator').innerHTML = indicatorHTML;
+            
+            // Update content
+            const featuresHTML = step.features.map(f => `
+                <div class="feature-item">
+                    <div class="feature-icon"><i class="fas ${f.icon}"></i></div>
+                    <div class="feature-text">
+                        <h4>${f.title}</h4>
+                        <p>${f.text}</p>
+                    </div>
+                </div>
+            `).join('');
+            
+            const contentHTML = `
+                <div class="step-content active">
+                    ${currentStep === 0 ? '<div class="welcome-screen"><div class="welcome-icon"><i class="fas ' + step.icon + '"></i></div></div>' : ''}
+                    ${currentStep === totalSteps - 1 ? '<div class="final-screen"><div class="success-icon"><i class="fas ' + step.icon + '"></i></div></div>' : ''}
+                    <div class="step-title">
+                        ${currentStep !== 0 && currentStep !== totalSteps - 1 ? '<div class="step-icon"><i class="fas ' + step.icon + '"></i></div>' : ''}
+                        <span>${step.title}</span>
+                    </div>
+                    <div class="step-description">${step.description}</div>
+                    <div class="feature-list">${featuresHTML}</div>
+                </div>
+            `;
+            document.getElementById('contentArea').innerHTML = contentHTML;
+            
+            // Update buttons
+            document.getElementById('prevBtn').disabled = currentStep === 0;
+            document.getElementById('prev-text').textContent = lang.prevText;
+            
+            const nextBtn = document.getElementById('nextBtn');
+            if (currentStep === totalSteps - 1) {
+                nextBtn.className = 'nav-btn btn-finish';
+                nextBtn.innerHTML = `${lang.finishText} <i class="fas fa-rocket"></i>`;
+                nextBtn.onclick = () => window.location.href = 'index.html';
+            } else {
+                nextBtn.className = 'nav-btn btn-next';
+                nextBtn.innerHTML = `${lang.nextText} <i class="fas fa-arrow-right"></i>`;
+                nextBtn.onclick = nextStep;
+            }
         }
+        
+        function nextStep() {
+            if (currentStep < content[currentLang].steps.length - 1) {
+                currentStep++;
+                renderStep();
+            }
+        }
+        
+        function prevStep() {
+            if (currentStep > 0) {
+                currentStep--;
+                renderStep();
+            }
+        }
+        
+        function goToStep(step) {
+            currentStep = step;
+            renderStep();
+        }
+        
+        function switchLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('header-title').textContent = content[lang].headerTitle;
+            document.getElementById('header-subtitle').textContent = content[lang].headerSubtitle;
+            renderStep();
+        }
+        
+        // Initialize
+        renderStep();
     </script>
 </body>
 </html>
