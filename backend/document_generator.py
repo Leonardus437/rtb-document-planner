@@ -176,42 +176,81 @@ def generate_apa_references(topic, sector, learning_outcomes):
     return "\n".join(refs)
 
 def generate_smart_objectives(topic, learning_outcomes):
-    """Generate SMART objectives matching teacher format with specific action verbs"""
+    """Generate SMART objectives matching teacher format - dynamically adapts to each specific topic"""
     lo_lower = (learning_outcomes or '').lower()
     topic = (topic or 'the topic').replace("Shield", "").replace("shield", "").strip()
     
-    # Extract key concepts from topic for specific objectives
-    topic_words = topic.lower().split()
+    # Extract key noun/concept from topic (last significant word or phrase)
+    topic_words = topic.split()
     
-    # Determine cognitive level and generate 4 specific objectives
-    action_verbs_create = ['create', 'design', 'develop', 'construct', 'produce', 'build', 'generate', 'compose']
-    action_verbs_analyze = ['analyze', 'evaluate', 'compare', 'examine', 'assess', 'critique', 'investigate']
-    action_verbs_apply = ['apply', 'demonstrate', 'implement', 'use', 'operate', 'perform', 'execute', 'practice']
-    
-    if any(verb in lo_lower for verb in action_verbs_create):
-        # Creation/Synthesis level - 4 progressive objectives
-        obj1 = f"Define correctly {topic} terminology and key concepts"
-        obj2 = f"Identify properly the components and elements of {topic}"
-        obj3 = f"Create correctly the structure and syntax of {topic}"
-        obj4 = f"Produce accurately a required application to perform specific tasks using {topic}"
-    elif any(verb in lo_lower for verb in action_verbs_analyze):
-        # Analysis/Evaluation level - 4 progressive objectives
-        obj1 = f"Define correctly {topic} concepts and principles"
-        obj2 = f"Identify properly each component in {topic} applications"
-        obj3 = f"Analyze correctly the relationships and patterns in {topic}"
-        obj4 = f"Evaluate accurately the effectiveness of {topic} solutions"
-    elif any(verb in lo_lower for verb in action_verbs_apply):
-        # Application level - 4 progressive objectives
-        obj1 = f"Define correctly {topic} terminology as used in practice"
-        obj2 = f"Identify properly each element in {topic} applications"
-        obj3 = f"Demonstrate correctly the procedures and techniques of {topic}"
-        obj4 = f"Apply accurately {topic} to perform specific workplace tasks"
+    # Determine if topic contains specific technical terms
+    # Extract the main concept (usually the last noun or key phrase)
+    if len(topic_words) > 0:
+        # For topics like "loops in C++", "database normalization", "HTML forms"
+        main_concept = topic
+        
+        # Check if topic has "in" or "using" - extract the specific element
+        if ' in ' in topic.lower():
+            parts = topic.split(' in ')
+            specific_element = parts[0].strip()
+            context = parts[1].strip() if len(parts) > 1 else ''
+            
+            # Generate objectives for "X in Y" format (e.g., "loops in C++")
+            obj1 = f"Define correctly {specific_element} keyword as used in {context}"
+            obj2 = f"Identify properly each {specific_element} keyword in {context} program"
+            obj3 = f"Create correctly syntax of each {specific_element} statements as it is used in {context} program"
+            obj4 = f"Produce accurately a required {context} application to perform specific tasks"
+            
+        elif ' using ' in topic.lower():
+            parts = topic.split(' using ')
+            task = parts[0].strip()
+            tool = parts[1].strip() if len(parts) > 1 else ''
+            
+            obj1 = f"Define correctly {tool} terminology and concepts"
+            obj2 = f"Identify properly the components needed for {task}"
+            obj3 = f"Demonstrate correctly the procedures of {task} using {tool}"
+            obj4 = f"Produce accurately a complete {task} application using {tool}"
+            
+        else:
+            # Standard format for single-concept topics
+            # Determine cognitive level from learning outcomes
+            action_verbs_create = ['create', 'design', 'develop', 'construct', 'produce', 'build', 'generate', 'compose', 'write']
+            action_verbs_analyze = ['analyze', 'evaluate', 'compare', 'examine', 'assess', 'critique', 'investigate']
+            action_verbs_apply = ['apply', 'demonstrate', 'implement', 'use', 'operate', 'perform', 'execute', 'practice']
+            
+            if any(verb in lo_lower for verb in action_verbs_create):
+                # Creation/Synthesis level
+                obj1 = f"Define correctly {topic} terminology and key concepts"
+                obj2 = f"Identify properly the components and elements of {topic}"
+                obj3 = f"Create correctly the structure and implementation of {topic}"
+                obj4 = f"Produce accurately a required application using {topic} to perform specific tasks"
+                
+            elif any(verb in lo_lower for verb in action_verbs_analyze):
+                # Analysis/Evaluation level
+                obj1 = f"Define correctly {topic} concepts and principles"
+                obj2 = f"Identify properly each component in {topic} applications"
+                obj3 = f"Analyze correctly the relationships and patterns in {topic}"
+                obj4 = f"Evaluate accurately the effectiveness of {topic} solutions"
+                
+            elif any(verb in lo_lower for verb in action_verbs_apply):
+                # Application level
+                obj1 = f"Define correctly {topic} terminology as used in practice"
+                obj2 = f"Identify properly each element in {topic} applications"
+                obj3 = f"Demonstrate correctly the procedures and techniques of {topic}"
+                obj4 = f"Apply accurately {topic} to perform specific workplace tasks"
+                
+            else:
+                # Understanding/Comprehension level (default)
+                obj1 = f"Define correctly the key terms and concepts of {topic}"
+                obj2 = f"Identify properly the main components of {topic}"
+                obj3 = f"Explain correctly how {topic} works in practice"
+                obj4 = f"Demonstrate accurately the basic procedures of {topic}"
     else:
-        # Understanding/Comprehension level - 4 progressive objectives
-        obj1 = f"Define correctly the key terms and concepts of {topic}"
-        obj2 = f"Identify properly the main components of {topic}"
-        obj3 = f"Explain correctly how {topic} works in practice"
-        obj4 = f"Demonstrate accurately the basic procedures of {topic}"
+        # Fallback for empty topic
+        obj1 = "Define correctly the key terminology and concepts"
+        obj2 = "Identify properly the main components and elements"
+        obj3 = "Demonstrate correctly the procedures and techniques"
+        obj4 = "Apply accurately the concepts to perform specific tasks"
     
     return f"By the end of the session trainees will be able to\n✓ {obj1}\n✓ {obj2}\n✓ {obj3}\n✓ {obj4}"
 
