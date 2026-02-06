@@ -231,6 +231,11 @@
             loginTitle.textContent = 'Administrator Login';
             loginSubtitle.textContent = 'Access admin panel and user management';
             registerLink.style.display = 'none';
+            
+            // Change email label to phone for admin
+            document.querySelector('label[for="email"]').innerHTML = '<i class="fas fa-phone"></i> Phone Number';
+            document.getElementById('email').type = 'tel';
+            document.getElementById('email').placeholder = '+250789751597';
         }
         
         // Handle form submission
