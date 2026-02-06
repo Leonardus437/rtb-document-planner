@@ -274,13 +274,20 @@
             registerBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Creating Account...';
             
             try {
+                // Add 30-second timeout for Railway cold starts
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000);
+                
                 const response = await fetch(`${API_URL}/users/register`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(data)
+                    body: JSON.stringify(data),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId);
                 
                 if (response.ok) {
                     const result = await response.json();
@@ -299,7 +306,13 @@
                     throw new Error(error.detail || 'Registration failed');
                 }
             } catch (error) {
-                errorMessage.textContent = error.message;
+                if (error.name === 'AbortError') {
+                    errorMessage.textContent = 'Connection timeout. The server might be starting up. Please wait 10 seconds and try again.';
+                } else if (error.message === 'Failed to fetch') {
+                    errorMessage.textContent = 'Cannot connect to server. Please check your internet connection or try again in a few seconds.';
+                } else {
+                    errorMessage.textContent = error.message;
+                }
                 errorMessage.style.display = 'block';
             } finally {
                 registerBtn.disabled = false;
