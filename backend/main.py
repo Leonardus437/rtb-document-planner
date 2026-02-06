@@ -15,13 +15,41 @@ models.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(title="RTB Document Planner API")
 
+# Startup event to ensure admin exists
+@app.on_event("startup")
+def startup_event():
+    """Ensure admin user exists on startup"""
+    db = SessionLocal()
+    try:
+        # Check if any users exist
+        user_count = db.query(models.User).count()
+        if user_count == 0:
+            # Create admin user
+            admin = models.User(
+                user_id=f"ADMIN_{datetime.now().strftime('%Y%m%d%H%M%S')}",
+                name="RTB Administrator",
+                phone="+250789751597",
+                email="admin@rtb.gov.rw",
+                institution="Rwanda Technical Board",
+                password="admin123",
+                role="admin",
+                is_premium=True,
+                session_plans_limit=999,
+                schemes_limit=999
+            )
+            db.add(admin)
+            db.commit()
+            print("✅ Admin user created automatically")
+        else:
+            print(f"✅ Database has {user_count} users - data is persistent")
+    except Exception as e:
+        print(f"❌ Startup error: {e}")
+    finally:
+        db.close()
+
 # Import init endpoint
 from init_endpoint import router as init_router
 app.include_router(init_router)
-
-# Import reset endpoint
-from reset_endpoint import router as reset_router
-app.include_router(reset_router)
 
 # Import migrate endpoint
 from migrate_endpoint import router as migrate_router
