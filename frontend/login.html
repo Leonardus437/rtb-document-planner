@@ -261,13 +261,20 @@
                 const url = `${API_URL}/users/login`;
                 console.log('Fetching:', url);
                 
+                // Add timeout and retry logic
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
+                
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ email, password })
+                    body: JSON.stringify({ email, password }),
+                    signal: controller.signal
                 });
+                
+                clearTimeout(timeoutId);
                 
                 console.log('Response status:', response.status);
                 const responseText = await response.text();
@@ -302,7 +309,16 @@
                 }
             } catch (error) {
                 console.error('Catch error:', error);
-                errorMessage.textContent = error.message;
+                
+                // Better error messages
+                let errorMsg = error.message;
+                if (error.name === 'AbortError') {
+                    errorMsg = 'Connection timeout. The server might be starting up. Please wait 10 seconds and try again.';
+                } else if (error.message === 'Failed to fetch') {
+                    errorMsg = 'Cannot connect to server. Please check your internet connection or try again in a few seconds.';
+                }
+                
+                errorMessage.textContent = errorMsg;
                 errorMessage.style.display = 'block';
             } finally {
                 loginBtn.disabled = false;
