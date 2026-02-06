@@ -176,82 +176,80 @@ def generate_apa_references(topic, sector, learning_outcomes):
     return "\n".join(refs)
 
 def generate_smart_objectives(topic, learning_outcomes):
-    """Generate SMART objectives matching teacher format - dynamically adapts to each specific topic"""
+    """Generate truly SMART objectives that will amaze TVET trainers - matches professional RTB standards"""
     lo_lower = (learning_outcomes or '').lower()
     topic = (topic or 'the topic').replace("Shield", "").replace("shield", "").strip()
     
-    # Extract key noun/concept from topic (last significant word or phrase)
-    topic_words = topic.split()
-    
-    # Determine if topic contains specific technical terms
-    # Extract the main concept (usually the last noun or key phrase)
-    if len(topic_words) > 0:
-        # For topics like "loops in C++", "database normalization", "HTML forms"
-        main_concept = topic
+    # Parse topic structure for maximum specificity
+    if ' in ' in topic.lower():
+        # Format: "X in Y" (e.g., "loops in C++", "arrays in Python")
+        parts = topic.split(' in ')
+        concept = parts[0].strip()
+        context = parts[1].strip() if len(parts) > 1 else ''
         
-        # Check if topic has "in" or "using" - extract the specific element
-        if ' in ' in topic.lower():
-            parts = topic.split(' in ')
-            specific_element = parts[0].strip()
-            context = parts[1].strip() if len(parts) > 1 else ''
+        # Generate SMART objectives following RTB trainer format
+        obj1 = f"Define correctly {concept} keywords as used in {context}"
+        obj2 = f"Identify properly each {concept} keyword in {context} program"
+        obj3 = f"Create correctly syntax of each {concept} statements as it is used in {context} program"
+        obj4 = f"Produce accurately a required {context} application to perform specific tasks"
+        
+    elif ' using ' in topic.lower():
+        # Format: "X using Y" (e.g., "web development using HTML")
+        parts = topic.split(' using ')
+        task = parts[0].strip()
+        tool = parts[1].strip() if len(parts) > 1 else ''
+        
+        obj1 = f"Define correctly {tool} elements and attributes as used in {task}"
+        obj2 = f"Identify properly each {tool} component required for {task}"
+        obj3 = f"Create correctly the structure of {task} project using {tool}"
+        obj4 = f"Produce accurately a complete {task} application using {tool} to meet specific requirements"
+        
+    elif ' with ' in topic.lower():
+        # Format: "X with Y" (e.g., "database design with MySQL")
+        parts = topic.split(' with ')
+        concept = parts[0].strip()
+        tool = parts[1].strip() if len(parts) > 1 else ''
+        
+        obj1 = f"Define correctly {concept} concepts as implemented in {tool}"
+        obj2 = f"Identify properly the components of {concept} in {tool} environment"
+        obj3 = f"Demonstrate correctly {concept} procedures using {tool}"
+        obj4 = f"Apply accurately {concept} principles to create functional {tool} solutions"
+        
+    else:
+        # Single concept - determine cognitive level from learning outcomes
+        action_verbs_create = ['create', 'design', 'develop', 'construct', 'produce', 'build', 'generate', 'compose', 'write', 'implement']
+        action_verbs_analyze = ['analyze', 'evaluate', 'compare', 'examine', 'assess', 'critique', 'investigate', 'test']
+        action_verbs_apply = ['apply', 'demonstrate', 'implement', 'use', 'operate', 'perform', 'execute', 'practice', 'solve']
+        
+        if any(verb in lo_lower for verb in action_verbs_create):
+            # Creation/Synthesis level - for building and producing
+            obj1 = f"Define correctly {topic} terminology and fundamental concepts"
+            obj2 = f"Identify properly the components and elements required in {topic}"
+            obj3 = f"Create correctly the structure and implementation of {topic} solutions"
+            obj4 = f"Produce accurately a complete {topic} project to meet specified requirements"
             
-            # Generate objectives for "X in Y" format (e.g., "loops in C++")
-            obj1 = f"Define correctly {specific_element} keyword as used in {context}"
-            obj2 = f"Identify properly each {specific_element} keyword in {context} program"
-            obj3 = f"Create correctly syntax of each {specific_element} statements as it is used in {context} program"
-            obj4 = f"Produce accurately a required {context} application to perform specific tasks"
+        elif any(verb in lo_lower for verb in action_verbs_analyze):
+            # Analysis/Evaluation level - for examining and assessing
+            obj1 = f"Define correctly {topic} concepts and underlying principles"
+            obj2 = f"Identify properly each component and its function in {topic} systems"
+            obj3 = f"Analyze correctly the relationships and patterns within {topic}"
+            obj4 = f"Evaluate accurately the effectiveness and efficiency of {topic} solutions"
             
-        elif ' using ' in topic.lower():
-            parts = topic.split(' using ')
-            task = parts[0].strip()
-            tool = parts[1].strip() if len(parts) > 1 else ''
-            
-            obj1 = f"Define correctly {tool} terminology and concepts"
-            obj2 = f"Identify properly the components needed for {task}"
-            obj3 = f"Demonstrate correctly the procedures of {task} using {tool}"
-            obj4 = f"Produce accurately a complete {task} application using {tool}"
+        elif any(verb in lo_lower for verb in action_verbs_apply):
+            # Application level - for using and demonstrating
+            obj1 = f"Define correctly {topic} terminology as used in professional practice"
+            obj2 = f"Identify properly each element and procedure in {topic} applications"
+            obj3 = f"Demonstrate correctly the techniques and methods of {topic}"
+            obj4 = f"Apply accurately {topic} skills to perform specific workplace tasks"
             
         else:
-            # Standard format for single-concept topics
-            # Determine cognitive level from learning outcomes
-            action_verbs_create = ['create', 'design', 'develop', 'construct', 'produce', 'build', 'generate', 'compose', 'write']
-            action_verbs_analyze = ['analyze', 'evaluate', 'compare', 'examine', 'assess', 'critique', 'investigate']
-            action_verbs_apply = ['apply', 'demonstrate', 'implement', 'use', 'operate', 'perform', 'execute', 'practice']
-            
-            if any(verb in lo_lower for verb in action_verbs_create):
-                # Creation/Synthesis level
-                obj1 = f"Define correctly {topic} terminology and key concepts"
-                obj2 = f"Identify properly the components and elements of {topic}"
-                obj3 = f"Create correctly the structure and implementation of {topic}"
-                obj4 = f"Produce accurately a required application using {topic} to perform specific tasks"
-                
-            elif any(verb in lo_lower for verb in action_verbs_analyze):
-                # Analysis/Evaluation level
-                obj1 = f"Define correctly {topic} concepts and principles"
-                obj2 = f"Identify properly each component in {topic} applications"
-                obj3 = f"Analyze correctly the relationships and patterns in {topic}"
-                obj4 = f"Evaluate accurately the effectiveness of {topic} solutions"
-                
-            elif any(verb in lo_lower for verb in action_verbs_apply):
-                # Application level
-                obj1 = f"Define correctly {topic} terminology as used in practice"
-                obj2 = f"Identify properly each element in {topic} applications"
-                obj3 = f"Demonstrate correctly the procedures and techniques of {topic}"
-                obj4 = f"Apply accurately {topic} to perform specific workplace tasks"
-                
-            else:
-                # Understanding/Comprehension level (default)
-                obj1 = f"Define correctly the key terms and concepts of {topic}"
-                obj2 = f"Identify properly the main components of {topic}"
-                obj3 = f"Explain correctly how {topic} works in practice"
-                obj4 = f"Demonstrate accurately the basic procedures of {topic}"
-    else:
-        # Fallback for empty topic
-        obj1 = "Define correctly the key terminology and concepts"
-        obj2 = "Identify properly the main components and elements"
-        obj3 = "Demonstrate correctly the procedures and techniques"
-        obj4 = "Apply accurately the concepts to perform specific tasks"
+            # Understanding/Comprehension level - default for knowledge-based topics
+            obj1 = f"Define correctly the key terms and concepts of {topic}"
+            obj2 = f"Identify properly the main components and characteristics of {topic}"
+            obj3 = f"Explain correctly how {topic} works and its practical applications"
+            obj4 = f"Demonstrate accurately the basic procedures and techniques of {topic}"
     
+    # Return formatted objectives with proper RTB structure
     return f"By the end of the session trainees will be able to\n✓ {obj1}\n✓ {obj2}\n✓ {obj3}\n✓ {obj4}"
 
 def generate_session_plan_docx(session_plan):
