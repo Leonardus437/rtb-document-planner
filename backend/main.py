@@ -92,7 +92,13 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @app.post("/users/login")
 def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
+    # Try to find user by email first (for teachers)
     user = db.query(models.User).filter(models.User.email == credentials.email).first()
+    
+    # If not found by email, try phone (for admin)
+    if not user:
+        user = db.query(models.User).filter(models.User.phone == credentials.email).first()
+    
     if not user or user.password != credentials.password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     
