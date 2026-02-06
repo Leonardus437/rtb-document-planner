@@ -176,39 +176,44 @@ def generate_apa_references(topic, sector, learning_outcomes):
     return "\n".join(refs)
 
 def generate_smart_objectives(topic, learning_outcomes):
-    """Generate truly dynamic SMART objectives based on user input"""
+    """Generate SMART objectives matching teacher format with specific action verbs"""
     lo_lower = (learning_outcomes or '').lower()
     topic = (topic or 'the topic').replace("Shield", "").replace("shield", "").strip()
     
-    # Extract action verbs from learning outcomes if present
+    # Extract key concepts from topic for specific objectives
+    topic_words = topic.lower().split()
+    
+    # Determine cognitive level and generate 4 specific objectives
     action_verbs_create = ['create', 'design', 'develop', 'construct', 'produce', 'build', 'generate', 'compose']
     action_verbs_analyze = ['analyze', 'evaluate', 'compare', 'examine', 'assess', 'critique', 'investigate']
     action_verbs_apply = ['apply', 'demonstrate', 'implement', 'use', 'operate', 'perform', 'execute', 'practice']
-    action_verbs_understand = ['explain', 'describe', 'identify', 'recognize', 'classify', 'summarize']
     
-    # Determine cognitive level from learning outcomes
     if any(verb in lo_lower for verb in action_verbs_create):
-        # Creation/Synthesis level
-        obj1 = f"Explain comprehensively the fundamental principles underlying {topic}"
-        obj2 = f"Design and develop practical solutions by applying {topic} concepts creatively"
-        obj3 = f"Evaluate and justify design decisions made when working with {topic}"
+        # Creation/Synthesis level - 4 progressive objectives
+        obj1 = f"Define correctly {topic} terminology and key concepts"
+        obj2 = f"Identify properly the components and elements of {topic}"
+        obj3 = f"Create correctly the structure and syntax of {topic}"
+        obj4 = f"Produce accurately a required application to perform specific tasks using {topic}"
     elif any(verb in lo_lower for verb in action_verbs_analyze):
-        # Analysis/Evaluation level
-        obj1 = f"Identify and describe key components and characteristics of {topic}"
-        obj2 = f"Analyze systematically the relationships and patterns within {topic}"
-        obj3 = f"Compare and contrast different approaches used in {topic} applications"
+        # Analysis/Evaluation level - 4 progressive objectives
+        obj1 = f"Define correctly {topic} concepts and principles"
+        obj2 = f"Identify properly each component in {topic} applications"
+        obj3 = f"Analyze correctly the relationships and patterns in {topic}"
+        obj4 = f"Evaluate accurately the effectiveness of {topic} solutions"
     elif any(verb in lo_lower for verb in action_verbs_apply):
-        # Application level
-        obj1 = f"Define accurately the terminology and concepts related to {topic}"
-        obj2 = f"Demonstrate proficiently the procedures and techniques of {topic}"
-        obj3 = f"Apply correctly {topic} principles to solve practical workplace problems"
+        # Application level - 4 progressive objectives
+        obj1 = f"Define correctly {topic} terminology as used in practice"
+        obj2 = f"Identify properly each element in {topic} applications"
+        obj3 = f"Demonstrate correctly the procedures and techniques of {topic}"
+        obj4 = f"Apply accurately {topic} to perform specific workplace tasks"
     else:
-        # Understanding/Comprehension level
-        obj1 = f"Define precisely the key terms and concepts of {topic}"
-        obj2 = f"Explain clearly how {topic} works and its practical applications"
-        obj3 = f"Identify correctly the main elements and procedures involved in {topic}"
+        # Understanding/Comprehension level - 4 progressive objectives
+        obj1 = f"Define correctly the key terms and concepts of {topic}"
+        obj2 = f"Identify properly the main components of {topic}"
+        obj3 = f"Explain correctly how {topic} works in practice"
+        obj4 = f"Demonstrate accurately the basic procedures of {topic}"
     
-    return f"By the end of the session trainees will be able to\n✓ {obj1}\n✓ {obj2}\n✓ {obj3}"
+    return f"By the end of the session trainees will be able to\n✓ {obj1}\n✓ {obj2}\n✓ {obj3}\n✓ {obj4}"
 
 def generate_session_plan_docx(session_plan):
     """Generate RTB session plan - OFFICIAL FORMAT"""
