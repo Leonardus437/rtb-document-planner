@@ -644,7 +644,6 @@
                     <thead>
                         <tr>
                             <th>Name</th>
-                            <th>Phone</th>
                             <th>Email</th>
                             <th>Institution</th>
                             <th>Role</th>
@@ -656,7 +655,6 @@
                         ${users.map(user => `
                             <tr>
                                 <td><strong>${user.name}</strong></td>
-                                <td>${user.phone}</td>
                                 <td>${user.email || '-'}</td>
                                 <td>${user.institution || '-'}</td>
                                 <td>
@@ -664,13 +662,13 @@
                                         ${user.role === 'admin' ? '<i class="fas fa-shield-alt"></i> Admin' : '<i class="fas fa-user"></i> Teacher'}
                                     </span>
                                 </td>
-                                <td id="docs-${user.phone}">
+                                <td id="docs-${user.email}">
                                     <i class="fas fa-spinner fa-spin"></i>
                                 </td>
                                 <td>
                                     <div class="user-actions">
                                         ${user.role !== 'admin' ? `
-                                            <button onclick="deleteUser('${user.phone}', '${user.name}')" 
+                                            <button onclick="deleteUser('${user.email}', '${user.name}')" 
                                                     class="btn btn-sm btn-danger">
                                                 <i class="fas fa-trash"></i> Delete
                                             </button>
@@ -686,15 +684,15 @@
             usersContent.innerHTML = tableHTML;
             
             // Load document counts for each user
-            users.forEach(user => loadUserDocuments(user.phone));
+            users.forEach(user => loadUserDocuments(user.email || user.phone));
         }
         
-        async function loadUserDocuments(phone) {
+        async function loadUserDocuments(identifier) {
             try {
-                const response = await fetch(`${API_BASE}/admin/user-documents/${encodeURIComponent(phone)}`);
+                const response = await fetch(`${API_BASE}/admin/user-documents/${encodeURIComponent(identifier)}`);
                 if (response.ok) {
                     const data = await response.json();
-                    const cell = document.getElementById(`docs-${phone}`);
+                    const cell = document.getElementById(`docs-${identifier}`);
                     if (cell) {
                         cell.innerHTML = `
                             <span style="color: #10b981;"><i class="fas fa-file-alt"></i> ${data.session_plans}</span> / 
@@ -703,7 +701,7 @@
                     }
                 }
             } catch (error) {
-                const cell = document.getElementById(`docs-${phone}`);
+                const cell = document.getElementById(`docs-${identifier}`);
                 if (cell) cell.innerHTML = '-';
             }
         }
@@ -742,7 +740,7 @@
                             <div class="activity-content">
                                 <h4>${activity.title}</h4>
                                 <p>
-                                    <i class="fas fa-user"></i> ${activity.user_phone} created a 
+                                    <i class="fas fa-user"></i> ${activity.user_phone || activity.user_email || 'Unknown'} created a 
                                     ${activity.type === 'session_plan' ? 'Session Plan' : 'Scheme of Work'}
                                 </p>
                             </div>
@@ -769,13 +767,13 @@
             return `${Math.floor(diff / 86400)}d ago`;
         }
         
-        async function deleteUser(phone, name) {
+        async function deleteUser(identifier, name) {
             if (!confirm(`Delete user "${name}"?\n\nThis will permanently remove the user and all their documents.`)) {
                 return;
             }
             
             try {
-                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(phone)}`, {
+                const response = await fetch(`${API_BASE}/users/${encodeURIComponent(identifier)}`, {
                     method: 'DELETE'
                 });
                 
@@ -793,8 +791,8 @@
             const search = document.getElementById('userSearch').value.toLowerCase();
             const filtered = allUsers.filter(user => 
                 user.name.toLowerCase().includes(search) ||
-                user.phone.includes(search) ||
                 (user.email && user.email.toLowerCase().includes(search)) ||
+                (user.phone && user.phone.includes(search)) ||
                 (user.institution && user.institution.toLowerCase().includes(search))
             );
             displayUsers(filtered);

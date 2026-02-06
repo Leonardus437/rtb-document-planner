@@ -217,10 +217,29 @@ def get_recent_activity(limit: int = 10, db: Session = Depends(get_db)):
     activities.sort(key=lambda x: x["created_at"] or "", reverse=True)
     return activities[:limit]
 
-@app.get("/admin/user-documents/{phone}")
-def get_user_documents(phone: str, db: Session = Depends(get_db)):
-    plans = db.query(models.SessionPlan).filter(models.SessionPlan.user_phone == phone).all()
-    schemes = db.query(models.SchemeOfWork).filter(models.SchemeOfWork.user_phone == phone).all()
+@app.get("/admin/user-documents/{identifier}")
+def get_user_documents(identifier: str, db: Session = Depends(get_db)):
+    # Try to find by email first, then phone
+    plans = db.query(models.SessionPlan).filter(
+        (models.SessionPlan.user_phone == identifier) | (models.SessionPlan.user_phone.like(f"%{identifier}%"))
+    ).all()
+    schemes = db.query(models.SchemeOfWork).filter(
+        (models.SchemeOfWork.user_phone == identifier) | (models.SchemeOfWork.user_phone.like(f"%{identifier}%"))
+    ).all()
+    
+    # Also try to match by user email
+    user = db.query(models.User).filter(
+        (models.User.email == identifier) | (models.User.phone == identifier)
+    ).first()
+    
+    if user:
+        # Get documents by user's phone or email
+        plans = db.query(models.SessionPlan).filter(
+            (models.SessionPlan.user_phone == user.phone) | (models.SessionPlan.user_phone == user.email)
+        ).all()
+        schemes = db.query(models.SchemeOfWork).filter(
+            (models.SchemeOfWork.user_phone == user.phone) | (models.SchemeOfWork.user_phone == user.email)
+        ).all()
     
     return {
         "session_plans": len(plans),
@@ -232,9 +251,13 @@ def get_user_documents(phone: str, db: Session = Depends(get_db)):
 def remove_endpoint(phone: str):
     raise HTTPException(status_code=404, detail="Endpoint removed")
 
-@app.put("/users/{phone}")
-def update_user(phone: str, update: dict, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.phone == phone).first()
+@app.put("/users/{identifier}")
+def update_user(identifier: str, update: dict, db: Session = Depends(get_db)):
+    # Try to find by email or phone
+    user = db.query(models.User).filter(
+        (models.User.email == identifier) | (models.User.phone == identifier)
+    ).first()
+    
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     
@@ -245,9 +268,13 @@ def update_user(phone: str, update: dict, db: Session = Depends(get_db)):
     db.commit()
     return {"message": "User updated successfully"}
 
-@app.delete("/users/{phone}")
-def delete_user(phone: str, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.phone == phone).first()
+@app.delete("/users/{identifier}")
+def delete_user(identifier: str, db: Session = Depends(get_db)):
+    # Try to find by email or phone
+    user = db.query(models.User).filter(
+        (models.User.email == identifier) | (models.User.phone == identifier)
+    ).first()
+    
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     if user.role == "admin":
