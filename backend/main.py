@@ -70,6 +70,24 @@ def api_info():
         "endpoints": ["register", "login", "session-plans", "schemes"]
     }
 
+@app.get("/health")
+def health_check(db: Session = Depends(get_db)):
+    """Health check with database user count"""
+    try:
+        user_count = db.query(models.User).count()
+        return {
+            "status": "healthy",
+            "database": "connected",
+            "total_users": user_count,
+            "message": f"Database has {user_count} users - data is persistent"
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "database": "error",
+            "error": str(e)
+        }
+
 @app.post("/users/register")
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     # Check if email already exists
