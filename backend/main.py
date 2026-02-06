@@ -72,8 +72,14 @@ def api_info():
 
 @app.post("/users/register")
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
-    existing = db.query(models.User).filter(models.User.phone == user.phone).first()
-    if existing:
+    # Check if email already exists
+    existing_email = db.query(models.User).filter(models.User.email == user.email).first()
+    if existing_email:
+        raise HTTPException(status_code=400, detail="Email already registered")
+    
+    # Check if phone already exists
+    existing_phone = db.query(models.User).filter(models.User.phone == user.phone).first()
+    if existing_phone:
         raise HTTPException(status_code=400, detail="Phone number already registered")
     
     db_user = models.User(
@@ -91,7 +97,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
 
 @app.post("/users/login")
 def login(credentials: schemas.UserLogin, db: Session = Depends(get_db)):
-    user = db.query(models.User).filter(models.User.phone == credentials.phone).first()
+    user = db.query(models.User).filter(models.User.email == credentials.email).first()
     if not user or user.password != credentials.password:
         raise HTTPException(status_code=401, detail="Invalid credentials")
     

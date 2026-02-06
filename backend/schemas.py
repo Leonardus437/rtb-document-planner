@@ -9,7 +9,7 @@ class UserCreate(BaseModel):
     password: str
 
 class UserLogin(BaseModel):
-    phone: str
+    email: str
     password: str
 
 class PremiumUpdate(BaseModel):
