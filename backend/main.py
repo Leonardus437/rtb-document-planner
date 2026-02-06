@@ -77,16 +77,11 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     if existing_email:
         raise HTTPException(status_code=400, detail="Email already registered")
     
-    # Check if phone already exists
-    existing_phone = db.query(models.User).filter(models.User.phone == user.phone).first()
-    if existing_phone:
-        raise HTTPException(status_code=400, detail="Phone number already registered")
-    
     db_user = models.User(
         user_id=f"USER_{datetime.now().strftime('%Y%m%d%H%M%S')}",
         name=user.name,
-        phone=user.phone,
-        email=user.email or "",
+        phone="",  # Empty phone
+        email=user.email,
         institution=user.institution or "",
         password=user.password,
         role="user"
