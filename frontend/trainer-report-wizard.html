@@ -328,54 +328,67 @@
             const container = document.getElementById('traineesContainer');
             const card = document.createElement('div');
             card.className = 'trainee-card';
+            
+            // Create card structure
             card.innerHTML = `
                 <button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
                 <h4><i class="fas fa-user"></i> Trainee ${traineeCount}</h4>
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Trainee Name *</label>
-                        <input type="text" class="trainee-field" data-field="name" placeholder="Full name" value="${data ? data.name || '' : ''}" required>
+                        <input type="text" class="trainee-field" data-field="name" placeholder="Full name" required>
                     </div>
                     <div class="form-group">
                         <label>Formative LO1 (Marks)</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="formative_lo1" placeholder="0-100" min="0" max="100" value="${data ? data.formative_lo1 || '' : ''}">
+                        <input type="number" step="0.1" class="trainee-field" data-field="formative_lo1" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Formative LO2 (Marks)</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="formative_lo2" placeholder="0-100" min="0" max="100" value="${data ? data.formative_lo2 || '' : ''}">
+                        <input type="number" step="0.1" class="trainee-field" data-field="formative_lo2" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Formative LO3 (Marks)</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="formative_lo3" placeholder="0-100" min="0" max="100" value="${data ? data.formative_lo3 || '' : ''}">
+                        <input type="number" step="0.1" class="trainee-field" data-field="formative_lo3" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Formative Total %</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="formative_total" placeholder="Average %" min="0" max="100" value="${data ? data.formative_total || '' : ''}">
+                        <input type="number" step="0.1" class="trainee-field" data-field="formative_total" placeholder="Average %" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Summative Practical (Marks)</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="summative_practical" placeholder="0-100" min="0" max="100" value="${data ? data.summative_practical || '' : ''}">
+                        <input type="number" step="0.1" class="trainee-field" data-field="summative_practical" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Summative Written (Marks)</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="summative_written" placeholder="0-100" min="0" max="100" value="${data ? data.summative_written || '' : ''}">
+                        <input type="number" step="0.1" class="trainee-field" data-field="summative_written" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Final Total %</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="final_total" placeholder="Final %" min="0" max="100" value="${data ? data.final_total || '' : ''}">
+                        <input type="number" step="0.1" class="trainee-field" data-field="final_total" placeholder="Final %" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Decision</label>
                         <select class="trainee-field" data-field="decision">
-                            <option value="" ${!data || !data.decision ? 'selected' : ''}>Select</option>
-                            <option value="Pass" ${data && data.decision === 'Pass' ? 'selected' : ''}>Pass</option>
-                            <option value="Fail" ${data && data.decision === 'Fail' ? 'selected' : ''}>Fail</option>
-                            <option value="Reassessment" ${data && data.decision === 'Reassessment' ? 'selected' : ''}>Reassessment</option>
+                            <option value="">Select</option>
+                            <option value="Pass">Pass</option>
+                            <option value="Fail">Fail</option>
+                            <option value="Reassessment">Reassessment</option>
                         </select>
                     </div>
                 </div>
             `;
             container.appendChild(card);
+            
+            // Populate data after DOM insertion
+            if (data) {
+                const fields = card.querySelectorAll('.trainee-field');
+                fields.forEach(field => {
+                    const fieldName = field.dataset.field;
+                    if (data[fieldName] !== undefined && data[fieldName] !== null && data[fieldName] !== '') {
+                        field.value = data[fieldName];
+                    }
+                });
+            }
         }
         
         // Add first trainee on load
