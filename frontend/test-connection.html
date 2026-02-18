@@ -1,113 +1,112 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Backend Connection Test</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connection Test</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .test { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
         .success { background: #d4edda; color: #155724; }
         .error { background: #f8d7da; color: #721c24; }
-        .loading { background: #fff3cd; color: #856404; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
     </style>
 </head>
 <body>
-    <h1>RTB Planner - Backend Connection Test</h1>
+    <h1>Backend Connection Test</h1>
     <div id="results"></div>
-    
+    <button onclick="runTests()">Run Tests</button>
+
     <script src="config.js"></script>
     <script>
-        async function testConnection() {
-            const results = document.getElementById('results');
+        const API_URL = CONFIG?.API_URL || 'https://web-production-df3e5.up.railway.app';
+        const results = document.getElementById('results');
+
+        async function runTests() {
+            results.innerHTML = '<div class="test-result info">Running tests...</div>';
             
-            // Test 1: Basic API connection
-            results.innerHTML += '<div class="test loading">Testing API connection...</div>';
-            try {
-                const response = await fetch(`${API_BASE}/`, {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'omit'
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    results.innerHTML += `<div class="test success">✅ API Connection: SUCCESS - ${JSON.stringify(data)}</div>`;
-                } else {
-                    results.innerHTML += `<div class="test error">❌ API Connection: FAILED - Status ${response.status}</div>`;
-                }
-            } catch (error) {
-                results.innerHTML += `<div class="test error">❌ API Connection: ERROR - ${error.message}</div>`;
-            }
+            // Test 1: Health endpoint
+            await testEndpoint('/health', 'GET');
             
-            // Test 2: CORS headers (check response headers from GET request)
-            results.innerHTML += '<div class="test loading">Testing CORS headers...</div>';
-            try {
-                const response = await fetch(`${API_BASE}/`, {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'omit'
-                });
-                
-                // Check if we can make cross-origin requests successfully
-                if (response.ok) {
-                    results.innerHTML += `<div class="test success">✅ CORS Headers: SUCCESS - Cross-origin requests working</div>`;
-                } else {
-                    results.innerHTML += `<div class="test error">❌ CORS Headers: Failed with status ${response.status}</div>`;
-                }
-            } catch (error) {
-                results.innerHTML += `<div class="test error">❌ CORS Test: ERROR - ${error.message}</div>`;
-            }
+            // Test 2: API info
+            await testEndpoint('/api', 'GET');
             
-            // Test 3: User login endpoint (actual functionality test)
-            results.innerHTML += '<div class="test loading">Testing user login...</div>';
-            try {
-                const response = await fetch(`${API_BASE}/users/login`, {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'omit',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    results.innerHTML += `<div class="test success">✅ User Login: SUCCESS - User: ${data.name}</div>`;
-                } else {
-                    results.innerHTML += `<div class="test error">❌ User Login: Status ${response.status}</div>`;
-                }
-            } catch (error) {
-                results.innerHTML += `<div class="test error">❌ User Login: ERROR - ${error.message}</div>`;
-            }
-            
-            // Test 4: User limits endpoint
-            results.innerHTML += '<div class="test loading">Testing user limits...</div>';
-            try {
-                const response = await fetch(`${API_BASE}/user-limits/+250788123456`, {
-                    method: 'GET',
-                    mode: 'cors',
-                    credentials: 'omit',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'Accept': 'application/json'
-                    }
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    results.innerHTML += `<div class="test success">✅ User Limits: SUCCESS - Plans: ${data.session_plans_limit}, Schemes: ${data.schemes_limit}</div>`;
-                } else {
-                    results.innerHTML += `<div class="test error">❌ User Limits: Status ${response.status}</div>`;
-                }
-            } catch (error) {
-                results.innerHTML += `<div class="test error">❌ User Limits: ERROR - ${error.message}</div>`;
-            }
-            
-            results.innerHTML += '<div class="test success"><strong>🎉 Integration Test Complete!</strong><br>If all tests show SUCCESS, your system is 100% live and ready for users!</div>';
+            // Test 3: Register endpoint (OPTIONS for CORS)
+            await testCORS('/users/register');
         }
-        
-        // Run tests on page load
-        testConnection();
+
+        async function testEndpoint(endpoint, method = 'GET') {
+            const url = `${API_URL}${endpoint}`;
+            try {
+                const response = await fetch(url, { method });
+                const data = await response.json();
+                results.innerHTML += `
+                    <div class="test-result success">
+                        <strong>✅ ${method} ${endpoint}</strong><br>
+                        Status: ${response.status}<br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="test-result error">
+                        <strong>❌ ${method} ${endpoint}</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testCORS(endpoint) {
+            const url = `${API_URL}${endpoint}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                results.innerHTML += `
+                    <div class="test-result success">
+                        <strong>✅ CORS Preflight ${endpoint}</strong><br>
+                        Status: ${response.status}<br>
+                        Headers: ${response.headers.get('access-control-allow-origin')}
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="test-result error">
+                        <strong>❌ CORS Preflight ${endpoint}</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-run on load
+        runTests();
     </script>
 </body>
 </html>
