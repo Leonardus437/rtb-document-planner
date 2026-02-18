@@ -118,9 +118,11 @@ def health_check(db: Session = Depends(get_db)):
 
 @app.post("/users/register")
 def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
+    print(f"📝 Registration attempt for email: {user.email}")
     # Check if email already exists
     existing_email = db.query(models.User).filter(models.User.email == user.email).first()
     if existing_email:
+        print(f"❌ Email already exists: {user.email}")
         raise HTTPException(status_code=400, detail="Email already registered")
     
     db_user = models.User(
@@ -134,6 +136,7 @@ def register(user: schemas.UserCreate, db: Session = Depends(get_db)):
     )
     db.add(db_user)
     db.commit()
+    print(f"✅ User registered successfully: {user.email}")
     return {"message": "User registered successfully"}
 
 @app.post("/users/login")
