@@ -243,10 +243,26 @@
             
             <div class="form-section">
                 <h3>Trainee Assessment Data</h3>
-                <p style="color: #666; font-size: 0.85rem; margin-bottom: 1rem;">Add trainees and their assessment marks. Click "Add Trainee" to add more.</p>
+                <p style="color: #666; font-size: 0.85rem; margin-bottom: 1rem;">Choose one: Upload a CSV/Excel file OR add trainees manually.</p>
+                
+                <div style="background: #e3f2fd; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <h4 style="color: #1976d2; margin-bottom: 0.5rem; font-size: 0.95rem;"><i class="fas fa-upload"></i> Option 1: Upload File</h4>
+                    <p style="font-size: 0.85rem; color: #555; margin-bottom: 0.75rem;">Upload CSV or Excel file with columns: Name, Formative_LO1, Formative_LO2, Formative_LO3, Formative_Total, Summative_Practical, Summative_Written, Final_Total, Decision</p>
+                    <input type="file" id="fileUpload" accept=".csv,.xlsx,.xls" style="margin-bottom: 0.5rem;">
+                    <button type="button" onclick="parseFile()" style="padding: 0.5rem 1rem; background: #1976d2; color: white; border: none; border-radius: 0.5rem; cursor: pointer;">
+                        <i class="fas fa-file-import"></i> Parse File
+                    </button>
+                    <div id="fileStatus" style="margin-top: 0.5rem; font-size: 0.85rem;"></div>
+                </div>
+                
+                <div style="background: #fff3e0; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
+                    <h4 style="color: #f57c00; margin-bottom: 0.5rem; font-size: 0.95rem;"><i class="fas fa-keyboard"></i> Option 2: Manual Entry</h4>
+                    <p style="font-size: 0.85rem; color: #555;">Add trainees one by one using the form below.</p>
+                </div>
+                
                 <div id="traineesContainer"></div>
                 <button type="button" class="btn-add-row" onclick="addTraineeCard()">
-                    <i class="fas fa-plus"></i> Add Trainee
+                    <i class="fas fa-plus"></i> Add Trainee Manually
                 </button>
             </div>
             
@@ -272,7 +288,54 @@
         const API_URL = CONFIG?.API_URL || 'http://localhost:5000';
         let traineeCount = 0;
         
-        function addTraineeCard() {
+        function parseFile() {
+            const fileInput = document.getElementById('fileUpload');
+            const file = fileInput.files[0];
+            const statusDiv = document.getElementById('fileStatus');
+            
+            if (!file) {
+                statusDiv.innerHTML = '<span style="color: #d32f2f;">Please select a file first</span>';
+                return;
+            }
+            
+            statusDiv.innerHTML = '<span style="color: #1976d2;"><i class="fas fa-spinner fa-spin"></i> Parsing file...</span>';
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const text = e.target.result;
+                    let trainees = [];
+                    
+                    const lines = text.split('\n');
+                    for (let i = 1; i < lines.length; i++) {
+                        if (!lines[i].trim()) continue;
+                        const values = lines[i].split(',');
+                        const trainee = {
+                            name: values[0]?.trim() || '',
+                            formative_lo1: values[1]?.trim() || '',
+                            formative_lo2: values[2]?.trim() || '',
+                            formative_lo3: values[3]?.trim() || '',
+                            formative_total: values[4]?.trim() || '',
+                            summative_practical: values[5]?.trim() || '',
+                            summative_written: values[6]?.trim() || '',
+                            final_total: values[7]?.trim() || '',
+                            decision: values[8]?.trim() || ''
+                        };
+                        if (trainee.name) trainees.push(trainee);
+                    }
+                    
+                    document.getElementById('traineesContainer').innerHTML = '';
+                    traineeCount = 0;
+                    trainees.forEach(trainee => addTraineeCard(trainee));
+                    statusDiv.innerHTML = `<span style="color: #2e7d32;"><i class="fas fa-check-circle"></i> Parsed ${trainees.length} trainees!</span>`;
+                } catch (error) {
+                    statusDiv.innerHTML = `<span style="color: #d32f2f;">Error: ${error.message}</span>`;
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        function addTraineeCard(data = null) {
             traineeCount++;
             const container = document.getElementById('traineesContainer');
             const card = document.createElement('div');
@@ -283,43 +346,43 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label>Trainee Name *</label>
-                        <input type="text" class="trainee-field" data-field="name" placeholder="Full name" required>
+                        <input type="text" class="trainee-field" data-field="name" placeholder="Full name" value="${data?.name || ''}" required>
                     </div>
                     <div class="form-group">
                         <label>Formative LO1 (Marks)</label>
-                        <input type="number" class="trainee-field" data-field="formative_lo1" placeholder="0-100" min="0" max="100">
+                        <input type="number" class="trainee-field" data-field="formative_lo1" placeholder="0-100" min="0" max="100" value="${data?.formative_lo1 || ''}">
                     </div>
                     <div class="form-group">
                         <label>Formative LO2 (Marks)</label>
-                        <input type="number" class="trainee-field" data-field="formative_lo2" placeholder="0-100" min="0" max="100">
+                        <input type="number" class="trainee-field" data-field="formative_lo2" placeholder="0-100" min="0" max="100" value="${data?.formative_lo2 || ''}">
                     </div>
                     <div class="form-group">
                         <label>Formative LO3 (Marks)</label>
-                        <input type="number" class="trainee-field" data-field="formative_lo3" placeholder="0-100" min="0" max="100">
+                        <input type="number" class="trainee-field" data-field="formative_lo3" placeholder="0-100" min="0" max="100" value="${data?.formative_lo3 || ''}">
                     </div>
                     <div class="form-group">
                         <label>Formative Total %</label>
-                        <input type="number" class="trainee-field" data-field="formative_total" placeholder="Average %" min="0" max="100">
+                        <input type="number" class="trainee-field" data-field="formative_total" placeholder="Average %" min="0" max="100" value="${data?.formative_total || ''}">
                     </div>
                     <div class="form-group">
                         <label>Summative Practical (Marks)</label>
-                        <input type="number" class="trainee-field" data-field="summative_practical" placeholder="0-100" min="0" max="100">
+                        <input type="number" class="trainee-field" data-field="summative_practical" placeholder="0-100" min="0" max="100" value="${data?.summative_practical || ''}">
                     </div>
                     <div class="form-group">
                         <label>Summative Written (Marks)</label>
-                        <input type="number" class="trainee-field" data-field="summative_written" placeholder="0-100" min="0" max="100">
+                        <input type="number" class="trainee-field" data-field="summative_written" placeholder="0-100" min="0" max="100" value="${data?.summative_written || ''}">
                     </div>
                     <div class="form-group">
                         <label>Final Total %</label>
-                        <input type="number" class="trainee-field" data-field="final_total" placeholder="Final %" min="0" max="100">
+                        <input type="number" class="trainee-field" data-field="final_total" placeholder="Final %" min="0" max="100" value="${data?.final_total || ''}">
                     </div>
                     <div class="form-group">
                         <label>Decision</label>
                         <select class="trainee-field" data-field="decision">
-                            <option value="">Select</option>
-                            <option value="Pass">Pass</option>
-                            <option value="Fail">Fail</option>
-                            <option value="Reassessment">Reassessment</option>
+                            <option value="" ${!data?.decision ? 'selected' : ''}>Select</option>
+                            <option value="Pass" ${data?.decision === 'Pass' ? 'selected' : ''}>Pass</option>
+                            <option value="Fail" ${data?.decision === 'Fail' ? 'selected' : ''}>Fail</option>
+                            <option value="Reassessment" ${data?.decision === 'Reassessment' ? 'selected' : ''}>Reassessment</option>
                         </select>
                     </div>
                 </div>
