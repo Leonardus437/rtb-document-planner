@@ -1433,7 +1433,6 @@ def generate_trainer_assessment_report_docx(report):
     # Copy the original template
     template_path = 'DOC TO REFER TO/Trainer\'s Assessment Report Template .docx'
     if not os.path.exists(template_path):
-        # Fallback: create simplified version
         return generate_trainer_assessment_report_simple(report)
     
     # Copy template to temp file
@@ -1444,46 +1443,27 @@ def generate_trainer_assessment_report_docx(report):
     doc = Document(temp_file.name)
     table = doc.tables[0]
     
-    # Fill header information (rows 3-9 based on template structure)
-    # Sector (row 3)
-    if len(table.rows) > 3:
-        for cell in table.rows[3].cells[37:42]:
-            cell.text = report.sector or ''
+    # Helper to safely set cell text without breaking merges
+    def safe_set_text(row_idx, col_idx, text):
+        try:
+            if row_idx < len(table.rows) and col_idx < len(table.rows[row_idx].cells):
+                cell = table.rows[row_idx].cells[col_idx]
+                # Only modify if cell has paragraphs
+                if cell.paragraphs:
+                    cell.paragraphs[0].text = str(text)
+        except:
+            pass
     
-    # Trade (row 4)
-    if len(table.rows) > 4:
-        for cell in table.rows[4].cells[34:39]:
-            cell.text = report.trade or ''
-    
-    # Module (row 4-5)
-    if len(table.rows) > 4:
-        for cell in table.rows[4].cells[5:10]:
-            cell.text = report.module_code_name or ''
-    
-    # Level (row 5)
-    if len(table.rows) > 5:
-        for cell in table.rows[5].cells[31:36]:
-            cell.text = report.level or ''
-    
-    # Competence (row 6)
-    if len(table.rows) > 6:
-        for cell in table.rows[6].cells[0:4]:
-            cell.text = report.competence or ''
-    
-    # Qualification (row 6)
-    if len(table.rows) > 6:
-        for cell in table.rows[6].cells[28:33]:
-            cell.text = report.qualification_title or ''
-    
-    # Learning Hours (row 6-7)
-    if len(table.rows) > 6:
-        for cell in table.rows[6].cells[41:45]:
-            cell.text = report.learning_hours or ''
-    
-    # Trainer Name (row 8-9)
-    if len(table.rows) > 8:
-        for cell in table.rows[8].cells[40:45]:
-            cell.text = report.trainer_name or ''
+    # Fill header information based on template structure
+    # These positions are from the template analysis
+    safe_set_text(3, 37, report.sector or '')
+    safe_set_text(4, 34, report.trade or '')
+    safe_set_text(4, 5, report.module_code_name or '')
+    safe_set_text(5, 31, report.level or '')
+    safe_set_text(6, 0, report.competence or '')
+    safe_set_text(6, 28, report.qualification_title or '')
+    safe_set_text(6, 41, report.learning_hours or '')
+    safe_set_text(8, 40, report.trainer_name or '')
     
     # Parse trainees data
     import json
@@ -1494,46 +1474,22 @@ def generate_trainer_assessment_report_docx(report):
         except:
             pass
     
-    # Fill trainee data starting from row 14 (after headers)
-    start_row = 14
+    # Fill trainee data starting from row 14
     for idx, trainee in enumerate(trainees):
-        if start_row + idx >= len(table.rows):
+        row_idx = 14 + idx
+        if row_idx >= len(table.rows):
             break
-        row = table.rows[start_row + idx]
         
-        # S/N
-        if len(row.cells) > 18:
-            row.cells[18].text = str(idx + 1)
-        
-        # Trainee Name
-        if len(row.cells) > 19:
-            row.cells[19].text = trainee.get('name', '')
-        
-        # Formative assessments
-        if len(row.cells) > 21:
-            row.cells[21].text = str(trainee.get('formative_lo1', ''))
-        if len(row.cells) > 28:
-            row.cells[28].text = str(trainee.get('formative_lo2', ''))
-        if len(row.cells) > 33:
-            row.cells[33].text = str(trainee.get('formative_lo3', ''))
-        
-        # Formative total
-        if len(row.cells) > 39:
-            row.cells[39].text = str(trainee.get('formative_total', ''))
-        
-        # Summative assessments
-        if len(row.cells) > 1:
-            row.cells[1].text = str(trainee.get('summative_practical', ''))
-        if len(row.cells) > 3:
-            row.cells[3].text = str(trainee.get('summative_written', ''))
-        
-        # Final total
-        if len(row.cells) > 9:
-            row.cells[9].text = str(trainee.get('final_total', ''))
-        
-        # Decision
-        if len(row.cells) > 14:
-            row.cells[14].text = trainee.get('decision', '')
+        safe_set_text(row_idx, 18, str(idx + 1))  # S/N
+        safe_set_text(row_idx, 19, trainee.get('name', ''))  # Name
+        safe_set_text(row_idx, 21, trainee.get('formative_lo1', ''))  # Formative LO1
+        safe_set_text(row_idx, 28, trainee.get('formative_lo2', ''))  # Formative LO2
+        safe_set_text(row_idx, 33, trainee.get('formative_lo3', ''))  # Formative LO3
+        safe_set_text(row_idx, 39, trainee.get('formative_total', ''))  # Formative Total
+        safe_set_text(row_idx, 1, trainee.get('summative_practical', ''))  # Summative Practical
+        safe_set_text(row_idx, 3, trainee.get('summative_written', ''))  # Summative Written
+        safe_set_text(row_idx, 9, trainee.get('final_total', ''))  # Final Total
+        safe_set_text(row_idx, 14, trainee.get('decision', ''))  # Decision
     
     doc.save(temp_file.name)
     return temp_file.name
