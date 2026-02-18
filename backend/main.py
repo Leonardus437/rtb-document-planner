@@ -503,20 +503,20 @@ async def generate_report_from_file(
                     try:
                         marks.append(float(val))
                     except:
-                        pass
+                        marks.append(0)
             
-            # Need at least 5 marks (3 formative + 2 summative)
-            if len(marks) < 5:
-                continue
+            # Pad with zeros if needed
+            while len(marks) < 5:
+                marks.append(0)
             
-            formative_lo1 = marks[0]
-            formative_lo2 = marks[1]
-            formative_lo3 = marks[2]
+            formative_lo1 = marks[0] if len(marks) > 0 else 0
+            formative_lo2 = marks[1] if len(marks) > 1 else 0
+            formative_lo3 = marks[2] if len(marks) > 2 else 0
             formative_total = (formative_lo1 + formative_lo2 + formative_lo3) / 3
             
-            summative_practical = marks[3]
-            summative_written = marks[4]
-            summative_avg = (summative_practical + summative_written) / 2
+            summative_practical = marks[3] if len(marks) > 3 else 0
+            summative_written = marks[4] if len(marks) > 4 else 0
+            summative_avg = (summative_practical + summative_written) / 2 if (summative_practical or summative_written) else 0
             
             final_total = (formative_total * 0.4) + (summative_avg * 0.6)
             decision = 'Pass' if final_total >= 50 else 'Fail'
