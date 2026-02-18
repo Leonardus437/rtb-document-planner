@@ -90,19 +90,41 @@
         .modules-table th {
             background: #667eea;
             color: white;
-            padding: 0.75rem;
+            padding: 0.75rem 0.5rem;
             text-align: left;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
+            white-space: nowrap;
+            min-width: 100px;
         }
         
         .modules-table td {
             padding: 0.5rem;
             border: 1px solid #ddd;
+            min-width: 100px;
         }
         
         .modules-table input {
             padding: 0.5rem;
             font-size: 0.85rem;
+            min-width: 120px;
+        }
+        
+        .modules-table input[data-field="module"],
+        .modules-table input[data-field="lo"],
+        .modules-table input[data-field="resources"] {
+            min-width: 200px;
+        }
+        
+        .modules-table {
+            overflow-x: auto;
+            display: block;
+        }
+        
+        .modules-table thead,
+        .modules-table tbody {
+            display: table;
+            width: 100%;
+            table-layout: fixed;
         }
         
         .btn-add-row {
@@ -234,40 +256,43 @@
             
             <div class="form-section">
                 <h3>Assessment Modules</h3>
-                <table class="modules-table" id="modulesTable">
-                    <thead>
-                        <tr>
-                            <th>Module (Code & Name)</th>
-                            <th>Type</th>
-                            <th>LO</th>
-                            <th>Assessment Type</th>
-                            <th>Trainer</th>
-                            <th>Candidates</th>
-                            <th>Invigilators</th>
-                            <th>Date</th>
-                            <th>Resources</th>
-                            <th>Place</th>
-                            <th>Publication Time</th>
-                            <th>Observation</th>
-                        </tr>
-                    </thead>
-                    <tbody id="modulesBody">
-                        <tr>
-                            <td><input type="text" class="module-field" data-field="module" placeholder="Module code & name"></td>
-                            <td><input type="text" class="module-field" data-field="type" placeholder="Core/Elective"></td>
-                            <td><input type="text" class="module-field" data-field="lo" placeholder="LO1, LO2"></td>
-                            <td><input type="text" class="module-field" data-field="assessment_type" placeholder="Written/Practical"></td>
-                            <td><input type="text" class="module-field" data-field="trainer" placeholder="Trainer name"></td>
-                            <td><input type="number" class="module-field" data-field="candidates" placeholder="Number"></td>
-                            <td><input type="number" class="module-field" data-field="invigilators" placeholder="Number"></td>
-                            <td><input type="date" class="module-field" data-field="date"></td>
-                            <td><input type="text" class="module-field" data-field="resources" placeholder="Resources"></td>
-                            <td><input type="text" class="module-field" data-field="place" placeholder="Location"></td>
-                            <td><input type="text" class="module-field" data-field="publication_time" placeholder="Date/Time"></td>
-                            <td><input type="text" class="module-field" data-field="observation" placeholder="Notes"></td>
-                        </tr>
-                    </tbody>
-                </table>
+                <p style="color: #666; font-size: 0.85rem; margin-bottom: 1rem;">Scroll horizontally to see all fields. Click "Add Module" to add more rows.</p>
+                <div style="overflow-x: auto; border: 1px solid #ddd; border-radius: 0.5rem;">
+                    <table class="modules-table" id="modulesTable">
+                        <thead>
+                            <tr>
+                                <th style="min-width: 200px;">Module (Code & Name)</th>
+                                <th style="min-width: 120px;">Type</th>
+                                <th style="min-width: 150px;">LO</th>
+                                <th style="min-width: 150px;">Assessment Type</th>
+                                <th style="min-width: 150px;">Trainer</th>
+                                <th style="min-width: 100px;">Candidates</th>
+                                <th style="min-width: 120px;">Invigilators</th>
+                                <th style="min-width: 130px;">Date</th>
+                                <th style="min-width: 180px;">Resources</th>
+                                <th style="min-width: 150px;">Place</th>
+                                <th style="min-width: 150px;">Publication Time</th>
+                                <th style="min-width: 150px;">Observation</th>
+                            </tr>
+                        </thead>
+                        <tbody id="modulesBody">
+                            <tr>
+                                <td><input type="text" class="module-field" data-field="module" placeholder="Module code & name" style="width: 100%; min-width: 180px;"></td>
+                                <td><input type="text" class="module-field" data-field="type" placeholder="Core/Elective" style="width: 100%;"></td>
+                                <td><input type="text" class="module-field" data-field="lo" placeholder="LO1, LO2" style="width: 100%; min-width: 130px;"></td>
+                                <td><input type="text" class="module-field" data-field="assessment_type" placeholder="Written/Practical" style="width: 100%;"></td>
+                                <td><input type="text" class="module-field" data-field="trainer" placeholder="Trainer name" style="width: 100%;"></td>
+                                <td><input type="number" class="module-field" data-field="candidates" placeholder="Number" style="width: 100%;"></td>
+                                <td><input type="number" class="module-field" data-field="invigilators" placeholder="Number" style="width: 100%;"></td>
+                                <td><input type="date" class="module-field" data-field="date" style="width: 100%;"></td>
+                                <td><input type="text" class="module-field" data-field="resources" placeholder="Resources" style="width: 100%; min-width: 160px;"></td>
+                                <td><input type="text" class="module-field" data-field="place" placeholder="Location" style="width: 100%;"></td>
+                                <td><input type="text" class="module-field" data-field="publication_time" placeholder="Date/Time" style="width: 100%;"></td>
+                                <td><input type="text" class="module-field" data-field="observation" placeholder="Notes" style="width: 100%;"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
                 <button type="button" class="btn-add-row" onclick="addModuleRow()">
                     <i class="fas fa-plus"></i> Add Module
                 </button>
@@ -298,18 +323,18 @@
             const tbody = document.getElementById('modulesBody');
             const row = tbody.insertRow();
             row.innerHTML = `
-                <td><input type="text" class="module-field" data-field="module" placeholder="Module code & name"></td>
-                <td><input type="text" class="module-field" data-field="type" placeholder="Core/Elective"></td>
-                <td><input type="text" class="module-field" data-field="lo" placeholder="LO1, LO2"></td>
-                <td><input type="text" class="module-field" data-field="assessment_type" placeholder="Written/Practical"></td>
-                <td><input type="text" class="module-field" data-field="trainer" placeholder="Trainer name"></td>
-                <td><input type="number" class="module-field" data-field="candidates" placeholder="Number"></td>
-                <td><input type="number" class="module-field" data-field="invigilators" placeholder="Number"></td>
-                <td><input type="date" class="module-field" data-field="date"></td>
-                <td><input type="text" class="module-field" data-field="resources" placeholder="Resources"></td>
-                <td><input type="text" class="module-field" data-field="place" placeholder="Location"></td>
-                <td><input type="text" class="module-field" data-field="publication_time" placeholder="Date/Time"></td>
-                <td><input type="text" class="module-field" data-field="observation" placeholder="Notes"></td>
+                <td><input type="text" class="module-field" data-field="module" placeholder="Module code & name" style="width: 100%; min-width: 180px;"></td>
+                <td><input type="text" class="module-field" data-field="type" placeholder="Core/Elective" style="width: 100%;"></td>
+                <td><input type="text" class="module-field" data-field="lo" placeholder="LO1, LO2" style="width: 100%; min-width: 130px;"></td>
+                <td><input type="text" class="module-field" data-field="assessment_type" placeholder="Written/Practical" style="width: 100%;"></td>
+                <td><input type="text" class="module-field" data-field="trainer" placeholder="Trainer name" style="width: 100%;"></td>
+                <td><input type="number" class="module-field" data-field="candidates" placeholder="Number" style="width: 100%;"></td>
+                <td><input type="number" class="module-field" data-field="invigilators" placeholder="Number" style="width: 100%;"></td>
+                <td><input type="date" class="module-field" data-field="date" style="width: 100%;"></td>
+                <td><input type="text" class="module-field" data-field="resources" placeholder="Resources" style="width: 100%; min-width: 160px;"></td>
+                <td><input type="text" class="module-field" data-field="place" placeholder="Location" style="width: 100%;"></td>
+                <td><input type="text" class="module-field" data-field="publication_time" placeholder="Date/Time" style="width: 100%;"></td>
+                <td><input type="text" class="module-field" data-field="observation" placeholder="Notes" style="width: 100%;"></td>
             `;
         }
         
