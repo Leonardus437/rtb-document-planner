@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trainer Assessment Report Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+        }
+        
+        .form-section h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .trainee-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .trainee-card h4 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .btn-remove {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-remove:hover {
+            background: #c82333;
+        }
+        
+        .btn-add-row {
+            margin-top: 1rem;
+            padding: 0.75rem 1.5rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        
+        .btn-add-row:hover {
+            background: #218838;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-chart-line"></i> Trainer Assessment Report Generator</h1>
+        <p class="subtitle">Create RTB-compliant trainer assessment reports</p>
+        
+        <form id="reportForm">
+            <div class="form-section">
+                <h3>Module Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Sector *</label>
+                        <input type="text" name="sector" placeholder="e.g., ICT" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Trade *</label>
+                        <input type="text" name="trade" placeholder="e.g., Software Development" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Level *</label>
+                        <select name="level" required>
+                            <option value="">Select Level</option>
+                            <option value="Level 4">Level 4</option>
+                            <option value="Level 5">Level 5</option>
+                            <option value="Level 6">Level 6</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Module (Code & Name) *</label>
+                        <input type="text" name="module_code_name" placeholder="e.g., GENCP 401 - C++ Programming" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Competence</label>
+                        <textarea name="competence" rows="2" placeholder="Module competence description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Qualification Title</label>
+                        <input type="text" name="qualification_title" placeholder="e.g., Advanced Diploma">
+                    </div>
+                    <div class="form-group">
+                        <label>Learning Hours</label>
+                        <input type="text" name="learning_hours" placeholder="e.g., 120 hours">
+                    </div>
+                    <div class="form-group">
+                        <label>Trainer Name *</label>
+                        <input type="text" name="trainer_name" placeholder="Trainer name" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Trainee Assessment Data</h3>
+                <p style="color: #666; font-size: 0.85rem; margin-bottom: 1rem;">Add trainees and their assessment marks. Click "Add Trainee" to add more.</p>
+                <div id="traineesContainer"></div>
+                <button type="button" class="btn-add-row" onclick="addTraineeCard()">
+                    <i class="fas fa-plus"></i> Add Trainee
+                </button>
+            </div>
+            
+            <div class="actions">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Generate Report
+                </button>
+            </div>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating your trainer assessment report...</p>
+        </div>
+    </div>
+    
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        const API_URL = CONFIG?.API_URL || 'http://localhost:5000';
+        let traineeCount = 0;
+        
+        function addTraineeCard() {
+            traineeCount++;
+            const container = document.getElementById('traineesContainer');
+            const card = document.createElement('div');
+            card.className = 'trainee-card';
+            card.innerHTML = `
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                <h4><i class="fas fa-user"></i> Trainee ${traineeCount}</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Trainee Name *</label>
+                        <input type="text" class="trainee-field" data-field="name" placeholder="Full name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Formative LO1 (Marks)</label>
+                        <input type="number" class="trainee-field" data-field="formative_lo1" placeholder="0-100" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Formative LO2 (Marks)</label>
+                        <input type="number" class="trainee-field" data-field="formative_lo2" placeholder="0-100" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Formative LO3 (Marks)</label>
+                        <input type="number" class="trainee-field" data-field="formative_lo3" placeholder="0-100" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Formative Total %</label>
+                        <input type="number" class="trainee-field" data-field="formative_total" placeholder="Average %" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Summative Practical (Marks)</label>
+                        <input type="number" class="trainee-field" data-field="summative_practical" placeholder="0-100" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Summative Written (Marks)</label>
+                        <input type="number" class="trainee-field" data-field="summative_written" placeholder="0-100" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Final Total %</label>
+                        <input type="number" class="trainee-field" data-field="final_total" placeholder="Final %" min="0" max="100">
+                    </div>
+                    <div class="form-group">
+                        <label>Decision</label>
+                        <select class="trainee-field" data-field="decision">
+                            <option value="">Select</option>
+                            <option value="Pass">Pass</option>
+                            <option value="Fail">Fail</option>
+                            <option value="Reassessment">Reassessment</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+            container.appendChild(card);
+        }
+        
+        // Add first trainee on load
+        addTraineeCard();
+        
+        document.getElementById('reportForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const session = getCurrentSession();
+            if (!session) {
+                alert('Please login first');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            // Collect trainees data
+            const cards = document.querySelectorAll('.trainee-card');
+            const trainees = [];
+            cards.forEach(card => {
+                const trainee = {};
+                card.querySelectorAll('.trainee-field').forEach(input => {
+                    trainee[input.dataset.field] = input.value;
+                });
+                if (trainee.name) {
+                    trainees.push(trainee);
+                }
+            });
+            
+            data.trainees_data = JSON.stringify(trainees);
+            data.user_phone = session.email || session.phone;
+            
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('reportForm').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/trainer-reports/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    window.location.href = `${API_URL}/trainer-reports/${result.id}/download`;
+                    setTimeout(() => {
+                        document.getElementById('loading').classList.remove('active');
+                        document.getElementById('reportForm').style.display = 'block';
+                        alert('Trainer Assessment Report generated successfully!');
+                    }, 2000);
+                } else {
+                    throw new Error('Failed to generate report');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('reportForm').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

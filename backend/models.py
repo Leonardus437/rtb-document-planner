@@ -192,3 +192,20 @@ class AssessmentPlan(Base):
     # Table data stored as JSON
     modules_data = Column(Text)  # JSON array of module rows
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+class TrainerAssessmentReport(Base):
+    __tablename__ = "trainer_assessment_reports"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_phone = Column(String(50))
+    sector = Column(String(255))
+    trade = Column(String(255))
+    level = Column(String(50))
+    module_code_name = Column(String(500))
+    competence = Column(Text)
+    qualification_title = Column(String(500))
+    learning_hours = Column(String(100))
+    trainer_name = Column(String(255))
+    # Trainee data stored as JSON
+    trainees_data = Column(Text)  # JSON array of trainee assessment data
+    created_at = Column(DateTime(timezone=True), server_default=func.now())

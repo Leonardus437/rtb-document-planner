@@ -9,7 +9,7 @@ import shutil
 from database import SessionLocal, engine
 import models
 import schemas
-from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx, generate_assessment_plan_docx
+from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx, generate_assessment_plan_docx, generate_trainer_assessment_report_docx
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -358,4 +358,25 @@ def download_assessment_plan(plan_id: int, db: Session = Depends(get_db)):
         docx_path,
         media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
         filename=f"RTB_Assessment_Plan_{plan_id}.docx"
+    )
+
+@app.post("/trainer-reports/")
+def create_trainer_report(report: schemas.TrainerAssessmentReportCreate, db: Session = Depends(get_db)):
+    db_report = models.TrainerAssessmentReport(**report.dict())
+    db.add(db_report)
+    db.commit()
+    db.refresh(db_report)
+    return {"id": db_report.id, "message": "Trainer assessment report created successfully"}
+
+@app.get("/trainer-reports/{report_id}/download")
+def download_trainer_report(report_id: int, db: Session = Depends(get_db)):
+    report = db.query(models.TrainerAssessmentReport).filter(models.TrainerAssessmentReport.id == report_id).first()
+    if not report:
+        raise HTTPException(status_code=404, detail="Trainer report not found")
+    
+    docx_path = generate_trainer_assessment_report_docx(report)
+    return FileResponse(
+        docx_path,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        filename=f"RTB_Trainer_Assessment_Report_{report_id}.docx"
     )

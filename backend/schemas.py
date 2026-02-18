@@ -112,3 +112,14 @@ class AssessmentPlanCreate(BaseModel):
     done_by: Optional[str] = None
     date: Optional[str] = None
     modules_data: Optional[str] = None
+
+class TrainerAssessmentReportCreate(BaseModel):
+    sector: Optional[str] = None
+    trade: Optional[str] = None
+    level: Optional[str] = None
+    module_code_name: Optional[str] = None
+    competence: Optional[str] = None
+    qualification_title: Optional[str] = None
+    learning_hours: Optional[str] = None
+    trainer_name: Optional[str] = None
+    trainees_data: Optional[str] = None
