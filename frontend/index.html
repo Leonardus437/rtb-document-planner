@@ -12,29 +12,41 @@
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #fafafa;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            padding: 2rem 1rem;
+        }
+        
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 20% 50%, rgba(102, 126, 234, 0.03) 0%, transparent 50%),
+                        radial-gradient(circle at 80% 80%, rgba(118, 75, 162, 0.03) 0%, transparent 50%);
+            pointer-events: none;
+            z-index: 0;
         }
         
         .container {
             text-align: center;
-            max-width: 800px;
-            padding: 3rem;
+            max-width: 900px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
         }
         
         h1 {
-            color: white;
-            font-size: 1.25rem;
-            font-weight: 500;
+            color: #1e293b;
+            font-size: 1.5rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         
         p {
-            color: rgba(255,255,255,0.9);
+            color: #64748b;
             font-size: 0.875rem;
             margin-bottom: 2rem;
         }
@@ -48,20 +60,21 @@
         
         .card-btn {
             background: white;
-            border: none;
+            border: 1px solid #e2e8f0;
             border-radius: 1rem;
             padding: 2rem 1.5rem;
-            width: 250px;
+            width: 220px;
             cursor: pointer;
             transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
             text-decoration: none;
             display: block;
         }
         
         .card-btn:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            border-color: #6366f1;
         }
         
         .card-btn i {
@@ -216,6 +229,12 @@
                 <i class="fas fa-tasks"></i>
                 <h2>Assessment Plan</h2>
                 <p>Create assessment Plan easily</p>
+            </a>
+            
+            <a href="trainer-report-wizard.html" class="card-btn" onclick="return checkAuth(event)">
+                <i class="fas fa-chart-line"></i>
+                <h2>Trainer Report</h2>
+                <p>Generate assessment reports</p>
             </a>
         </div>
     </div>
