@@ -9,7 +9,7 @@ import shutil
 from database import SessionLocal, engine
 import models
 import schemas
-from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx
+from document_generator import generate_session_plan_docx, generate_scheme_of_work_docx, generate_assessment_plan_docx
 
 models.Base.metadata.create_all(bind=engine)
 
@@ -338,3 +338,24 @@ def delete_user(identifier: str, db: Session = Depends(get_db)):
     db.delete(user)
     db.commit()
     return {"message": "User deleted successfully"}
+
+@app.post("/assessment-plans/")
+def create_assessment_plan(plan: schemas.AssessmentPlanCreate, db: Session = Depends(get_db)):
+    db_plan = models.AssessmentPlan(**plan.dict())
+    db.add(db_plan)
+    db.commit()
+    db.refresh(db_plan)
+    return {"id": db_plan.id, "message": "Assessment plan created successfully"}
+
+@app.get("/assessment-plans/{plan_id}/download")
+def download_assessment_plan(plan_id: int, db: Session = Depends(get_db)):
+    plan = db.query(models.AssessmentPlan).filter(models.AssessmentPlan.id == plan_id).first()
+    if not plan:
+        raise HTTPException(status_code=404, detail="Assessment plan not found")
+    
+    docx_path = generate_assessment_plan_docx(plan)
+    return FileResponse(
+        docx_path,
+        media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        filename=f"RTB_Assessment_Plan_{plan_id}.docx"
+    )

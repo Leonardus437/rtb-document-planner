@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Assessment Plan Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.75rem;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 2rem;
+            font-size: 0.9rem;
+        }
+        
+        .form-section {
+            margin-bottom: 2rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 0.5rem;
+        }
+        
+        .form-section h3 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            color: #333;
+            font-size: 0.9rem;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .modules-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        
+        .modules-table th {
+            background: #667eea;
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            font-size: 0.85rem;
+        }
+        
+        .modules-table td {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+        }
+        
+        .modules-table input {
+            padding: 0.5rem;
+            font-size: 0.85rem;
+        }
+        
+        .btn-add-row {
+            margin-top: 1rem;
+            padding: 0.5rem 1rem;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+        
+        .btn-add-row:hover {
+            background: #218838;
+        }
+        
+        .actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            flex: 1;
+            padding: 1rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #667eea;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-tasks"></i> Assessment Plan Generator</h1>
+        <p class="subtitle">Create RTB-compliant assessment planning documents</p>
+        
+        <form id="assessmentForm">
+            <div class="form-section">
+                <h3>Basic Information</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>School Year *</label>
+                        <input type="text" name="school_year" placeholder="e.g., 2024-2025" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Term *</label>
+                        <select name="term" required>
+                            <option value="">Select Term</option>
+                            <option value="Term 1">Term 1</option>
+                            <option value="Term 2">Term 2</option>
+                            <option value="Term 3">Term 3</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Sector *</label>
+                        <input type="text" name="sector" placeholder="e.g., ICT" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Trade *</label>
+                        <input type="text" name="trade" placeholder="e.g., Software Development" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Level *</label>
+                        <select name="level" required>
+                            <option value="">Select Level</option>
+                            <option value="Level 4">Level 4</option>
+                            <option value="Level 5">Level 5</option>
+                            <option value="Level 6">Level 6</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Done by (Trainer Name) *</label>
+                        <input type="text" name="done_by" placeholder="Trainer name" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Date *</label>
+                        <input type="date" name="date" required>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-section">
+                <h3>Assessment Modules</h3>
+                <table class="modules-table" id="modulesTable">
+                    <thead>
+                        <tr>
+                            <th>Module (Code & Name)</th>
+                            <th>Type</th>
+                            <th>LO</th>
+                            <th>Assessment Type</th>
+                            <th>Trainer</th>
+                            <th>Candidates</th>
+                            <th>Invigilators</th>
+                            <th>Date</th>
+                            <th>Resources</th>
+                            <th>Place</th>
+                            <th>Publication Time</th>
+                            <th>Observation</th>
+                        </tr>
+                    </thead>
+                    <tbody id="modulesBody">
+                        <tr>
+                            <td><input type="text" class="module-field" data-field="module" placeholder="Module code & name"></td>
+                            <td><input type="text" class="module-field" data-field="type" placeholder="Core/Elective"></td>
+                            <td><input type="text" class="module-field" data-field="lo" placeholder="LO1, LO2"></td>
+                            <td><input type="text" class="module-field" data-field="assessment_type" placeholder="Written/Practical"></td>
+                            <td><input type="text" class="module-field" data-field="trainer" placeholder="Trainer name"></td>
+                            <td><input type="number" class="module-field" data-field="candidates" placeholder="Number"></td>
+                            <td><input type="number" class="module-field" data-field="invigilators" placeholder="Number"></td>
+                            <td><input type="date" class="module-field" data-field="date"></td>
+                            <td><input type="text" class="module-field" data-field="resources" placeholder="Resources"></td>
+                            <td><input type="text" class="module-field" data-field="place" placeholder="Location"></td>
+                            <td><input type="text" class="module-field" data-field="publication_time" placeholder="Date/Time"></td>
+                            <td><input type="text" class="module-field" data-field="observation" placeholder="Notes"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <button type="button" class="btn-add-row" onclick="addModuleRow()">
+                    <i class="fas fa-plus"></i> Add Module
+                </button>
+            </div>
+            
+            <div class="actions">
+                <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">
+                    <i class="fas fa-arrow-left"></i> Back to Home
+                </button>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-download"></i> Generate Assessment Plan
+                </button>
+            </div>
+        </form>
+        
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p>Generating your assessment plan...</p>
+        </div>
+    </div>
+    
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        const API_URL = CONFIG?.API_URL || 'http://localhost:5000';
+        
+        function addModuleRow() {
+            const tbody = document.getElementById('modulesBody');
+            const row = tbody.insertRow();
+            row.innerHTML = `
+                <td><input type="text" class="module-field" data-field="module" placeholder="Module code & name"></td>
+                <td><input type="text" class="module-field" data-field="type" placeholder="Core/Elective"></td>
+                <td><input type="text" class="module-field" data-field="lo" placeholder="LO1, LO2"></td>
+                <td><input type="text" class="module-field" data-field="assessment_type" placeholder="Written/Practical"></td>
+                <td><input type="text" class="module-field" data-field="trainer" placeholder="Trainer name"></td>
+                <td><input type="number" class="module-field" data-field="candidates" placeholder="Number"></td>
+                <td><input type="number" class="module-field" data-field="invigilators" placeholder="Number"></td>
+                <td><input type="date" class="module-field" data-field="date"></td>
+                <td><input type="text" class="module-field" data-field="resources" placeholder="Resources"></td>
+                <td><input type="text" class="module-field" data-field="place" placeholder="Location"></td>
+                <td><input type="text" class="module-field" data-field="publication_time" placeholder="Date/Time"></td>
+                <td><input type="text" class="module-field" data-field="observation" placeholder="Notes"></td>
+            `;
+        }
+        
+        document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const session = getCurrentSession();
+            if (!session) {
+                alert('Please login first');
+                window.location.href = 'login.html';
+                return;
+            }
+            
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            // Collect modules data
+            const rows = document.querySelectorAll('#modulesBody tr');
+            const modules = [];
+            rows.forEach(row => {
+                const module = {};
+                row.querySelectorAll('.module-field').forEach(input => {
+                    module[input.dataset.field] = input.value;
+                });
+                if (module.module) { // Only add if module name is filled
+                    modules.push(module);
+                }
+            });
+            
+            data.modules_data = JSON.stringify(modules);
+            data.user_phone = session.email || session.phone;
+            
+            document.getElementById('loading').classList.add('active');
+            document.getElementById('assessmentForm').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_URL}/assessment-plans/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                
+                if (response.ok) {
+                    const result = await response.json();
+                    window.location.href = `${API_URL}/assessment-plans/${result.id}/download`;
+                    setTimeout(() => {
+                        document.getElementById('loading').classList.remove('active');
+                        document.getElementById('assessmentForm').style.display = 'block';
+                        alert('Assessment Plan generated successfully!');
+                    }, 2000);
+                } else {
+                    throw new Error('Failed to generate assessment plan');
+                }
+            } catch (error) {
+                alert('Error: ' + error.message);
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('assessmentForm').style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1298,3 +1298,129 @@ Practical area'''
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
     doc.save(temp_file.name)
     return temp_file.name
+
+
+def generate_assessment_plan_docx(assessment_plan):
+    """Generate RTB Assessment Plan - OFFICIAL FORMAT"""
+    doc = Document()
+    
+    # LANDSCAPE orientation
+    section = doc.sections[0]
+    section.orientation = 1
+    section.page_width = Inches(11.0)
+    section.page_height = Inches(8.5)
+    section.left_margin = Inches(1.0)
+    section.right_margin = Inches(1.0)
+    section.top_margin = Inches(1.0)
+    section.bottom_margin = Inches(1.0)
+    
+    # Title
+    title = doc.add_paragraph()
+    title.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    title_run = title.add_run('\tASSESSMENT PLAN ')
+    title_run.font.name = 'Times New Roman'
+    title_run.font.size = Pt(14)
+    title_run.font.bold = True
+    
+    # Header info
+    info = doc.add_paragraph()
+    run = info.add_run(f"School year: {assessment_plan.school_year or ''}\n")
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(14)
+    run.font.bold = True
+    
+    run = info.add_run(f"Term: {assessment_plan.term or ''}\n")
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(14)
+    run.font.bold = True
+    
+    run = info.add_run(f"Sector: {assessment_plan.sector or ''}\n")
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(14)
+    run.font.bold = True
+    
+    run = info.add_run(f"Trade: {assessment_plan.trade or ''}\n")
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(14)
+    run.font.bold = True
+    
+    run = info.add_run(f"Level: {assessment_plan.level or ''}\n")
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(14)
+    run.font.bold = True
+    
+    # Note
+    note = doc.add_paragraph()
+    run = note.add_run('Note: This tool is filled by the trainer ')
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(12)
+    
+    # Main table: 13 columns
+    table = doc.add_table(rows=5, cols=13)
+    table.style = 'Table Grid'
+    
+    # Header row
+    headers = [
+        'NO', 'Module\n(Code&name)', 'Type of module', 'LO', 'Type of assessment',
+        'Responsible\nTrainer', 'Number of candidates', 'Number of Invigilators/ Assessors',
+        'Date', 'Resources', 'Place', 'Time for Publication of Assessment results', 'Observation'
+    ]
+    
+    for i, header_text in enumerate(headers):
+        cell = table.cell(0, i)
+        para = cell.paragraphs[0]
+        para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = para.add_run(header_text)
+        run.font.name = 'Times New Roman'
+        run.font.size = Pt(14)
+        run.font.bold = True
+    
+    # Data rows (parse JSON if provided)
+    import json
+    modules_data = []
+    if assessment_plan.modules_data:
+        try:
+            modules_data = json.loads(assessment_plan.modules_data)
+        except:
+            pass
+    
+    # Fill data rows
+    for row_idx in range(1, 5):
+        cell = table.cell(row_idx, 0)
+        para = cell.paragraphs[0]
+        para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        run = para.add_run(str(row_idx))
+        run.font.name = 'Times New Roman'
+        run.font.size = Pt(12)
+        
+        # Fill module data if available
+        if row_idx - 1 < len(modules_data):
+            module = modules_data[row_idx - 1]
+            for col_idx, key in enumerate(['module', 'type', 'lo', 'assessment_type', 'trainer',
+                                           'candidates', 'invigilators', 'date', 'resources',
+                                           'place', 'publication_time', 'observation']):
+                cell = table.cell(row_idx, col_idx + 1)
+                para = cell.paragraphs[0]
+                run = para.add_run(module.get(key, ''))
+                run.font.name = 'Times New Roman'
+                run.font.size = Pt(12)
+    
+    # Footer
+    doc.add_paragraph()
+    footer = doc.add_paragraph()
+    run = footer.add_run(f"Done by: {assessment_plan.done_by or ''}\n")
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(12)
+    
+    run = footer.add_run('Signature:\n')
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(12)
+    
+    run = footer.add_run(f"Date: {assessment_plan.date or '/../..'}")
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(12)
+    
+    # Save
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
+    doc.save(temp_file.name)
+    return temp_file.name

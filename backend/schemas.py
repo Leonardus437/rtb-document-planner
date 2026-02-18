@@ -102,3 +102,13 @@ class SchemeCreate(BaseModel):
     manager_name: Optional[str] = None
     rtb_logo_path: Optional[str] = None
     school_logo_path: Optional[str] = None
+
+class AssessmentPlanCreate(BaseModel):
+    school_year: Optional[str] = None
+    term: Optional[str] = None
+    sector: Optional[str] = None
+    trade: Optional[str] = None
+    level: Optional[str] = None
+    done_by: Optional[str] = None
+    date: Optional[str] = None
+    modules_data: Optional[str] = None

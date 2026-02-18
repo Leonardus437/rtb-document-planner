@@ -176,3 +176,19 @@ class Settings(Base):
     value = Column(String(255), nullable=False)
     description = Column(String(500))
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
+
+class AssessmentPlan(Base):
+    __tablename__ = "assessment_plans"
+
+    id = Column(Integer, primary_key=True, index=True)
+    user_phone = Column(String(50))
+    school_year = Column(String(100))
+    term = Column(String(100))
+    sector = Column(String(255))
+    trade = Column(String(255))
+    level = Column(String(50))
+    done_by = Column(String(255))
+    date = Column(String(100))
+    # Table data stored as JSON
+    modules_data = Column(Text)  # JSON array of module rows
+    created_at = Column(DateTime(timezone=True), server_default=func.now())
