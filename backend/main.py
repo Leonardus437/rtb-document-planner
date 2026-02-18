@@ -476,6 +476,7 @@ async def generate_report_from_file(
         else:
             df = pd.read_excel(io.BytesIO(content))
         
+        # Find name column
         name_col = None
         for col in df.columns:
             if any(word in str(col).lower() for word in ['name', 'student', 'trainee', 'learner']):
@@ -484,7 +485,9 @@ async def generate_report_from_file(
         if not name_col:
             name_col = df.columns[0]
         
-        numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+        # Get all columns after name column
+        name_col_idx = df.columns.get_loc(name_col)
+        data_cols = df.columns[name_col_idx + 1:].tolist()
         
         trainees = []
         for idx, row in df.iterrows():
@@ -492,25 +495,40 @@ async def generate_report_from_file(
             if not name or name.lower() in ['nan', 'none', '']:
                 continue
             
-            marks = [row[col] for col in numeric_cols if pd.notna(row[col])]
-            formative_marks = marks[:3] if len(marks) >= 3 else marks
-            formative_total = sum(formative_marks) / len(formative_marks) if formative_marks else 0
+            # Extract all marks from columns after name
+            marks = []
+            for col in data_cols:
+                val = row[col]
+                if pd.notna(val):
+                    try:
+                        marks.append(float(val))
+                    except:
+                        pass
             
-            summative_marks = marks[3:5] if len(marks) >= 5 else []
-            summative_practical = summative_marks[0] if len(summative_marks) > 0 else 0
-            summative_written = summative_marks[1] if len(summative_marks) > 1 else 0
+            # Need at least 5 marks (3 formative + 2 summative)
+            if len(marks) < 5:
+                continue
             
-            final_total = (formative_total * 0.4 + (summative_practical + summative_written) / 2 * 0.6) if summative_marks else formative_total
+            formative_lo1 = marks[0]
+            formative_lo2 = marks[1]
+            formative_lo3 = marks[2]
+            formative_total = (formative_lo1 + formative_lo2 + formative_lo3) / 3
+            
+            summative_practical = marks[3]
+            summative_written = marks[4]
+            summative_avg = (summative_practical + summative_written) / 2
+            
+            final_total = (formative_total * 0.4) + (summative_avg * 0.6)
             decision = 'Pass' if final_total >= 50 else 'Fail'
             
             trainees.append({
                 'name': name,
-                'formative_lo1': str(round(formative_marks[0], 1)) if len(formative_marks) > 0 else '',
-                'formative_lo2': str(round(formative_marks[1], 1)) if len(formative_marks) > 1 else '',
-                'formative_lo3': str(round(formative_marks[2], 1)) if len(formative_marks) > 2 else '',
+                'formative_lo1': str(round(formative_lo1, 1)),
+                'formative_lo2': str(round(formative_lo2, 1)),
+                'formative_lo3': str(round(formative_lo3, 1)),
                 'formative_total': str(round(formative_total, 1)),
-                'summative_practical': str(round(summative_practical, 1)) if summative_practical else '',
-                'summative_written': str(round(summative_written, 1)) if summative_written else '',
+                'summative_practical': str(round(summative_practical, 1)),
+                'summative_written': str(round(summative_written, 1)),
                 'final_total': str(round(final_total, 1)),
                 'decision': decision
             })
