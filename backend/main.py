@@ -368,6 +368,88 @@ def create_trainer_report(report: schemas.TrainerAssessmentReportCreate, db: Ses
     db.refresh(db_report)
     return {"id": db_report.id, "message": "Trainer assessment report created successfully"}
 
+@app.post("/parse-marks-file/")
+async def parse_marks_file(file: UploadFile = File(...)):
+    """Smart Excel/CSV parser that extracts trainee marks from any format"""
+    try:
+        import pandas as pd
+        import io
+        
+        # Read file content
+        content = await file.read()
+        
+        # Try to read as Excel or CSV
+        try:
+            if file.filename.endswith('.csv'):
+                df = pd.read_csv(io.BytesIO(content))
+            else:
+                df = pd.read_excel(io.BytesIO(content))
+        except:
+            raise HTTPException(status_code=400, detail="Could not read file. Please upload Excel (.xls, .xlsx) or CSV file.")
+        
+        # Smart column detection - find name and marks columns
+        trainees = []
+        
+        # Find name column (case-insensitive)
+        name_col = None
+        for col in df.columns:
+            col_lower = str(col).lower()
+            if any(word in col_lower for word in ['name', 'student', 'trainee', 'learner']):
+                name_col = col
+                break
+        
+        if not name_col:
+            # Use first column as name
+            name_col = df.columns[0]
+        
+        # Find numeric columns (marks)
+        numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+        
+        # Process each row
+        for idx, row in df.iterrows():
+            name = str(row[name_col]).strip()
+            if not name or name.lower() in ['nan', 'none', '']:
+                continue
+            
+            # Extract marks from numeric columns
+            marks = [row[col] for col in numeric_cols if pd.notna(row[col])]
+            
+            # Calculate totals
+            formative_marks = marks[:3] if len(marks) >= 3 else marks
+            formative_total = sum(formative_marks) / len(formative_marks) if formative_marks else 0
+            
+            summative_marks = marks[3:5] if len(marks) >= 5 else []
+            summative_practical = summative_marks[0] if len(summative_marks) > 0 else 0
+            summative_written = summative_marks[1] if len(summative_marks) > 1 else 0
+            
+            final_total = (formative_total * 0.4 + (summative_practical + summative_written) / 2 * 0.6) if summative_marks else formative_total
+            
+            # Determine decision
+            decision = 'Pass' if final_total >= 50 else 'Fail'
+            
+            trainee = {
+                'name': name,
+                'formative_lo1': round(formative_marks[0], 1) if len(formative_marks) > 0 else '',
+                'formative_lo2': round(formative_marks[1], 1) if len(formative_marks) > 1 else '',
+                'formative_lo3': round(formative_marks[2], 1) if len(formative_marks) > 2 else '',
+                'formative_total': round(formative_total, 1),
+                'summative_practical': round(summative_practical, 1) if summative_practical else '',
+                'summative_written': round(summative_written, 1) if summative_written else '',
+                'final_total': round(final_total, 1),
+                'decision': decision
+            }
+            trainees.append(trainee)
+        
+        return {
+            "success": True,
+            "trainees": trainees,
+            "count": len(trainees),
+            "message": f"Successfully parsed {len(trainees)} trainees from {file.filename}"
+        }
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error parsing file: {str(e)}")
+
 @app.get("/trainer-reports/{report_id}/download")
 def download_trainer_report(report_id: int, db: Session = Depends(get_db)):
     report = db.query(models.TrainerAssessmentReport).filter(models.TrainerAssessmentReport.id == report_id).first()
