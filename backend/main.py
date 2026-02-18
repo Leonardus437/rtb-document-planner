@@ -450,6 +450,95 @@ async def parse_marks_file(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Error parsing file: {str(e)}")
 
+@app.post("/generate-report-from-file/")
+async def generate_report_from_file(
+    file: UploadFile = File(...),
+    sector: str = '',
+    trade: str = '',
+    level: str = '',
+    module_code_name: str = '',
+    competence: str = '',
+    qualification_title: str = '',
+    learning_hours: str = '',
+    trainer_name: str = '',
+    user_phone: str = ''
+):
+    """Generate RTB report directly from Excel/CSV file"""
+    try:
+        import pandas as pd
+        import io
+        import json
+        
+        content = await file.read()
+        
+        if file.filename.endswith('.csv'):
+            df = pd.read_csv(io.BytesIO(content))
+        else:
+            df = pd.read_excel(io.BytesIO(content))
+        
+        name_col = None
+        for col in df.columns:
+            if any(word in str(col).lower() for word in ['name', 'student', 'trainee', 'learner']):
+                name_col = col
+                break
+        if not name_col:
+            name_col = df.columns[0]
+        
+        numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+        
+        trainees = []
+        for idx, row in df.iterrows():
+            name = str(row[name_col]).strip()
+            if not name or name.lower() in ['nan', 'none', '']:
+                continue
+            
+            marks = [row[col] for col in numeric_cols if pd.notna(row[col])]
+            formative_marks = marks[:3] if len(marks) >= 3 else marks
+            formative_total = sum(formative_marks) / len(formative_marks) if formative_marks else 0
+            
+            summative_marks = marks[3:5] if len(marks) >= 5 else []
+            summative_practical = summative_marks[0] if len(summative_marks) > 0 else 0
+            summative_written = summative_marks[1] if len(summative_marks) > 1 else 0
+            
+            final_total = (formative_total * 0.4 + (summative_practical + summative_written) / 2 * 0.6) if summative_marks else formative_total
+            decision = 'Pass' if final_total >= 50 else 'Fail'
+            
+            trainees.append({
+                'name': name,
+                'formative_lo1': str(round(formative_marks[0], 1)) if len(formative_marks) > 0 else '',
+                'formative_lo2': str(round(formative_marks[1], 1)) if len(formative_marks) > 1 else '',
+                'formative_lo3': str(round(formative_marks[2], 1)) if len(formative_marks) > 2 else '',
+                'formative_total': str(round(formative_total, 1)),
+                'summative_practical': str(round(summative_practical, 1)) if summative_practical else '',
+                'summative_written': str(round(summative_written, 1)) if summative_written else '',
+                'final_total': str(round(final_total, 1)),
+                'decision': decision
+            })
+        
+        class ReportData:
+            pass
+        
+        report = ReportData()
+        report.sector = sector
+        report.trade = trade
+        report.level = level
+        report.module_code_name = module_code_name
+        report.competence = competence
+        report.qualification_title = qualification_title
+        report.learning_hours = learning_hours
+        report.trainer_name = trainer_name
+        report.trainees_data = json.dumps(trainees)
+        
+        docx_path = generate_trainer_assessment_report_docx(report)
+        return FileResponse(
+            docx_path,
+            media_type="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            filename="RTB_Trainer_Assessment_Report.docx"
+        )
+        
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+
 @app.get("/trainer-reports/{report_id}/download")
 def download_trainer_report(report_id: int, db: Session = Depends(get_db)):
     report = db.query(models.TrainerAssessmentReport).filter(models.TrainerAssessmentReport.id == report_id).first()
