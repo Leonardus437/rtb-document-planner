@@ -1427,75 +1427,7 @@ def generate_assessment_plan_docx(assessment_plan):
 
 
 def generate_trainer_assessment_report_docx(report):
-    """Generate RTB Trainer's Assessment Report - Using Original Template"""
-    import shutil
-    
-    # Copy the original template
-    template_path = 'DOC TO REFER TO/Trainer\'s Assessment Report Template .docx'
-    if not os.path.exists(template_path):
-        return generate_trainer_assessment_report_simple(report)
-    
-    # Copy template to temp file
-    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
-    shutil.copy(template_path, temp_file.name)
-    
-    # Open and fill the template
-    doc = Document(temp_file.name)
-    table = doc.tables[0]
-    
-    # Helper to safely set cell text without breaking merges
-    def safe_set_text(row_idx, col_idx, text):
-        try:
-            if row_idx < len(table.rows) and col_idx < len(table.rows[row_idx].cells):
-                cell = table.rows[row_idx].cells[col_idx]
-                # Only modify if cell has paragraphs
-                if cell.paragraphs:
-                    cell.paragraphs[0].text = str(text)
-        except:
-            pass
-    
-    # Fill header information based on template structure
-    # These positions are from the template analysis
-    safe_set_text(3, 37, report.sector or '')
-    safe_set_text(4, 34, report.trade or '')
-    safe_set_text(4, 5, report.module_code_name or '')
-    safe_set_text(5, 31, report.level or '')
-    safe_set_text(6, 0, report.competence or '')
-    safe_set_text(6, 28, report.qualification_title or '')
-    safe_set_text(6, 41, report.learning_hours or '')
-    safe_set_text(8, 40, report.trainer_name or '')
-    
-    # Parse trainees data
-    import json
-    trainees = []
-    if report.trainees_data:
-        try:
-            trainees = json.loads(report.trainees_data)
-        except:
-            pass
-    
-    # Fill trainee data starting from row 14
-    for idx, trainee in enumerate(trainees):
-        row_idx = 14 + idx
-        if row_idx >= len(table.rows):
-            break
-        
-        safe_set_text(row_idx, 18, str(idx + 1))  # S/N
-        safe_set_text(row_idx, 19, trainee.get('name', ''))  # Name
-        safe_set_text(row_idx, 21, trainee.get('formative_lo1', ''))  # Formative LO1
-        safe_set_text(row_idx, 28, trainee.get('formative_lo2', ''))  # Formative LO2
-        safe_set_text(row_idx, 33, trainee.get('formative_lo3', ''))  # Formative LO3
-        safe_set_text(row_idx, 39, trainee.get('formative_total', ''))  # Formative Total
-        safe_set_text(row_idx, 1, trainee.get('summative_practical', ''))  # Summative Practical
-        safe_set_text(row_idx, 3, trainee.get('summative_written', ''))  # Summative Written
-        safe_set_text(row_idx, 9, trainee.get('final_total', ''))  # Final Total
-        safe_set_text(row_idx, 14, trainee.get('decision', ''))  # Decision
-    
-    doc.save(temp_file.name)
-    return temp_file.name
-
-def generate_trainer_assessment_report_simple(report):
-    """Fallback: Generate simplified version if template not found"""
+    """Generate RTB Trainer's Assessment Report - Clean table version"""
     doc = Document()
     
     # LANDSCAPE orientation
@@ -1525,7 +1457,7 @@ def generate_trainer_assessment_report_simple(report):
     run.font.bold = True
     
     # Info table
-    info_table = doc.add_table(rows=6, cols=4)
+    info_table = doc.add_table(rows=4, cols=4)
     info_table.style = 'Table Grid'
     
     def add_info(row, col1_label, col1_val, col2_label, col2_val):
@@ -1562,7 +1494,7 @@ def generate_trainer_assessment_report_simple(report):
     
     doc.add_paragraph()
     
-    # Assessment table - simplified practical version
+    # Assessment table
     table = doc.add_table(rows=1, cols=10)
     table.style = 'Table Grid'
     
