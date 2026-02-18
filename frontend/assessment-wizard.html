@@ -120,6 +120,39 @@
             display: block;
         }
         
+        .module-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+        }
+        
+        .module-card h4 {
+            color: #667eea;
+            margin-bottom: 1rem;
+            font-size: 1rem;
+        }
+        
+        .btn-remove {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: #dc3545;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 1rem;
+        }
+        
+        .btn-remove:hover {
+            background: #c82333;
+        }
+        
         .modules-table thead,
         .modules-table tbody {
             display: table;
@@ -256,44 +289,9 @@
             
             <div class="form-section">
                 <h3>Assessment Modules</h3>
-                <p style="color: #666; font-size: 0.85rem; margin-bottom: 1rem;">Scroll horizontally to see all fields. Click "Add Module" to add more rows.</p>
-                <div style="overflow-x: auto; border: 1px solid #ddd; border-radius: 0.5rem;">
-                    <table class="modules-table" id="modulesTable">
-                        <thead>
-                            <tr>
-                                <th style="min-width: 200px;">Module (Code & Name)</th>
-                                <th style="min-width: 120px;">Type</th>
-                                <th style="min-width: 150px;">LO</th>
-                                <th style="min-width: 150px;">Assessment Type</th>
-                                <th style="min-width: 150px;">Trainer</th>
-                                <th style="min-width: 100px;">Candidates</th>
-                                <th style="min-width: 120px;">Invigilators</th>
-                                <th style="min-width: 130px;">Date</th>
-                                <th style="min-width: 180px;">Resources</th>
-                                <th style="min-width: 150px;">Place</th>
-                                <th style="min-width: 150px;">Publication Time</th>
-                                <th style="min-width: 150px;">Observation</th>
-                            </tr>
-                        </thead>
-                        <tbody id="modulesBody">
-                            <tr>
-                                <td><input type="text" class="module-field" data-field="module" placeholder="Module code & name" style="width: 100%; min-width: 180px;"></td>
-                                <td><input type="text" class="module-field" data-field="type" placeholder="Core/Elective" style="width: 100%;"></td>
-                                <td><input type="text" class="module-field" data-field="lo" placeholder="LO1, LO2" style="width: 100%; min-width: 130px;"></td>
-                                <td><input type="text" class="module-field" data-field="assessment_type" placeholder="Written/Practical" style="width: 100%;"></td>
-                                <td><input type="text" class="module-field" data-field="trainer" placeholder="Trainer name" style="width: 100%;"></td>
-                                <td><input type="number" class="module-field" data-field="candidates" placeholder="Number" style="width: 100%;"></td>
-                                <td><input type="number" class="module-field" data-field="invigilators" placeholder="Number" style="width: 100%;"></td>
-                                <td><input type="date" class="module-field" data-field="date" style="width: 100%;"></td>
-                                <td><input type="text" class="module-field" data-field="resources" placeholder="Resources" style="width: 100%; min-width: 160px;"></td>
-                                <td><input type="text" class="module-field" data-field="place" placeholder="Location" style="width: 100%;"></td>
-                                <td><input type="text" class="module-field" data-field="publication_time" placeholder="Date/Time" style="width: 100%;"></td>
-                                <td><input type="text" class="module-field" data-field="observation" placeholder="Notes" style="width: 100%;"></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <button type="button" class="btn-add-row" onclick="addModuleRow()">
+                <p style="color: #666; font-size: 0.85rem; margin-bottom: 1rem;">Add modules one by one. Click "Add Module" to add more.</p>
+                <div id="modulesContainer"></div>
+                <button type="button" class="btn-add-row" onclick="addModuleCard()">
                     <i class="fas fa-plus"></i> Add Module
                 </button>
             </div>
@@ -318,25 +316,76 @@
     <script src="auth.js"></script>
     <script>
         const API_URL = CONFIG?.API_URL || 'http://localhost:5000';
+        let moduleCount = 0;
         
-        function addModuleRow() {
-            const tbody = document.getElementById('modulesBody');
-            const row = tbody.insertRow();
-            row.innerHTML = `
-                <td><input type="text" class="module-field" data-field="module" placeholder="Module code & name" style="width: 100%; min-width: 180px;"></td>
-                <td><input type="text" class="module-field" data-field="type" placeholder="Core/Elective" style="width: 100%;"></td>
-                <td><input type="text" class="module-field" data-field="lo" placeholder="LO1, LO2" style="width: 100%; min-width: 130px;"></td>
-                <td><input type="text" class="module-field" data-field="assessment_type" placeholder="Written/Practical" style="width: 100%;"></td>
-                <td><input type="text" class="module-field" data-field="trainer" placeholder="Trainer name" style="width: 100%;"></td>
-                <td><input type="number" class="module-field" data-field="candidates" placeholder="Number" style="width: 100%;"></td>
-                <td><input type="number" class="module-field" data-field="invigilators" placeholder="Number" style="width: 100%;"></td>
-                <td><input type="date" class="module-field" data-field="date" style="width: 100%;"></td>
-                <td><input type="text" class="module-field" data-field="resources" placeholder="Resources" style="width: 100%; min-width: 160px;"></td>
-                <td><input type="text" class="module-field" data-field="place" placeholder="Location" style="width: 100%;"></td>
-                <td><input type="text" class="module-field" data-field="publication_time" placeholder="Date/Time" style="width: 100%;"></td>
-                <td><input type="text" class="module-field" data-field="observation" placeholder="Notes" style="width: 100%;"></td>
+        function addModuleCard() {
+            moduleCount++;
+            const container = document.getElementById('modulesContainer');
+            const card = document.createElement('div');
+            card.className = 'module-card';
+            card.innerHTML = `
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                <h4><i class="fas fa-book"></i> Module ${moduleCount}</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Module (Code & Name) *</label>
+                        <input type="text" class="module-field" data-field="module" placeholder="e.g., GENCP 401 - C++ Programming" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Type of Module</label>
+                        <select class="module-field" data-field="type">
+                            <option value="">Select Type</option>
+                            <option value="Core">Core</option>
+                            <option value="Elective">Elective</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Learning Outcomes (LO)</label>
+                        <input type="text" class="module-field" data-field="lo" placeholder="e.g., LO1, LO2, LO3">
+                    </div>
+                    <div class="form-group">
+                        <label>Type of Assessment</label>
+                        <input type="text" class="module-field" data-field="assessment_type" placeholder="e.g., Written/Practical">
+                    </div>
+                    <div class="form-group">
+                        <label>Responsible Trainer</label>
+                        <input type="text" class="module-field" data-field="trainer" placeholder="Trainer name">
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Candidates</label>
+                        <input type="number" class="module-field" data-field="candidates" placeholder="e.g., 30">
+                    </div>
+                    <div class="form-group">
+                        <label>Number of Invigilators/Assessors</label>
+                        <input type="number" class="module-field" data-field="invigilators" placeholder="e.g., 2">
+                    </div>
+                    <div class="form-group">
+                        <label>Assessment Date</label>
+                        <input type="date" class="module-field" data-field="date">
+                    </div>
+                    <div class="form-group">
+                        <label>Resources</label>
+                        <input type="text" class="module-field" data-field="resources" placeholder="e.g., Computers, Projector">
+                    </div>
+                    <div class="form-group">
+                        <label>Place</label>
+                        <input type="text" class="module-field" data-field="place" placeholder="e.g., Computer Lab">
+                    </div>
+                    <div class="form-group">
+                        <label>Publication Time for Results</label>
+                        <input type="text" class="module-field" data-field="publication_time" placeholder="e.g., 2 weeks after">
+                    </div>
+                    <div class="form-group">
+                        <label>Observation</label>
+                        <input type="text" class="module-field" data-field="observation" placeholder="Additional notes">
+                    </div>
+                </div>
             `;
+            container.appendChild(card);
         }
+        
+        // Add first module on load
+        addModuleCard();
         
         document.getElementById('assessmentForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -352,14 +401,14 @@
             const data = Object.fromEntries(formData);
             
             // Collect modules data
-            const rows = document.querySelectorAll('#modulesBody tr');
+            const cards = document.querySelectorAll('.module-card');
             const modules = [];
-            rows.forEach(row => {
+            cards.forEach(card => {
                 const module = {};
-                row.querySelectorAll('.module-field').forEach(input => {
+                card.querySelectorAll('.module-field').forEach(input => {
                     module[input.dataset.field] = input.value;
                 });
-                if (module.module) { // Only add if module name is filled
+                if (module.module) {
                     modules.push(module);
                 }
             });
