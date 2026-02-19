@@ -1451,51 +1451,46 @@ def generate_trainer_assessment_report_docx(report):
     
     # Module Details Section
     details = doc.add_paragraph()
-    details.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    details.paragraph_format.space_after = Pt(8)
+    details.alignment = WD_ALIGN_PARAGRAPH.LEFT
+    details.paragraph_format.space_after = Pt(6)
+    details.paragraph_format.space_before = Pt(6)
     run = details.add_run('Module Details')
     run.font.name = 'Times New Roman'
-    run.font.size = Pt(14)
+    run.font.size = Pt(12)
     run.font.bold = True
-    run.font.underline = True
     
-    # Info table
-    info_table = doc.add_table(rows=4, cols=4)
+    # Info table: 8 rows x 2 columns (label | value format)
+    info_table = doc.add_table(rows=8, cols=2)
     info_table.style = 'Table Grid'
     
-    def add_info(row, col1_label, col1_val, col2_label, col2_val):
+    # Set column widths
+    info_table.columns[0].width = Inches(2.0)
+    info_table.columns[1].width = Inches(7.0)
+    
+    def add_info_row(row, label, value):
+        # Label cell
         cell = info_table.cell(row, 0)
         para = cell.paragraphs[0]
-        run = para.add_run(col1_label)
+        run = para.add_run(label)
         run.font.bold = True
         run.font.size = Pt(11)
         run.font.name = 'Times New Roman'
-        set_cell_color(cell, 'E7E6E6')
         
+        # Value cell
         cell = info_table.cell(row, 1)
         para = cell.paragraphs[0]
-        run = para.add_run(col1_val)
-        run.font.size = Pt(11)
-        run.font.name = 'Times New Roman'
-        
-        cell = info_table.cell(row, 2)
-        para = cell.paragraphs[0]
-        run = para.add_run(col2_label)
-        run.font.bold = True
-        run.font.size = Pt(11)
-        run.font.name = 'Times New Roman'
-        set_cell_color(cell, 'E7E6E6')
-        
-        cell = info_table.cell(row, 3)
-        para = cell.paragraphs[0]
-        run = para.add_run(col2_val)
+        run = para.add_run(value)
         run.font.size = Pt(11)
         run.font.name = 'Times New Roman'
     
-    add_info(0, 'Sector:', report.sector or '', 'Trade:', report.trade or '')
-    add_info(1, 'Module:', report.module_code_name or '', 'Level:', report.level or '')
-    add_info(2, 'Competence:', report.competence or '', 'Qualification:', report.qualification_title or '')
-    add_info(3, 'Learning Hours:', report.learning_hours or '', 'Trainer:', report.trainer_name or '')
+    add_info_row(0, 'Sector:', report.sector or '')
+    add_info_row(1, 'Trade:', report.trade or '')
+    add_info_row(2, 'Module:', report.module_code_name or '')
+    add_info_row(3, 'Level:', report.level or '')
+    add_info_row(4, 'Competence:', report.competence or '')
+    add_info_row(5, 'Qualification:', report.qualification_title or '')
+    add_info_row(6, 'Learning Hours:', report.learning_hours or '')
+    add_info_row(7, 'Trainer:', report.trainer_name or '')
     
     doc.add_paragraph()
     
