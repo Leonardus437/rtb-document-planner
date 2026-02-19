@@ -370,75 +370,83 @@ def create_trainer_report(report: schemas.TrainerAssessmentReportCreate, db: Ses
 
 @app.post("/parse-marks-file/")
 async def parse_marks_file(file: UploadFile = File(...)):
-    """Smart Excel/CSV parser that extracts trainee marks from any format"""
+    """Enhanced Excel/CSV parser with smart column detection"""
     try:
         import pandas as pd
         import io
         
-        # Read file content
         content = await file.read()
         
-        # Try to read as Excel or CSV
-        try:
-            if file.filename.endswith('.csv'):
-                df = pd.read_csv(io.BytesIO(content))
-            else:
-                df = pd.read_excel(io.BytesIO(content))
-        except:
-            raise HTTPException(status_code=400, detail="Could not read file. Please upload Excel (.xls, .xlsx) or CSV file.")
+        if file.filename.endswith('.csv'):
+            df = pd.read_csv(io.BytesIO(content))
+        else:
+            df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
         
-        # Smart column detection - find name and marks columns
-        trainees = []
+        df = df.dropna(how='all')
         
-        # Find name column (case-insensitive)
+        # Find name column
         name_col = None
-        for col in df.columns:
-            col_lower = str(col).lower()
-            if any(word in col_lower for word in ['name', 'student', 'trainee', 'learner']):
+        name_col_idx = 0
+        for idx, col in enumerate(df.columns[:5]):
+            if any(word in str(col).lower() for word in ['name', 'student', 'trainee', 'learner', 'names']):
                 name_col = col
+                name_col_idx = idx
                 break
         
         if not name_col:
-            # Use first column as name
+            for idx, col in enumerate(df.columns):
+                if df[col].dtype == 'object':
+                    name_col = col
+                    name_col_idx = idx
+                    break
+        
+        if not name_col:
             name_col = df.columns[0]
         
-        # Find numeric columns (marks)
-        numeric_cols = df.select_dtypes(include=['number']).columns.tolist()
+        # Get numeric columns
+        marks_cols = []
+        for col in df.columns[name_col_idx + 1:]:
+            try:
+                pd.to_numeric(df[col], errors='coerce')
+                marks_cols.append(col)
+            except:
+                pass
         
-        # Process each row
+        if not marks_cols:
+            marks_cols = df.columns[name_col_idx + 1:].tolist()
+        
+        trainees = []
         for idx, row in df.iterrows():
             name = str(row[name_col]).strip()
-            if not name or name.lower() in ['nan', 'none', '']:
+            if not name or name.lower() in ['nan', 'none', '', 'null'] or name.startswith('Unnamed'):
                 continue
             
-            # Extract marks from numeric columns
-            marks = [row[col] for col in numeric_cols if pd.notna(row[col])]
+            marks = []
+            for col in marks_cols:
+                try:
+                    val = float(row[col]) if pd.notna(row[col]) else 0.0
+                    marks.append(val)
+                except:
+                    marks.append(0.0)
             
-            # Calculate totals
-            formative_marks = marks[:3] if len(marks) >= 3 else marks
-            formative_total = sum(formative_marks) / len(formative_marks) if formative_marks else 0
+            while len(marks) < 5:
+                marks.append(0.0)
             
-            summative_marks = marks[3:5] if len(marks) >= 5 else []
-            summative_practical = summative_marks[0] if len(summative_marks) > 0 else 0
-            summative_written = summative_marks[1] if len(summative_marks) > 1 else 0
+            formative_total = (marks[0] + marks[1] + marks[2]) / 3.0
+            summative_avg = (marks[3] + marks[4]) / 2.0
+            final_total = (formative_total * 0.4) + (summative_avg * 0.6)
             
-            final_total = (formative_total * 0.4 + (summative_practical + summative_written) / 2 * 0.6) if summative_marks else formative_total
-            
-            # Determine decision
-            decision = 'Pass' if final_total >= 50 else 'Fail'
-            
-            trainee = {
+            trainees.append({
                 'name': name,
-                'formative_lo1': round(formative_marks[0], 1) if len(formative_marks) > 0 else '',
-                'formative_lo2': round(formative_marks[1], 1) if len(formative_marks) > 1 else '',
-                'formative_lo3': round(formative_marks[2], 1) if len(formative_marks) > 2 else '',
+                'formative_lo1': round(marks[0], 1),
+                'formative_lo2': round(marks[1], 1),
+                'formative_lo3': round(marks[2], 1),
                 'formative_total': round(formative_total, 1),
-                'summative_practical': round(summative_practical, 1) if summative_practical else '',
-                'summative_written': round(summative_written, 1) if summative_written else '',
+                'summative_practical': round(marks[3], 1),
+                'summative_written': round(marks[4], 1),
                 'final_total': round(final_total, 1),
-                'decision': decision
-            }
-            trainees.append(trainee)
+                'decision': 'Pass' if final_total >= 50 else 'Fail'
+            })
         
         return {
             "success": True,
@@ -448,6 +456,8 @@ async def parse_marks_file(file: UploadFile = File(...)):
         }
         
     except Exception as e:
+        import traceback
+        traceback.print_exc()
         raise HTTPException(status_code=500, detail=f"Error parsing file: {str(e)}")
 
 @app.post("/generate-report-from-file/")
@@ -463,7 +473,7 @@ async def generate_report_from_file(
     trainer_name: str = '',
     user_phone: str = ''
 ):
-    """Generate RTB report directly from Excel/CSV file"""
+    """Generate RTB report directly from Excel/CSV file with enhanced parsing"""
     try:
         import pandas as pd
         import io
@@ -471,54 +481,97 @@ async def generate_report_from_file(
         
         content = await file.read()
         
+        # Read file with proper handling
         if file.filename.endswith('.csv'):
             df = pd.read_csv(io.BytesIO(content))
         else:
-            df = pd.read_excel(io.BytesIO(content))
+            df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
         
-        # Find name column
+        # Skip empty rows at the beginning
+        df = df.dropna(how='all')
+        
+        # Find name column - check first 5 columns
         name_col = None
-        for col in df.columns:
-            if any(word in str(col).lower() for word in ['name', 'student', 'trainee', 'learner']):
+        name_col_idx = 0
+        for idx, col in enumerate(df.columns[:5]):
+            col_str = str(col).lower()
+            if any(word in col_str for word in ['name', 'student', 'trainee', 'learner', 'names']):
                 name_col = col
+                name_col_idx = idx
                 break
+        
+        if not name_col:
+            # Use first non-numeric column as name
+            for idx, col in enumerate(df.columns):
+                if df[col].dtype == 'object':
+                    name_col = col
+                    name_col_idx = idx
+                    break
+        
         if not name_col:
             name_col = df.columns[0]
+            name_col_idx = 0
         
-        # Get all columns after name column
-        name_col_idx = df.columns.get_loc(name_col)
-        data_cols = df.columns[name_col_idx + 1:].tolist()
+        # Get numeric columns after name column
+        marks_cols = []
+        for col in df.columns[name_col_idx + 1:]:
+            # Check if column has numeric data
+            try:
+                pd.to_numeric(df[col], errors='coerce')
+                marks_cols.append(col)
+            except:
+                pass
+        
+        # If no marks columns found, use all columns after name
+        if not marks_cols:
+            marks_cols = df.columns[name_col_idx + 1:].tolist()
         
         trainees = []
         for idx, row in df.iterrows():
             name = str(row[name_col]).strip()
-            if not name or name.lower() in ['nan', 'none', '']:
+            
+            # Skip invalid names
+            if not name or name.lower() in ['nan', 'none', '', 'null']:
+                continue
+            if name.startswith('Unnamed'):
                 continue
             
-            # Extract all marks from columns after name
+            # Extract marks from identified columns
             marks = []
-            for col in data_cols:
+            for col in marks_cols:
                 val = row[col]
-                if pd.notna(val):
-                    try:
-                        marks.append(float(val))
-                    except:
-                        marks.append(0)
+                try:
+                    if pd.notna(val):
+                        num_val = float(val)
+                        marks.append(num_val)
+                    else:
+                        marks.append(0.0)
+                except:
+                    marks.append(0.0)
             
-            # Pad with zeros if needed
+            # Ensure we have at least 5 marks
             while len(marks) < 5:
-                marks.append(0)
+                marks.append(0.0)
             
-            formative_lo1 = marks[0] if len(marks) > 0 else 0
-            formative_lo2 = marks[1] if len(marks) > 1 else 0
-            formative_lo3 = marks[2] if len(marks) > 2 else 0
-            formative_total = (formative_lo1 + formative_lo2 + formative_lo3) / 3
+            # Extract marks: first 3 are formative LOs, next 2 are summative
+            formative_lo1 = marks[0]
+            formative_lo2 = marks[1]
+            formative_lo3 = marks[2]
             
-            summative_practical = marks[3] if len(marks) > 3 else 0
-            summative_written = marks[4] if len(marks) > 4 else 0
-            summative_avg = (summative_practical + summative_written) / 2 if (summative_practical or summative_written) else 0
+            # Calculate formative total (average of 3 LOs)
+            formative_total = (formative_lo1 + formative_lo2 + formative_lo3) / 3.0
             
+            # Summative marks
+            summative_practical = marks[3]
+            summative_written = marks[4]
+            
+            # Calculate summative average
+            summative_avg = (summative_practical + summative_written) / 2.0
+            
+            # Final total: 40% formative + 60% summative
             final_total = (formative_total * 0.4) + (summative_avg * 0.6)
+            
+            # Decision based on 50% pass mark
             decision = 'Pass' if final_total >= 50 else 'Fail'
             
             trainees.append({
@@ -533,6 +586,10 @@ async def generate_report_from_file(
                 'decision': decision
             })
         
+        if not trainees:
+            raise HTTPException(status_code=400, detail="No valid student data found in file. Please check your Excel format.")
+        
+        # Create report object
         class ReportData:
             pass
         
@@ -547,6 +604,7 @@ async def generate_report_from_file(
         report.trainer_name = trainer_name
         report.trainees_data = json.dumps(trainees)
         
+        # Generate document
         docx_path = generate_trainer_assessment_report_docx(report)
         return FileResponse(
             docx_path,
@@ -554,8 +612,12 @@ async def generate_report_from_file(
             filename="RTB_Trainer_Assessment_Report.docx"
         )
         
+    except HTTPException:
+        raise
     except Exception as e:
-        raise HTTPException(status_code=500, detail=f"Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        raise HTTPException(status_code=500, detail=f"Error processing file: {str(e)}")
 
 @app.get("/trainer-reports/{report_id}/download")
 def download_trainer_report(report_id: int, db: Session = Depends(get_db)):

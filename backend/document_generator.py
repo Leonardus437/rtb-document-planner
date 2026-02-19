@@ -1427,7 +1427,7 @@ def generate_assessment_plan_docx(assessment_plan):
 
 
 def generate_trainer_assessment_report_docx(report):
-    """Generate RTB Trainer's Assessment Report - Clean table version"""
+    """Generate RTB Trainer's Assessment Report - Professional RTB Format"""
     doc = Document()
     
     # LANDSCAPE orientation
@@ -1435,52 +1435,61 @@ def generate_trainer_assessment_report_docx(report):
     section.orientation = 1
     section.page_width = Inches(11.69)
     section.page_height = Inches(8.27)
-    section.left_margin = Inches(0.5)
-    section.right_margin = Inches(0.5)
-    section.top_margin = Inches(0.5)
-    section.bottom_margin = Inches(0.5)
+    section.left_margin = Inches(0.4)
+    section.right_margin = Inches(0.4)
+    section.top_margin = Inches(0.6)
+    section.bottom_margin = Inches(0.6)
     
     # Title
     title = doc.add_paragraph()
     title.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    title_run = title.add_run("Trainer's Assessment Report")
+    title.paragraph_format.space_after = Pt(12)
+    title_run = title.add_run("TRAINER'S ASSESSMENT REPORT")
     title_run.font.name = 'Times New Roman'
-    title_run.font.size = Pt(16)
+    title_run.font.size = Pt(18)
     title_run.font.bold = True
     
     # Module Details Section
     details = doc.add_paragraph()
     details.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    run = details.add_run('Module Detail')
+    details.paragraph_format.space_after = Pt(8)
+    run = details.add_run('Module Details')
     run.font.name = 'Times New Roman'
     run.font.size = Pt(14)
     run.font.bold = True
+    run.font.underline = True
     
-    # Info table
+    # Info table with better formatting
     info_table = doc.add_table(rows=4, cols=4)
     info_table.style = 'Table Grid'
     
     def add_info(row, col1_label, col1_val, col2_label, col2_val):
+        # Column 1 label
         cell = info_table.cell(row, 0)
         para = cell.paragraphs[0]
         run = para.add_run(col1_label)
         run.font.bold = True
         run.font.size = Pt(11)
         run.font.name = 'Times New Roman'
+        set_cell_color(cell, 'E7E6E6')
         
+        # Column 1 value
         cell = info_table.cell(row, 1)
         para = cell.paragraphs[0]
         run = para.add_run(col1_val)
         run.font.size = Pt(11)
         run.font.name = 'Times New Roman'
         
+        # Column 2 label
         cell = info_table.cell(row, 2)
         para = cell.paragraphs[0]
         run = para.add_run(col2_label)
         run.font.bold = True
         run.font.size = Pt(11)
         run.font.name = 'Times New Roman'
+        set_cell_color(cell, 'E7E6E6')
         
+        # Column 2 value
         cell = info_table.cell(row, 3)
         para = cell.paragraphs[0]
         run = para.add_run(col2_val)
@@ -1492,26 +1501,46 @@ def generate_trainer_assessment_report_docx(report):
     add_info(2, 'Competence:', report.competence or '', 'Qualification:', report.qualification_title or '')
     add_info(3, 'Learning Hours:', report.learning_hours or '', 'Trainer:', report.trainer_name or '')
     
+    # Space before assessment table
     doc.add_paragraph()
     
-    # Assessment table
+    # Assessment Results heading
+    results_heading = doc.add_paragraph()
+    results_heading.alignment = WD_ALIGN_PARAGRAPH.CENTER
+    results_heading.paragraph_format.space_after = Pt(6)
+    run = results_heading.add_run('Assessment Results')
+    run.font.name = 'Times New Roman'
+    run.font.size = Pt(13)
+    run.font.bold = True
+    
+    # Assessment table with proper column widths
     table = doc.add_table(rows=1, cols=10)
     table.style = 'Table Grid'
+    table.autofit = False
+    table.allow_autofit = False
     
-    # Headers
-    headers = ['S/N', 'Trainee Name', 'Formative LO1', 'Formative LO2', 'Formative LO3', 
-               'Formative Total %', 'Summative Practical', 'Summative Written', 
-               'Final Total %', 'Decision']
+    # Set column widths
+    widths = [Inches(0.4), Inches(1.8), Inches(0.8), Inches(0.8), Inches(0.8), 
+              Inches(0.9), Inches(0.9), Inches(0.9), Inches(0.9), Inches(0.7)]
+    for i, width in enumerate(widths):
+        table.columns[i].width = width
+    
+    # Headers with proper formatting
+    headers = ['S/N', 'Trainee Name', 'Formative\nLO1', 'Formative\nLO2', 'Formative\nLO3', 
+               'Formative\nTotal %', 'Summative\nPractical', 'Summative\nWritten', 
+               'Final\nTotal %', 'Decision']
     
     for i, header in enumerate(headers):
         cell = table.cell(0, i)
         para = cell.paragraphs[0]
         para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
         run = para.add_run(header)
         run.font.bold = True
         run.font.size = Pt(10)
         run.font.name = 'Times New Roman'
-        set_cell_color(cell, 'D9D9D9')
+        set_cell_color(cell, '4472C4')
+        run.font.color.rgb = RGBColor(255, 255, 255)
     
     # Parse trainees data
     import json
@@ -1522,31 +1551,96 @@ def generate_trainer_assessment_report_docx(report):
         except:
             pass
     
-    # Add trainee rows
+    # Add trainee rows with alternating colors
     for idx, trainee in enumerate(trainees, 1):
         row = table.add_row()
+        
+        # Alternate row colors for better readability
+        row_color = 'F2F2F2' if idx % 2 == 0 else 'FFFFFF'
         
         # S/N
         cell = row.cells[0]
         para = cell.paragraphs[0]
         para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
         run = para.add_run(str(idx))
         run.font.size = Pt(10)
         run.font.name = 'Times New Roman'
+        set_cell_color(cell, row_color)
         
-        # Data
-        fields = ['name', 'formative_lo1', 'formative_lo2', 'formative_lo3', 
+        # Trainee name (left-aligned)
+        cell = row.cells[1]
+        para = cell.paragraphs[0]
+        cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+        run = para.add_run(str(trainee.get('name', '')))
+        run.font.size = Pt(10)
+        run.font.name = 'Times New Roman'
+        set_cell_color(cell, row_color)
+        
+        # Marks (center-aligned)
+        fields = ['formative_lo1', 'formative_lo2', 'formative_lo3', 
                  'formative_total', 'summative_practical', 'summative_written', 
-                 'final_total', 'decision']
+                 'final_total']
         
-        for col_idx, field in enumerate(fields, 1):
+        for col_idx, field in enumerate(fields, 2):
             cell = row.cells[col_idx]
             para = cell.paragraphs[0]
-            if col_idx > 1:
-                para.alignment = WD_ALIGN_PARAGRAPH.CENTER
-            run = para.add_run(str(trainee.get(field, '')))
+            para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+            cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+            value = str(trainee.get(field, '0'))
+            run = para.add_run(value)
             run.font.size = Pt(10)
             run.font.name = 'Times New Roman'
+            set_cell_color(cell, row_color)
+        
+        # Decision (center-aligned with color)
+        cell = row.cells[9]
+        para = cell.paragraphs[0]
+        para.alignment = WD_ALIGN_PARAGRAPH.CENTER
+        cell.vertical_alignment = WD_ALIGN_VERTICAL.CENTER
+        decision = str(trainee.get('decision', 'Fail'))
+        run = para.add_run(decision)
+        run.font.size = Pt(10)
+        run.font.name = 'Times New Roman'
+        run.font.bold = True
+        if decision == 'Pass':
+            run.font.color.rgb = RGBColor(0, 128, 0)
+        else:
+            run.font.color.rgb = RGBColor(255, 0, 0)
+        set_cell_color(cell, row_color)
+    
+    # Summary statistics
+    doc.add_paragraph()
+    summary = doc.add_paragraph()
+    summary.paragraph_format.space_before = Pt(12)
+    
+    total_students = len(trainees)
+    passed = sum(1 for t in trainees if t.get('decision') == 'Pass')
+    failed = total_students - passed
+    pass_rate = (passed / total_students * 100) if total_students > 0 else 0
+    
+    run = summary.add_run(f"Summary: ")
+    run.font.bold = True
+    run.font.size = Pt(11)
+    run.font.name = 'Times New Roman'
+    
+    run = summary.add_run(f"Total Students: {total_students} | Passed: {passed} | Failed: {failed} | Pass Rate: {pass_rate:.1f}%")
+    run.font.size = Pt(11)
+    run.font.name = 'Times New Roman'
+    
+    # Signature section
+    doc.add_paragraph()
+    sig_para = doc.add_paragraph()
+    sig_para.paragraph_format.space_before = Pt(24)
+    run = sig_para.add_run(f"Trainer's Name: {report.trainer_name or '_' * 40}\n\n")
+    run.font.size = Pt(11)
+    run.font.name = 'Times New Roman'
+    run = sig_para.add_run(f"Signature: {'_' * 40}\n\n")
+    run.font.size = Pt(11)
+    run.font.name = 'Times New Roman'
+    run = sig_para.add_run(f"Date: {'_' * 40}")
+    run.font.size = Pt(11)
+    run.font.name = 'Times New Roman'
     
     # Save
     temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.docx')
