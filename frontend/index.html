@@ -106,56 +106,45 @@
         }
         
         .doc-link {
-            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
             border-left: 3px solid #6366f1;
             border-radius: 0.75rem;
-            padding: 0.9rem 1.25rem;
+            padding: 1rem 1.5rem;
             margin-bottom: 0.7rem;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 0 1px 3px rgba(0,0,0,0.06);
             text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            display: block;
+            text-align: left;
         }
         
-        body.dark .doc-link { 
-            background: rgba(30, 41, 59, 0.85);
-            backdrop-filter: blur(12px);
+        .doc-link:nth-child(1) { 
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.08), rgba(129, 140, 248, 0.08));
+            border-left-color: #6366f1;
         }
+        .doc-link:nth-child(2) { 
+            background: linear-gradient(135deg, rgba(139, 92, 246, 0.08), rgba(167, 139, 250, 0.08));
+            border-left-color: #8b5cf6;
+        }
+        .doc-link:nth-child(3) { 
+            background: linear-gradient(135deg, rgba(236, 72, 153, 0.08), rgba(244, 114, 182, 0.08));
+            border-left-color: #ec4899;
+        }
+        .doc-link:nth-child(4) { 
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.08), rgba(251, 191, 36, 0.08));
+            border-left-color: #f59e0b;
+        }
+        
+        body.dark .doc-link:nth-child(1) { background: linear-gradient(135deg, rgba(99, 102, 241, 0.12), rgba(129, 140, 248, 0.12)); }
+        body.dark .doc-link:nth-child(2) { background: linear-gradient(135deg, rgba(139, 92, 246, 0.12), rgba(167, 139, 250, 0.12)); }
+        body.dark .doc-link:nth-child(3) { background: linear-gradient(135deg, rgba(236, 72, 153, 0.12), rgba(244, 114, 182, 0.12)); }
+        body.dark .doc-link:nth-child(4) { background: linear-gradient(135deg, rgba(245, 158, 11, 0.12), rgba(251, 191, 36, 0.12)); }
         
         .doc-link:hover {
             transform: translateX(5px);
             box-shadow: 0 4px 12px rgba(99, 102, 241, 0.18);
             border-left-width: 4px;
-        }
-        
-        .doc-link:nth-child(1) { border-left-color: #6366f1; }
-        .doc-link:nth-child(2) { border-left-color: #8b5cf6; }
-        .doc-link:nth-child(3) { border-left-color: #ec4899; }
-        .doc-link:nth-child(4) { border-left-color: #f59e0b; }
-        
-        .doc-icon {
-            font-size: 1.4rem;
-            width: 42px;
-            height: 42px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 0.5rem;
-            flex-shrink: 0;
-        }
-        
-        .doc-link:nth-child(1) .doc-icon { background: linear-gradient(135deg, #6366f1, #818cf8); color: white; }
-        .doc-link:nth-child(2) .doc-icon { background: linear-gradient(135deg, #8b5cf6, #a78bfa); color: white; }
-        .doc-link:nth-child(3) .doc-icon { background: linear-gradient(135deg, #ec4899, #f472b6); color: white; }
-        .doc-link:nth-child(4) .doc-icon { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: white; }
-        
-        .doc-content {
-            flex: 1;
-            text-align: left;
         }
         
         .doc-content h2 {
@@ -171,17 +160,6 @@
             color: #64748b;
             font-size: 0.75rem;
             margin: 0;
-        }
-        
-        .doc-arrow {
-            font-size: 1.15rem;
-            color: #cbd5e1;
-            transition: all 0.3s;
-        }
-        
-        .doc-link:hover .doc-arrow {
-            color: #6366f1;
-            transform: translateX(3px);
         }
         
         .footer {
@@ -224,39 +202,33 @@
         
         <div class="buttons">
             <a href="wizard.html" class="doc-link" onclick="return checkAuth(event)">
-                <div class="doc-icon">
-                    <i class="fas fa-chalkboard-teacher"></i>
-                </div>
                 <div class="doc-content">
                     <h2>Session Plan</h2>
                     <p>Create RTB-formatted session plans</p>
                 </div>
-                <i class="fas fa-arrow-right doc-arrow"></i>
             </a>
             
             <a href="scheme-wizard.html" class="doc-link" onclick="return checkAuth(event)">
-                <div class="doc-icon">
-                    <i class="fas fa-clipboard-list"></i>
-                </div>
                 <div class="doc-content">
                     <h2>Scheme of Work</h2>
                     <p>Generate comprehensive schemes</p>
                 </div>
-                <i class="fas fa-arrow-right doc-arrow"></i>
             </a>
             
             <a href="assessment-wizard.html" class="doc-link" onclick="return checkAuth(event)">
-                <div class="doc-icon">
-                    <i class="fas fa-tasks"></i>
-                </div>
                 <div class="doc-content">
                     <h2>Assessment Plan</h2>
                     <p>Create assessment Plan easily</p>
                 </div>
-                <i class="fas fa-arrow-right doc-arrow"></i>
             </a>
             
             <a href="trainer-report-wizard.html" class="doc-link" onclick="return checkAuth(event)">
+                <div class="doc-content">
+                    <h2>Trainer Assessment Report</h2>
+                    <p>Generate trainer assessment reports</p>
+                </div>
+            </a>
+        </div> onclick="return checkAuth(event)">
                 <div class="doc-icon">
                     <i class="fas fa-chart-line"></i>
                 </div>
