@@ -520,7 +520,7 @@ async def generate_report_from_file(
     trainer_name: str = '',
     user_phone: str = ''
 ):
-    """AI-Powered parser: Intelligently extracts and normalizes marks from any Excel format"""
+    """AI-Powered parser with multiple fallback strategies for ANY Excel format"""
     try:
         import pandas as pd
         import io
@@ -550,53 +550,83 @@ async def generate_report_from_file(
             name_col = df.columns[0]
             name_col_idx = 0
         
-        # STEP 2: Analyze all columns after name to identify marks columns
+        # STEP 2: Analyze marks columns with intelligent detection
         marks_columns = []
         for col in df.columns[name_col_idx + 1:]:
             col_str = str(col)
             
-            # Extract max score from column name (e.g., "Assessment1/50" → 50)
-            max_score = None
+            # Try to extract max score from column name
+            max_score = 100  # Default
+            
+            # Pattern 1: "Assessment1/50" or "Quiz/30"
             match = re.search(r'/(\d+)', col_str)
             if match:
+                max_score = float(match.group(1))
+            # Pattern 2: "Assessment1 (50)" or "Quiz (30)"
+            elif match := re.search(r'\((\d+)\)', col_str):
+                max_score = float(match.group(1))
+            # Pattern 3: "Assessment1 50" or "Quiz 30"
+            elif match := re.search(r'\s(\d{2,3})$', col_str):
                 max_score = float(match.group(1))
             
             # Check if column has numeric data
             try:
                 numeric_data = pd.to_numeric(df[col], errors='coerce')
-                if numeric_data.notna().sum() > 0:  # Has at least one valid number
+                if numeric_data.notna().sum() > 0:
                     marks_columns.append({
                         'name': col,
-                        'max_score': max_score or 100,  # Default to 100 if not specified
-                        'is_formative': any(word in col_str.lower() for word in ['assessment', 'quiz', 'test', 'formative', 'lo']),
-                        'is_practical': 'practical' in col_str.lower(),
-                        'is_written': any(word in col_str.lower() for word in ['written', 'theory', 'exam'])
+                        'max_score': max_score,
+                        'is_formative': any(word in col_str.lower() for word in ['assessment', 'quiz', 'test', 'formative', 'lo', 'ca']),
+                        'is_practical': any(word in col_str.lower() for word in ['practical', 'prac', 'lab']),
+                        'is_written': any(word in col_str.lower() for word in ['written', 'theory', 'exam', 'final'])
                     })
             except:
                 pass
         
         if len(marks_columns) < 5:
-            raise HTTPException(status_code=400, detail=f"Need at least 5 marks columns. Found only {len(marks_columns)}. Please ensure your Excel has: 3 formative assessments + 1 practical + 1 written.")
+            # FALLBACK: Use all numeric columns
+            for col in df.columns[name_col_idx + 1:]:
+                if col not in [m['name'] for m in marks_columns]:
+                    try:
+                        numeric_data = pd.to_numeric(df[col], errors='coerce')
+                        if numeric_data.notna().sum() > 0:
+                            marks_columns.append({
+                                'name': col,
+                                'max_score': 100,
+                                'is_formative': False,
+                                'is_practical': False,
+                                'is_written': False
+                            })
+                    except:
+                        pass
         
-        # STEP 3: Classify columns intelligently
+        if len(marks_columns) < 5:
+            raise HTTPException(
+                status_code=400, 
+                detail=f"Need at least 5 marks columns. Found {len(marks_columns)}. Please ensure Excel has: Name column + 5 marks columns (3 formative + 2 summative)"
+            )
+        
+        # STEP 3: Intelligent column classification with fallback
         formative_cols = []
         summative_practical = None
         summative_written = None
         
-        # First, identify practical and written
+        # Strategy 1: Use keywords
         for col_info in marks_columns:
             if col_info['is_practical'] and not summative_practical:
                 summative_practical = col_info
             elif col_info['is_written'] and not summative_written:
                 summative_written = col_info
+            elif col_info['is_formative'] and len(formative_cols) < 3:
+                formative_cols.append(col_info)
         
-        # Then get formative columns (first 3 non-summative columns)
+        # Strategy 2: Fill remaining formative slots
         for col_info in marks_columns:
-            if col_info != summative_practical and col_info != summative_written:
+            if col_info not in formative_cols and col_info != summative_practical and col_info != summative_written:
                 if len(formative_cols) < 3:
                     formative_cols.append(col_info)
         
-        # If we don't have practical/written explicitly, use last 2 columns
+        # Strategy 3: Assign last 2 as summative if not found
         if not summative_practical or not summative_written:
             remaining = [c for c in marks_columns if c not in formative_cols]
             if len(remaining) >= 2:
@@ -606,31 +636,32 @@ async def generate_report_from_file(
                 summative_practical = remaining[0]
                 summative_written = remaining[0]
         
-        # Ensure we have exactly 3 formative
-        while len(formative_cols) < 3 and len(marks_columns) > len(formative_cols):
-            for col_info in marks_columns:
-                if col_info not in formative_cols and col_info != summative_practical and col_info != summative_written:
-                    formative_cols.append(col_info)
-                    break
+        # Strategy 4: Final fallback - use first 5 columns
+        if len(formative_cols) < 3:
+            formative_cols = marks_columns[:3]
+            summative_practical = marks_columns[3] if len(marks_columns) > 3 else marks_columns[0]
+            summative_written = marks_columns[4] if len(marks_columns) > 4 else marks_columns[0]
         
-        # STEP 4: Process each student
+        # STEP 4: Process each student with normalization
         trainees = []
         for idx, row in df.iterrows():
             name = str(row[name_col]).strip()
             if not name or name.lower() in ['nan', 'none', '', 'null'] or name.startswith('Unnamed'):
                 continue
             
-            # Extract and normalize formative marks (convert to percentage)
+            # Extract and normalize formative marks
             formative_marks = []
             for col_info in formative_cols[:3]:
                 try:
                     raw_mark = float(row[col_info['name']]) if pd.notna(row[col_info['name']]) else 0
+                    # Normalize to percentage
                     percentage = (raw_mark / col_info['max_score']) * 100
+                    # Cap at 100%
+                    percentage = min(percentage, 100)
                     formative_marks.append(percentage)
                 except:
                     formative_marks.append(0.0)
             
-            # Ensure exactly 3 formative marks
             while len(formative_marks) < 3:
                 formative_marks.append(0.0)
             
@@ -642,13 +673,13 @@ async def generate_report_from_file(
             # Extract and normalize summative marks
             try:
                 practical_raw = float(row[summative_practical['name']]) if pd.notna(row[summative_practical['name']]) else 0
-                summative_practical_pct = (practical_raw / summative_practical['max_score']) * 100
+                summative_practical_pct = min((practical_raw / summative_practical['max_score']) * 100, 100)
             except:
                 summative_practical_pct = 0.0
             
             try:
                 written_raw = float(row[summative_written['name']]) if pd.notna(row[summative_written['name']]) else 0
-                summative_written_pct = (written_raw / summative_written['max_score']) * 100
+                summative_written_pct = min((written_raw / summative_written['max_score']) * 100, 100)
             except:
                 summative_written_pct = 0.0
             
@@ -671,7 +702,7 @@ async def generate_report_from_file(
             })
         
         if not trainees:
-            raise HTTPException(status_code=400, detail="No valid student data found. Please check your Excel file format.")
+            raise HTTPException(status_code=400, detail="No valid student data found. Please check Excel format.")
         
         # Create report
         class ReportData:
