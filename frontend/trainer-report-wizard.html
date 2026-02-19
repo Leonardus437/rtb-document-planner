@@ -9,44 +9,124 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Inter', 'Segoe UI', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
-            padding: 2rem;
+            padding: 2rem 1rem;
         }
         
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 2rem;
+        }
+        
+        .header h1 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+        
+        .split-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        @media (max-width: 1024px) {
+            .split-container {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .card {
             background: white;
             border-radius: 1rem;
             padding: 2rem;
             box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            position: relative;
+            overflow: hidden;
         }
         
-        h1 {
+        .card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #667eea, #764ba2);
+        }
+        
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 2px solid #f0f0f0;
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .upload-icon {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+        
+        .manual-icon {
+            background: linear-gradient(135deg, #f093fb, #f5576c);
+        }
+        
+        .card-title {
+            flex: 1;
+        }
+        
+        .card-title h2 {
+            font-size: 1.3rem;
             color: #333;
-            margin-bottom: 0.5rem;
-            font-size: 1.75rem;
+            margin-bottom: 0.25rem;
         }
         
-        .subtitle {
+        .card-title p {
+            font-size: 0.85rem;
             color: #666;
-            margin-bottom: 2rem;
-            font-size: 0.9rem;
         }
         
-        .form-section {
+        .module-info {
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
             margin-bottom: 2rem;
-            padding: 1.5rem;
-            background: #f8f9fa;
-            border-radius: 0.5rem;
         }
         
-        .form-section h3 {
+        .module-info h3 {
             color: #667eea;
-            margin-bottom: 1rem;
-            font-size: 1.1rem;
+            margin-bottom: 1.5rem;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
         
         .form-grid {
@@ -56,7 +136,7 @@
         }
         
         .form-group {
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
         }
         
         label {
@@ -64,29 +144,132 @@
             margin-bottom: 0.5rem;
             font-weight: 600;
             color: #333;
-            font-size: 0.9rem;
+            font-size: 0.875rem;
         }
         
         input, select, textarea {
             width: 100%;
             padding: 0.75rem;
-            border: 2px solid #e0e0e0;
+            border: 2px solid #e5e7eb;
             border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: border-color 0.3s;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            font-family: inherit;
         }
         
         input:focus, select:focus, textarea:focus {
             outline: none;
             border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .upload-area {
+            border: 3px dashed #d1d5db;
+            border-radius: 1rem;
+            padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+            background: #f9fafb;
+            cursor: pointer;
+        }
+        
+        .upload-area:hover {
+            border-color: #667eea;
+            background: #f3f4f6;
+        }
+        
+        .upload-area i {
+            font-size: 3rem;
+            color: #667eea;
+            margin-bottom: 1rem;
+        }
+        
+        .upload-area h4 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        
+        .upload-area p {
+            color: #666;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .format-info {
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-top: 1rem;
+        }
+        
+        .format-info h5 {
+            color: #92400e;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+        
+        .format-info ul {
+            font-size: 0.8rem;
+            color: #78350f;
+            margin-left: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .btn {
+            padding: 0.875rem 1.75rem;
+            border: none;
+            border-radius: 0.75rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+        }
+        
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #4b5563;
         }
         
         .trainee-card {
-            background: white;
-            border: 2px solid #e0e0e0;
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
             border-radius: 0.75rem;
             padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
             position: relative;
         }
         
@@ -100,34 +283,20 @@
             position: absolute;
             top: 1rem;
             right: 1rem;
-            background: #dc3545;
+            background: #ef4444;
             color: white;
             border: none;
             border-radius: 50%;
-            width: 30px;
-            height: 30px;
+            width: 32px;
+            height: 32px;
             cursor: pointer;
             font-size: 1rem;
+            transition: all 0.3s;
         }
         
         .btn-remove:hover {
-            background: #c82333;
-        }
-        
-        .btn-add-row {
-            margin-top: 1rem;
-            padding: 0.75rem 1.5rem;
-            background: #28a745;
-            color: white;
-            border: none;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-        }
-        
-        .btn-add-row:hover {
-            background: #218838;
+            background: #dc2626;
+            transform: scale(1.1);
         }
         
         .actions {
@@ -136,40 +305,40 @@
             margin-top: 2rem;
         }
         
-        .btn {
+        .actions .btn {
             flex: 1;
-            padding: 1rem;
-            border: none;
+        }
+        
+        .status-message {
+            margin-top: 1rem;
+            padding: 0.75rem;
             border-radius: 0.5rem;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
+            font-size: 0.875rem;
+            display: none;
         }
         
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
+        .status-message.success {
+            background: #d1fae5;
+            color: #065f46;
+            display: block;
         }
         
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.3);
+        .status-message.error {
+            background: #fee2e2;
+            color: #991b1b;
+            display: block;
         }
         
-        .btn-secondary {
-            background: #6c757d;
-            color: white;
-        }
-        
-        .btn-secondary:hover {
-            background: #5a6268;
+        .status-message.loading {
+            background: #dbeafe;
+            color: #1e40af;
+            display: block;
         }
         
         .loading {
             display: none;
             text-align: center;
-            padding: 2rem;
+            padding: 3rem;
         }
         
         .loading.active {
@@ -180,8 +349,8 @@
             border: 4px solid #f3f3f3;
             border-top: 4px solid #667eea;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             animation: spin 1s linear infinite;
             margin: 0 auto 1rem;
         }
@@ -190,113 +359,145 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
+        
+        .empty-state {
+            text-align: center;
+            padding: 2rem;
+            color: #9ca3af;
+        }
+        
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1><i class="fas fa-chart-line"></i> Trainer Assessment Report Generator</h1>
-        <p class="subtitle">Create RTB-compliant trainer assessment reports</p>
+        <div class="header">
+            <h1><i class="fas fa-chart-bar"></i> Trainer Assessment Report Generator</h1>
+            <p>Create professional RTB-compliant assessment reports</p>
+        </div>
         
-        <form id="reportForm">
-            <div class="form-section">
-                <h3>Module Information</h3>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Sector *</label>
-                        <input type="text" name="sector" placeholder="e.g., ICT" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Trade *</label>
-                        <input type="text" name="trade" placeholder="e.g., Software Development" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Level *</label>
-                        <select name="level" required>
-                            <option value="">Select Level</option>
-                            <option value="Level 4">Level 4</option>
-                            <option value="Level 5">Level 5</option>
-                            <option value="Level 6">Level 6</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Module (Code & Name) *</label>
-                        <input type="text" name="module_code_name" placeholder="e.g., GENCP 401 - C++ Programming" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Competence</label>
-                        <textarea name="competence" rows="2" placeholder="Module competence description"></textarea>
-                    </div>
-                    <div class="form-group">
-                        <label>Qualification Title</label>
-                        <input type="text" name="qualification_title" placeholder="e.g., Advanced Diploma">
-                    </div>
-                    <div class="form-group">
-                        <label>Learning Hours</label>
-                        <input type="text" name="learning_hours" placeholder="e.g., 120 hours">
-                    </div>
-                    <div class="form-group">
-                        <label>Trainer Name *</label>
-                        <input type="text" name="trainer_name" placeholder="Trainer name" required>
-                    </div>
+        <div class="module-info">
+            <h3><i class="fas fa-info-circle"></i> Module Information</h3>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Sector *</label>
+                    <input type="text" id="sector" placeholder="e.g., ICT" required>
+                </div>
+                <div class="form-group">
+                    <label>Trade *</label>
+                    <input type="text" id="trade" placeholder="e.g., Software Development" required>
+                </div>
+                <div class="form-group">
+                    <label>Level *</label>
+                    <select id="level" required>
+                        <option value="">Select Level</option>
+                        <option value="Level 4">Level 4</option>
+                        <option value="Level 5">Level 5</option>
+                        <option value="Level 6">Level 6</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Module (Code & Name) *</label>
+                    <input type="text" id="module_code_name" placeholder="e.g., GENCP 401 - C++ Programming" required>
+                </div>
+                <div class="form-group">
+                    <label>Competence</label>
+                    <textarea id="competence" rows="2" placeholder="Module competence description"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Qualification Title</label>
+                    <input type="text" id="qualification_title" placeholder="e.g., Advanced Diploma">
+                </div>
+                <div class="form-group">
+                    <label>Learning Hours</label>
+                    <input type="text" id="learning_hours" placeholder="e.g., 120 hours">
+                </div>
+                <div class="form-group">
+                    <label>Trainer Name *</label>
+                    <input type="text" id="trainer_name" placeholder="Trainer name" required>
                 </div>
             </div>
-            
-            <div class="form-section">
-                <h3>Trainee Assessment Data</h3>
-                <p style="color: #666; font-size: 0.85rem; margin-bottom: 1rem;">Choose one: Upload a CSV/Excel file OR add trainees manually.</p>
-                
-                <div style="background: #e3f2fd; padding: 1.5rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                    <h4 style="color: #1976d2; margin-bottom: 0.75rem; font-size: 1rem;"><i class="fas fa-magic"></i> Quick Upload - AI Generates Report</h4>
-                    <p style="font-size: 0.85rem; color: #555; margin-bottom: 1rem;">Upload your Excel/CSV marks file. AI will auto-detect columns and generate RTB report instantly!</p>
-                    
-                    <!-- Excel Format Instructions -->
-                    <div style="background: #fff9e6; border-left: 4px solid #ff9800; padding: 1rem; margin-bottom: 1rem; border-radius: 0.25rem;">
-                        <h5 style="color: #f57c00; margin-bottom: 0.5rem; font-size: 0.9rem;"><i class="fas fa-info-circle"></i> Excel File Format Requirements:</h5>
-                        <ul style="font-size: 0.8rem; color: #555; margin: 0.5rem 0 0 1.5rem; line-height: 1.6;">
-                            <li><strong>Column 1:</strong> Student names (header: "Name", "Student", "Trainee", or "Learner")</li>
-                            <li><strong>Columns 2-4:</strong> Formative marks (e.g., "Assessment1/50", "Quiz/30", "LO1/100")</li>
-                            <li><strong>Column 5:</strong> Practical marks (e.g., "Practical/50", "Lab/100")</li>
-                            <li><strong>Column 6:</strong> Written marks (e.g., "Written/50", "Exam/100")</li>
-                            <li><strong>Max scores:</strong> Include in column names like "Assessment1/50" or "Quiz (30)"</li>
-                            <li><strong>Minimum:</strong> At least 3 marks columns required (system adapts to your format)</li>
-                            <li><strong>Supported:</strong> .xlsx, .xls, .csv files</li>
-                        </ul>
-                        <p style="font-size: 0.75rem; color: #666; margin-top: 0.5rem; font-style: italic;">💡 AI automatically normalizes all marks to percentages and applies RTB formula (40% formative + 60% summative)</p>
+        </div>
+        
+        <div class="split-container">
+            <!-- Upload Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon upload-icon">
+                        <i class="fas fa-cloud-upload-alt"></i>
                     </div>
-                    
-                    <input type="file" id="fileUpload" accept=".csv,.xlsx,.xls" style="margin-bottom: 0.75rem; padding: 0.5rem;">
-                    <button type="button" onclick="generateFromFile()" style="padding: 0.75rem 1.5rem; background: #1976d2; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600;">
-                        <i class="fas fa-bolt"></i> Generate Report Now
-                    </button>
-                    <div id="fileStatus" style="margin-top: 0.75rem; font-size: 0.85rem;"></div>
+                    <div class="card-title">
+                        <h2>Quick Upload</h2>
+                        <p>AI-powered Excel/CSV parser</p>
+                    </div>
                 </div>
                 
-                <div style="text-align: center; margin: 1.5rem 0; color: #94a3b8; font-size: 0.875rem;">OR</div>
-                
-                <div style="background: #fff3e0; padding: 1rem; border-radius: 0.5rem; margin-bottom: 1rem;">
-                    <h4 style="color: #f57c00; margin-bottom: 0.5rem; font-size: 0.95rem;"><i class="fas fa-keyboard"></i> Manual Entry</h4>
-                    <p style="font-size: 0.85rem; color: #555;">Fill module info below, then add trainees manually</p>
+                <div class="upload-area" onclick="document.getElementById('fileUpload').click()">
+                    <i class="fas fa-file-excel"></i>
+                    <h4>Drop your Excel file here</h4>
+                    <p>or click to browse</p>
+                    <input type="file" id="fileUpload" class="file-input" accept=".csv,.xlsx,.xls">
                 </div>
                 
-                <div id="traineesContainer"></div>
-                <button type="button" class="btn-add-row" onclick="addTraineeCard()">
-                    <i class="fas fa-plus"></i> Add Trainee Manually
+                <div class="format-info">
+                    <h5><i class="fas fa-info-circle"></i> File Format Requirements:</h5>
+                    <ul>
+                        <li><strong>Column 1:</strong> Student names</li>
+                        <li><strong>Columns 2-4:</strong> Formative marks (e.g., "Assessment1/50")</li>
+                        <li><strong>Column 5:</strong> Practical marks</li>
+                        <li><strong>Column 6:</strong> Written marks</li>
+                        <li><strong>Supported:</strong> .xlsx, .xls, .csv</li>
+                    </ul>
+                </div>
+                
+                <button class="btn btn-primary" onclick="generateFromFile()" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-magic"></i> Generate Report from File
                 </button>
+                
+                <div id="fileStatus" class="status-message"></div>
             </div>
             
-            <div class="actions">
-                <button type="button" class="btn btn-secondary" onclick="window.location.href='index.html'">
-                    <i class="fas fa-arrow-left"></i> Back to Home
+            <!-- Manual Entry Section -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-icon manual-icon">
+                        <i class="fas fa-keyboard"></i>
+                    </div>
+                    <div class="card-title">
+                        <h2>Manual Entry</h2>
+                        <p>Add trainees one by one</p>
+                    </div>
+                </div>
+                
+                <div id="traineesContainer">
+                    <div class="empty-state">
+                        <i class="fas fa-users"></i>
+                        <p>No trainees added yet</p>
+                    </div>
+                </div>
+                
+                <button class="btn btn-success" onclick="addTraineeCard()" style="width: 100%; margin-top: 1rem;">
+                    <i class="fas fa-plus"></i> Add Trainee
                 </button>
-                <button type="submit" class="btn btn-primary">
+                
+                <button class="btn btn-primary" onclick="generateManual()" style="width: 100%; margin-top: 0.5rem;">
                     <i class="fas fa-download"></i> Generate Report
                 </button>
             </div>
-        </form>
+        </div>
+        
+        <div class="actions">
+            <button class="btn btn-secondary" onclick="window.location.href='index.html'">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </button>
+        </div>
         
         <div class="loading" id="loading">
             <div class="spinner"></div>
-            <p>Generating your trainer assessment report...</p>
+            <p style="color: white; font-size: 1.1rem;">Generating your report...</p>
         </div>
     </div>
     
@@ -312,7 +513,8 @@
             const statusDiv = document.getElementById('fileStatus');
             
             if (!file) {
-                statusDiv.innerHTML = '<span style="color: #d32f2f;">Please select a file first</span>';
+                statusDiv.className = 'status-message error';
+                statusDiv.innerHTML = '<i class="fas fa-exclamation-circle"></i> Please select a file first';
                 return;
             }
             
@@ -323,25 +525,20 @@
                 return;
             }
             
-            statusDiv.innerHTML = '<span style="color: #1976d2;"><i class="fas fa-spinner fa-spin"></i> AI parsing and generating report...</span>';
+            statusDiv.className = 'status-message loading';
+            statusDiv.innerHTML = '<i class="fas fa-spinner fa-spin"></i> AI parsing and generating report...';
             
             const formData = new FormData();
             formData.append('file', file);
             formData.append('user_phone', session.email || session.phone);
-            
-            // Get module info from form
-            const moduleData = {
-                sector: document.querySelector('[name="sector"]').value,
-                trade: document.querySelector('[name="trade"]').value,
-                level: document.querySelector('[name="level"]').value,
-                module_code_name: document.querySelector('[name="module_code_name"]').value,
-                competence: document.querySelector('[name="competence"]').value,
-                qualification_title: document.querySelector('[name="qualification_title"]').value,
-                learning_hours: document.querySelector('[name="learning_hours"]').value,
-                trainer_name: document.querySelector('[name="trainer_name"]').value
-            };
-            
-            Object.keys(moduleData).forEach(key => formData.append(key, moduleData[key]));
+            formData.append('sector', document.getElementById('sector').value);
+            formData.append('trade', document.getElementById('trade').value);
+            formData.append('level', document.getElementById('level').value);
+            formData.append('module_code_name', document.getElementById('module_code_name').value);
+            formData.append('competence', document.getElementById('competence').value);
+            formData.append('qualification_title', document.getElementById('qualification_title').value);
+            formData.append('learning_hours', document.getElementById('learning_hours').value);
+            formData.append('trainer_name', document.getElementById('trainer_name').value);
             
             fetch(`${API_URL}/generate-report-from-file/`, {
                 method: 'POST',
@@ -355,7 +552,8 @@
                         a.href = url;
                         a.download = 'RTB_Trainer_Assessment_Report.docx';
                         a.click();
-                        statusDiv.innerHTML = '<span style="color: #2e7d32;"><i class="fas fa-check-circle"></i> Report generated successfully!</span>';
+                        statusDiv.className = 'status-message success';
+                        statusDiv.innerHTML = '<i class="fas fa-check-circle"></i> Report generated successfully!';
                     });
                 } else {
                     return response.json().then(data => {
@@ -364,53 +562,58 @@
                 }
             })
             .catch(error => {
-                console.error('Generate error:', error);
-                statusDiv.innerHTML = `<span style="color: #d32f2f;">Error: ${error.message}</span>`;
+                statusDiv.className = 'status-message error';
+                statusDiv.innerHTML = `<i class="fas fa-times-circle"></i> ${error.message}`;
             });
         }
         
-        function addTraineeCard(data = null) {
+        function addTraineeCard() {
             traineeCount++;
             const container = document.getElementById('traineesContainer');
+            
+            if (traineeCount === 1) {
+                container.innerHTML = '';
+            }
+            
             const card = document.createElement('div');
             card.className = 'trainee-card';
-            
-            // Create card structure
             card.innerHTML = `
-                <button type="button" class="btn-remove" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                <button type="button" class="btn-remove" onclick="this.parentElement.remove(); checkEmpty()">
+                    <i class="fas fa-times"></i>
+                </button>
                 <h4><i class="fas fa-user"></i> Trainee ${traineeCount}</h4>
                 <div class="form-grid">
                     <div class="form-group">
-                        <label>Trainee Name *</label>
+                        <label>Name *</label>
                         <input type="text" class="trainee-field" data-field="name" placeholder="Full name" required>
                     </div>
                     <div class="form-group">
-                        <label>Formative LO1 (Marks)</label>
+                        <label>Formative LO1</label>
                         <input type="number" step="0.1" class="trainee-field" data-field="formative_lo1" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
-                        <label>Formative LO2 (Marks)</label>
+                        <label>Formative LO2</label>
                         <input type="number" step="0.1" class="trainee-field" data-field="formative_lo2" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
-                        <label>Formative LO3 (Marks)</label>
+                        <label>Formative LO3</label>
                         <input type="number" step="0.1" class="trainee-field" data-field="formative_lo3" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Formative Total %</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="formative_total" placeholder="Average %" min="0" max="100">
+                        <input type="number" step="0.1" class="trainee-field" data-field="formative_total" placeholder="Average" min="0" max="100">
                     </div>
                     <div class="form-group">
-                        <label>Summative Practical (Marks)</label>
+                        <label>Summative Practical</label>
                         <input type="number" step="0.1" class="trainee-field" data-field="summative_practical" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
-                        <label>Summative Written (Marks)</label>
+                        <label>Summative Written</label>
                         <input type="number" step="0.1" class="trainee-field" data-field="summative_written" placeholder="0-100" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Final Total %</label>
-                        <input type="number" step="0.1" class="trainee-field" data-field="final_total" placeholder="Final %" min="0" max="100">
+                        <input type="number" step="0.1" class="trainee-field" data-field="final_total" placeholder="Final" min="0" max="100">
                     </div>
                     <div class="form-group">
                         <label>Decision</label>
@@ -418,31 +621,21 @@
                             <option value="">Select</option>
                             <option value="Pass">Pass</option>
                             <option value="Fail">Fail</option>
-                            <option value="Reassessment">Reassessment</option>
                         </select>
                     </div>
                 </div>
             `;
             container.appendChild(card);
-            
-            // Populate data after DOM insertion
-            if (data) {
-                const fields = card.querySelectorAll('.trainee-field');
-                fields.forEach(field => {
-                    const fieldName = field.dataset.field;
-                    if (data[fieldName] !== undefined && data[fieldName] !== null && data[fieldName] !== '') {
-                        field.value = data[fieldName];
-                    }
-                });
+        }
+        
+        function checkEmpty() {
+            const container = document.getElementById('traineesContainer');
+            if (container.children.length === 0) {
+                container.innerHTML = '<div class="empty-state"><i class="fas fa-users"></i><p>No trainees added yet</p></div>';
             }
         }
         
-        // Add first trainee on load
-        addTraineeCard();
-        
-        document.getElementById('reportForm').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            
+        async function generateManual() {
             const session = getCurrentSession();
             if (!session) {
                 alert('Please login first');
@@ -450,11 +643,12 @@
                 return;
             }
             
-            const formData = new FormData(e.target);
-            const data = Object.fromEntries(formData);
-            
-            // Collect trainees data
             const cards = document.querySelectorAll('.trainee-card');
+            if (cards.length === 0) {
+                alert('Please add at least one trainee');
+                return;
+            }
+            
             const trainees = [];
             cards.forEach(card => {
                 const trainee = {};
@@ -466,11 +660,20 @@
                 }
             });
             
-            data.trainees_data = JSON.stringify(trainees);
-            data.user_phone = session.email || session.phone;
+            const data = {
+                sector: document.getElementById('sector').value,
+                trade: document.getElementById('trade').value,
+                level: document.getElementById('level').value,
+                module_code_name: document.getElementById('module_code_name').value,
+                competence: document.getElementById('competence').value,
+                qualification_title: document.getElementById('qualification_title').value,
+                learning_hours: document.getElementById('learning_hours').value,
+                trainer_name: document.getElementById('trainer_name').value,
+                trainees_data: JSON.stringify(trainees),
+                user_phone: session.email || session.phone
+            };
             
             document.getElementById('loading').classList.add('active');
-            document.getElementById('reportForm').style.display = 'none';
             
             try {
                 const response = await fetch(`${API_URL}/trainer-reports/`, {
@@ -484,8 +687,7 @@
                     window.location.href = `${API_URL}/trainer-reports/${result.id}/download`;
                     setTimeout(() => {
                         document.getElementById('loading').classList.remove('active');
-                        document.getElementById('reportForm').style.display = 'block';
-                        alert('Trainer Assessment Report generated successfully!');
+                        alert('Report generated successfully!');
                     }, 2000);
                 } else {
                     throw new Error('Failed to generate report');
@@ -493,9 +695,8 @@
             } catch (error) {
                 alert('Error: ' + error.message);
                 document.getElementById('loading').classList.remove('active');
-                document.getElementById('reportForm').style.display = 'block';
             }
-        });
+        }
     </script>
 </body>
 </html>
