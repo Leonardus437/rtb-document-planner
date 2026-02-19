@@ -604,10 +604,10 @@ async def generate_report_from_file(
                     except:
                         pass
         
-        if len(marks_columns) < 5:
+        if len(marks_columns) < 3:
             raise HTTPException(
                 status_code=400, 
-                detail=f"Need at least 5 marks columns. Found {len(marks_columns)}. Please ensure Excel has: Name column + 5 marks columns (3 formative + 2 summative)"
+                detail=f"Need at least 3 marks columns. Found {len(marks_columns)}. Please ensure Excel has: Name column + at least 3 marks columns"
             )
         
         # STEP 3: Intelligent column classification with fallback
@@ -640,11 +640,13 @@ async def generate_report_from_file(
                 summative_practical = remaining[0]
                 summative_written = remaining[0]
         
-        # Strategy 4: Final fallback - use first 5 columns
+        # Strategy 4: Final fallback - use available columns
         if len(formative_cols) < 3:
-            formative_cols = marks_columns[:3]
-            summative_practical = marks_columns[3] if len(marks_columns) > 3 else marks_columns[0]
-            summative_written = marks_columns[4] if len(marks_columns) > 4 else marks_columns[0]
+            formative_cols = marks_columns[:min(3, len(marks_columns))]
+        if not summative_practical:
+            summative_practical = marks_columns[min(3, len(marks_columns))] if len(marks_columns) > 3 else marks_columns[0]
+        if not summative_written:
+            summative_written = marks_columns[min(4, len(marks_columns))] if len(marks_columns) > 4 else marks_columns[-1]
         
         # STEP 4: Process each student with normalization
         trainees = []
