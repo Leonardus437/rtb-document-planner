@@ -380,6 +380,8 @@ async def parse_marks_file(file: UploadFile = File(...)):
         
         if file.filename.endswith('.csv'):
             df = pd.read_csv(io.BytesIO(content))
+        elif file.filename.endswith('.xls'):
+            df = pd.read_excel(io.BytesIO(content), engine='xlrd')
         else:
             df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
         
@@ -531,6 +533,8 @@ async def generate_report_from_file(
         
         if file.filename.endswith('.csv'):
             df = pd.read_csv(io.BytesIO(content))
+        elif file.filename.endswith('.xls'):
+            df = pd.read_excel(io.BytesIO(content), engine='xlrd')
         else:
             df = pd.read_excel(io.BytesIO(content), engine='openpyxl')
         
