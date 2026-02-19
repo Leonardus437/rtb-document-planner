@@ -1,22 +1,21 @@
-# Cloudflare Pages Configuration
+# Cloudflare Pages Build Configuration
 
-## Build Configuration
-- Build command: (leave empty - static site)
-- Build output directory: `/frontend`
-- Root directory: `/`
+Build command: (leave empty)
+Build output directory: /frontend
+Root directory: /
 
-## Environment Variables
-Add these in Cloudflare Pages dashboard:
-- `NODE_VERSION`: 18
-- `API_URL`: https://rtb-planner-backend.onrender.com (update after Render deployment)
+# Environment Variables
+None required for static frontend
 
-## Custom Headers (_headers file)
-/*
-  X-Frame-Options: DENY
-  X-Content-Type-Options: nosniff
-  X-XSS-Protection: 1; mode=block
-  Referrer-Policy: strict-origin-when-cross-origin
+# Deploy Settings
+- Branch: main
+- Auto-deploy: Enabled
+- Production branch: main
 
-## Redirects (_redirects file)
-/api/* https://rtb-planner-backend.onrender.com/:splat 200
-/* /index.html 200
+# Custom Domain
+ikidanago.pages.dev
+
+# Build Status
+✅ Auto-deploys on every push to main branch
+✅ Frontend files in /frontend directory
+✅ No build step required (static HTML/CSS/JS)
