@@ -14,17 +14,18 @@
             font-family: 'Inter', sans-serif;
             background: #fef3c7;
             min-height: 100vh;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
         }
         
         .container {
-            max-width: 700px;
+            max-width: 900px;
             margin: 0 auto;
         }
         
         .header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .back-btn {
@@ -76,9 +77,15 @@
         }
         
         .accordion {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 0.75rem;
+        }
+        
+        @media (max-width: 768px) {
+            .accordion {
+                grid-template-columns: 1fr;
+            }
         }
         
         .accordion-item {
@@ -89,7 +96,7 @@
         }
         
         .accordion-header {
-            padding: 1rem 1.25rem;
+            padding: 0.75rem 1rem;
             cursor: pointer;
             display: flex;
             justify-content: space-between;
@@ -101,8 +108,10 @@
         .accordion-item:nth-child(2) .accordion-header { background: #e0e7ff; }
         .accordion-item:nth-child(3) .accordion-header { background: #fce7f3; }
         .accordion-item:nth-child(4) .accordion-header { background: #fef3c7; }
-        .accordion-item:nth-child(5) .accordion-header { background: #d1fae5; }
-        .accordion-item:nth-child(6) .accordion-header { background: #fce4ec; }
+        .accordion-item:nth-child(5) .accordion-header { background: #fef3c7; }
+        .accordion-item:nth-child(6) .accordion-header { background: #d1fae5; }
+        .accordion-item:nth-child(7) .accordion-header { background: #fce4ec; }
+        .accordion-item:nth-child(8) .accordion-header { background: #e0f2fe; }
         
         .accordion-header:hover {
             opacity: 0.9;
@@ -111,7 +120,7 @@
         .accordion-title {
             font-weight: 600;
             color: #1e293b;
-            font-size: 0.95rem;
+            font-size: 0.875rem;
         }
         
         .accordion-icon {
@@ -130,47 +139,47 @@
         }
         
         .accordion-body {
-            padding: 1.25rem;
+            padding: 1rem;
             border-top: 1px solid #e2e8f0;
         }
         
         .description {
             color: #64748b;
-            font-size: 0.875rem;
-            margin-bottom: 1rem;
-            line-height: 1.6;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
         }
         
         .features {
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
+            gap: 0.5rem;
         }
         
         .feature {
-            padding: 0.75rem;
+            padding: 0.5rem;
             background: #f8fafc;
-            border-radius: 0.5rem;
+            border-radius: 0.4rem;
             border-left: 3px solid #3b82f6;
         }
         
         .feature-title {
             font-weight: 600;
             color: #1e293b;
-            font-size: 0.85rem;
-            margin-bottom: 0.25rem;
+            font-size: 0.8rem;
+            margin-bottom: 0.15rem;
         }
         
         .feature-text {
             color: #64748b;
-            font-size: 0.8rem;
-            line-height: 1.4;
+            font-size: 0.75rem;
+            line-height: 1.3;
         }
         
         .footer {
             text-align: center;
-            margin-top: 2rem;
-            padding: 1.5rem;
+            margin-top: 1.5rem;
+            padding: 1rem;
             background: white;
             border-radius: 0.75rem;
             box-shadow: 0 2px 8px rgba(0,0,0,0.08);
@@ -269,6 +278,26 @@
                         ]
                     },
                     {
+                        title: 'Step 5: Create Assessment Plan',
+                        description: 'Generate RTB assessment plans with module-based wizard.',
+                        features: [
+                            { title: 'Module Cards', text: 'Add multiple modules with individual assessment details' },
+                            { title: '13-Column Format', text: 'Official RTB assessment plan layout' },
+                            { title: 'Complete Details', text: 'Module code, LO, assessment type, trainer, candidates, date, resources' },
+                            { title: 'Landscape DOCX', text: 'Times New Roman 14pt, professional output' }
+                        ]
+                    },
+                    {
+                        title: 'Step 6: Create Trainer Report',
+                        description: 'Upload Excel marks file and generate RTB trainer assessment reports.',
+                        features: [
+                            { title: 'Excel Upload', text: 'Upload student marks from any Excel format' },
+                            { title: 'AI Parser', text: 'Automatically detects columns and normalizes marks to percentages' },
+                            { title: 'RTB Calculations', text: '40% formative + 60% summative with Pass/Fail decisions' },
+                            { title: 'Professional Report', text: '10-column table with summary statistics' }
+                        ]
+                    },
+                    {
                         title: 'You\'re Ready to Start!',
                         description: 'Join thousands of Rwandan TVET teachers creating professional documents effortlessly.',
                         features: [
@@ -330,6 +359,26 @@
                             { title: 'Amaherezo Atatu', text: 'Tegura ibigize Igihembwe 1, 2, na 3' },
                             { title: 'Format y\'Inkingi 9', text: 'Imiterere yemewe na RTB ifite ibice byose bisabwa' },
                             { title: 'Inyandiko Yuzuye', text: 'Bookman Old Style 12pt, landscape orientation' }
+                        ]
+                    },
+                    {
+                        title: 'Intambwe 5: Kora Assessment Plan',
+                        description: 'Kora assessment plans zikurikije RTB ukoresheje wizard.',
+                        features: [  
+                            { title: 'Amakarita ya Module', text: 'Ongeraho modules nyinshi hamwe n\'ibisobanuro bya buri module' },
+                            { title: 'Format y\'Inkingi 13', text: 'Imiterere y\'assessment plan yemewe na RTB' },
+                            { title: 'Ibisobanuro Byuzuye', text: 'Code ya module, LO, ubwoko bw\'assessment, trainer, abanyeshuri, itariki, ibikoresho' },
+                            { title: 'Landscape DOCX', text: 'Times New Roman 14pt, inyandiko yuzuye' }
+                        ]
+                    },
+                    {
+                        title: 'Intambwe 6: Kora Trainer Report',
+                        description: 'Ohereza dosiye ya Excel y\'amanota ukore raporo y\'umwarimu ikurikije RTB.',
+                        features: [
+                            { title: 'Ohereza Excel', text: 'Ohereza amanota y\'abanyeshuri ukoresheje format iyo ari yo yose ya Excel' },
+                            { title: 'AI Parser', text: 'Ikora byonyine gusoma inkingi no guhindura amanota kuri pourcentage' },
+                            { title: 'Imibare ya RTB', text: '40% formative + 60% summative hamwe n\'icyemezo cyo gutsinda cyangwa kunanirwa' },
+                            { title: 'Raporo Yuzuye', text: 'Imbonerahamwe y\'inkingi 10 hamwe n\'imibare y\'incamake' }
                         ]
                     },
                     {
