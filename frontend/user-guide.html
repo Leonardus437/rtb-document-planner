@@ -6,290 +6,220 @@
     <title>User Guide - Session Plans & Schemes of Work Generator</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
         
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
         body {
             font-family: 'Inter', sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: #fef3c7;
             min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
+            padding: 2rem 1rem;
         }
         
-        .guide-container {
-            max-width: 650px;
-            width: 100%;
-            background: white;
-            border-radius: 1rem;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
         }
         
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 1.25rem;
             text-align: center;
-            position: relative;
+            margin-bottom: 2rem;
         }
         
-        .header h1 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-        
-        .header p {
-            opacity: 0.9;
-            font-size: 0.85rem;
-        }
-        
-        .progress-bar {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            height: 3px;
-            background: rgba(255,255,255,0.3);
-            width: 100%;
-        }
-        
-        .progress-fill {
-            height: 100%;
+        .back-btn {
+            display: inline-block;
             background: white;
-            transition: width 0.4s ease;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
         
-        .step-indicator {
-            display: flex;
-            justify-content: center;
-            gap: 0.4rem;
-            padding: 0.75rem;
-            background: #f8fafc;
-        }
-        
-        .step-dot {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: #cbd5e1;
-            transition: all 0.3s;
-            cursor: pointer;
-        }
-        
-        .step-dot.active {
-            background: #667eea;
-            transform: scale(1.2);
-        }
-        
-        .content-area {
-            padding: 1.25rem;
-            height: 280px;
-            overflow: hidden;
-        }
-        
-        .step-content {
-            display: none;
-            animation: fadeIn 0.4s;
-        }
-        
-        .step-content.active {
-            display: block;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .step-title {
-            font-size: 1.05rem;
-            font-weight: 700;
-            color: #1e293b;
+        h1 {
+            color: #78350f;
+            font-size: 1.75rem;
+            font-weight: 600;
             margin-bottom: 0.5rem;
         }
         
-        .step-description {
-            color: #64748b;
-            font-size: 0.85rem;
-            line-height: 1.5;
-            margin-bottom: 0.75rem;
-        }
-        
-        .feature-list {
-            display: grid;
-            gap: 0.5rem;
-        }
-        
-        .feature-item {
-            padding: 0.6rem;
-            background: #f8fafc;
-            border-radius: 0.4rem;
-            border-left: 3px solid #667eea;
-        }
-        
-        .feature-item h4 {
-            color: #1e293b;
-            font-weight: 600;
-            margin-bottom: 0.15rem;
-            font-size: 0.85rem;
-        }
-        
-        .feature-item p {
-            color: #64748b;
-            font-size: 0.75rem;
-            line-height: 1.3;
-        }
-        
-        .navigation {
-            display: flex;
-            justify-content: space-between;
-            padding: 1rem 1.5rem;
-            background: #f8fafc;
-            border-top: 1px solid #e2e8f0;
-        }
-        
-        .nav-btn {
-            padding: 0.65rem 1.25rem;
-            border: none;
-            border-radius: 0.5rem;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        
-        .nav-btn:disabled {
-            opacity: 0.3;
-            cursor: not-allowed;
-        }
-        
-        .btn-prev {
-            background: white;
-            color: #667eea;
-            border: 2px solid #667eea;
-        }
-        
-        .btn-prev:hover:not(:disabled) {
-            background: #667eea;
-            color: white;
-        }
-        
-        .btn-next {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-        
-        .btn-next:hover:not(:disabled) {
-            opacity: 0.9;
-        }
-        
-        .btn-finish {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-        }
-        
-        .btn-finish:hover {
-            opacity: 0.9;
-        }
-        
-        .back-home {
-            position: absolute;
-            top: 1rem;
-            left: 1rem;
-            background: white;
-            color: #667eea;
-            padding: 0.5rem 1rem;
-            border-radius: 1.5rem;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.85rem;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            transition: all 0.3s;
-            z-index: 1000;
-        }
-        
-        .back-home:hover {
-            transform: translateX(-3px);
+        .subtitle {
+            color: #92400e;
+            font-size: 0.95rem;
         }
         
         .lang-switch {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
             display: flex;
-            gap: 0.4rem;
-            z-index: 1000;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
         }
         
         .lang-btn {
-            padding: 0.5rem 0.9rem;
+            padding: 0.4rem 1rem;
             background: white;
-            color: #667eea;
-            border: 2px solid white;
+            color: #78350f;
+            border: 2px solid #fbbf24;
             border-radius: 1.5rem;
             font-weight: 600;
-            font-size: 0.8rem;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: all 0.3s;
         }
         
         .lang-btn.active {
-            background: #667eea;
+            background: #fbbf24;
             color: white;
         }
         
-        @media (max-width: 768px) {
-            .guide-container { max-width: 100%; }
-            .content-area { height: 350px; }
+        .accordion {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .accordion-item {
+            background: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .accordion-header {
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .accordion-item:nth-child(1) .accordion-header { background: #dbeafe; }
+        .accordion-item:nth-child(2) .accordion-header { background: #e0e7ff; }
+        .accordion-item:nth-child(3) .accordion-header { background: #fce7f3; }
+        .accordion-item:nth-child(4) .accordion-header { background: #fef3c7; }
+        .accordion-item:nth-child(5) .accordion-header { background: #d1fae5; }
+        .accordion-item:nth-child(6) .accordion-header { background: #fce4ec; }
+        
+        .accordion-header:hover {
+            opacity: 0.9;
+        }
+        
+        .accordion-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.95rem;
+        }
+        
+        .accordion-icon {
+            color: #64748b;
+            transition: transform 0.3s;
+        }
+        
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .accordion-body {
+            padding: 1.25rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .description {
+            color: #64748b;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+            line-height: 1.6;
+        }
+        
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .feature {
+            padding: 0.75rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        .feature-text {
+            color: #64748b;
+            font-size: 0.8rem;
+            line-height: 1.4;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 2rem;
+            padding: 1.5rem;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .start-btn {
+            display: inline-block;
+            background: #fbbf24;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+        }
+        
+        .start-btn:hover {
+            background: #f59e0b;
         }
     </style>
 </head>
 <body>
-    <a href="index.html" class="back-home">← Home</a>
-    
-    <div class="lang-switch">
-        <button class="lang-btn active" onclick="switchLang('en')">EN</button>
-        <button class="lang-btn" onclick="switchLang('rw')">RW</button>
-    </div>
-    
-    <div class="guide-container">
+    <div class="container">
         <div class="header">
-            <h1 id="header-title">User Guide</h1>
-            <p id="header-subtitle">Step-by-step guide to create professional documents</p>
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressBar"></div>
+            <a href="index.html" class="back-btn">← Back to Home</a>
+            <h1 id="title">User Guide</h1>
+            <p class="subtitle" id="subtitle">Learn how to use the system</p>
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="switchLang('en')">English</button>
+                <button class="lang-btn" onclick="switchLang('rw')">Kinyarwanda</button>
             </div>
         </div>
         
-        <div class="step-indicator" id="stepIndicator"></div>
+        <div class="accordion" id="accordion"></div>
         
-        <div class="content-area" id="contentArea"></div>
-        
-        <div class="navigation">
-            <button class="nav-btn btn-prev" id="prevBtn" onclick="prevStep()">
-                <span id="prev-text">← Previous</span>
-            </button>
-            <button class="nav-btn btn-next" id="nextBtn" onclick="nextStep()">
-                <span id="next-text">Next →</span>
-            </button>
+        <div class="footer">
+            <a href="index.html" class="start-btn" id="startBtn">Start Creating Documents →</a>
         </div>
     </div>
     
     <script>
-        let currentStep = 0;
         let currentLang = 'en';
         
         const content = {
             en: {
-                headerTitle: 'User Guide',
-                headerSubtitle: 'Step-by-step guide to create professional documents',
-                prevText: '← Previous',
-                nextText: 'Next →',
-                finishText: 'Start Creating →',
+                title: 'User Guide',
+                subtitle: 'Learn how to use the system',
+                startBtn: 'Start Creating Documents →',
                 steps: [
                     {
                         title: 'Welcome to RTB Document Generator',
@@ -313,14 +243,14 @@
                         title: 'Step 2: Login to Dashboard',
                         description: 'Access your personal workspace where all the magic happens.',
                         features: [
-                            { title: 'Personal Dashboard', text: 'Clean interface with two main options: Session Plan and Scheme of Work' },
+                            { title: 'Personal Dashboard', text: 'Clean interface with four main options: Session Plan, Scheme of Work, Assessment Plan, and Trainer Report' },
                             { title: 'Always Available', text: 'Login anytime from any device to create documents' },
                             { title: 'Secure Access', text: 'Your account and data are protected' }
                         ]
                     },
                     {
                         title: 'Step 3: Create Session Plan',
-                        description: 'Generate RTB-compliant session plans with our 4-step wizard.',
+                        description: 'Generate RTB-compliant session plans with our wizard.',
                         features: [
                             { title: 'Basic Information', text: 'Enter trainer name, module, unit, and session details' },
                             { title: 'Course Details', text: 'Add learning outcomes, duration, and facilitation technique' },
@@ -351,11 +281,9 @@
                 ]
             },
             rw: {
-                headerTitle: 'Umuyobozi w\'Abakoresha',
-                headerSubtitle: 'Intambwe ku ntambwe zo gukora inyandiko zuzuye',
-                prevText: '← Ibanze',
-                nextText: 'Komeza →',
-                finishText: 'Tangira Gukora →',
+                title: 'Umuyobozi w\'Abakoresha',
+                subtitle: 'Wige uko ukoresha sisitemu',
+                startBtn: 'Tangira Gukora Inyandiko →',
                 steps: [
                     {
                         title: 'Murakaza Neza kuri RTB Document Generator',
@@ -379,14 +307,14 @@
                         title: 'Intambwe 2: Injira kuri Dashboard',
                         description: 'Injira ku rupapuro rwawe bwite aho byose bikorwa.',
                         features: [
-                            { title: 'Dashboard Yawe', text: 'Interface isukuye ifite amahitamo abiri: Session Plan na Scheme of Work' },
+                            { title: 'Dashboard Yawe', text: 'Interface isukuye ifite amahitamo ane: Session Plan, Scheme of Work, Assessment Plan, na Trainer Report' },
                             { title: 'Igihe Cyose', text: 'Injira igihe cyose ukoresheje igikoresho icyo ari cyo cyose' },
                             { title: 'Umutekano Mwiza', text: 'Konti yawe n\'amakuru yawe birinzwe' }
                         ]
                     },
                     {
                         title: 'Intambwe 3: Kora Session Plan',
-                        description: 'Kora session plans zikurikije RTB ukoresheje intambwe 4.',
+                        description: 'Kora session plans zikurikije RTB ukoresheje wizard.',
                         features: [
                             { title: 'Amakuru y\'Ibanze', text: 'Andika amazina y\'umwarimu, module, unit, na session' },
                             { title: 'Ibisobanuro by\'Isomo', text: 'Ongeraho intego zo kwiga, igihe, n\'uburyo bwo kwigisha' },
@@ -418,79 +346,61 @@
             }
         };
         
-        function renderStep() {
+        function renderAccordion() {
             const lang = content[currentLang];
-            const step = lang.steps[currentStep];
-            const totalSteps = lang.steps.length;
-            
-            const progress = ((currentStep + 1) / totalSteps) * 100;
-            document.getElementById('progressBar').style.width = progress + '%';
-            
-            const indicatorHTML = lang.steps.map((_, i) => 
-                `<div class="step-dot ${i === currentStep ? 'active' : ''}" onclick="goToStep(${i})"></div>`
-            ).join('');
-            document.getElementById('stepIndicator').innerHTML = indicatorHTML;
-            
-            const featuresHTML = step.features.map(f => `
-                <div class="feature-item">
-                    <h4>${f.title}</h4>
-                    <p>${f.text}</p>
+            const html = lang.steps.map((step, index) => `
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(${index})">
+                        <span class="accordion-title">${step.title}</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p class="description">${step.description}</p>
+                            <div class="features">
+                                ${step.features.map(f => `
+                                    <div class="feature">
+                                        <div class="feature-title">${f.title}</div>
+                                        <div class="feature-text">${f.text}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `).join('');
             
-            const contentHTML = `
-                <div class="step-content active">
-                    <div class="step-title">${step.title}</div>
-                    <div class="step-description">${step.description}</div>
-                    <div class="feature-list">${featuresHTML}</div>
-                </div>
-            `;
-            document.getElementById('contentArea').innerHTML = contentHTML;
+            document.getElementById('accordion').innerHTML = html;
+        }
+        
+        function toggleAccordion(index) {
+            const items = document.querySelectorAll('.accordion-item');
+            const item = items[index];
+            const content = item.querySelector('.accordion-content');
+            const isActive = item.classList.contains('active');
             
-            document.getElementById('prevBtn').disabled = currentStep === 0;
-            document.getElementById('prev-text').textContent = lang.prevText;
+            items.forEach(i => {
+                i.classList.remove('active');
+                i.querySelector('.accordion-content').style.maxHeight = null;
+            });
             
-            const nextBtn = document.getElementById('nextBtn');
-            if (currentStep === totalSteps - 1) {
-                nextBtn.className = 'nav-btn btn-finish';
-                nextBtn.innerHTML = `<span>${lang.finishText}</span>`;
-                nextBtn.onclick = () => window.location.href = 'index.html';
-            } else {
-                nextBtn.className = 'nav-btn btn-next';
-                nextBtn.innerHTML = `<span>${lang.nextText}</span>`;
-                nextBtn.onclick = nextStep;
+            if (!isActive) {
+                item.classList.add('active');
+                content.style.maxHeight = content.scrollHeight + 'px';
             }
-        }
-        
-        function nextStep() {
-            if (currentStep < content[currentLang].steps.length - 1) {
-                currentStep++;
-                renderStep();
-            }
-        }
-        
-        function prevStep() {
-            if (currentStep > 0) {
-                currentStep--;
-                renderStep();
-            }
-        }
-        
-        function goToStep(step) {
-            currentStep = step;
-            renderStep();
         }
         
         function switchLang(lang) {
             currentLang = lang;
             document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
             event.target.classList.add('active');
-            document.getElementById('header-title').textContent = content[lang].headerTitle;
-            document.getElementById('header-subtitle').textContent = content[lang].headerSubtitle;
-            renderStep();
+            document.getElementById('title').textContent = content[lang].title;
+            document.getElementById('subtitle').textContent = content[lang].subtitle;
+            document.getElementById('startBtn').textContent = content[lang].startBtn;
+            renderAccordion();
         }
         
-        renderStep();
+        renderAccordion();
     </script>
 </body>
 </html>
