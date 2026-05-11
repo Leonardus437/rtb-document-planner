@@ -1,7 +1,7 @@
 // API Configuration
 const CONFIG = {
     // Railway Production Backend
-    API_URL: 'https://web-production-df3e5.up.railway.app'
+    API_URL: 'https://endearing-tenderness-production.up.railway.app'
 };
 
 // Export for use in other files
