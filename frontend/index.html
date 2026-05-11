@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Session Plans & Schemes of Work Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+            padding: 6rem 1rem 2rem;
+        }
+        
+        body.dark { background: #1a1a1a; }
+        
+        .top-bar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        
+        body.dark .top-bar { background: #2a2a2a; }
+        
+        .theme-toggle {
+            background: #e5e5e5;
+            border: none;
+            border-radius: 2rem;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-size: 0.875rem;
+        }
+        
+        body.dark .theme-toggle { background: #3a3a3a; color: #e5e5e5; }
+        
+        .container {
+            text-align: center;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        h1 {
+            color: #2a2a2a;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        body.dark h1 { color: #e5e5e5; }
+        
+        p {
+            color: #666;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+        
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .doc-link {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            text-decoration: none;
+            display: block;
+            text-align: left;
+        }
+        
+        .doc-link:nth-child(1) { background: #e8eaf6; }
+        .doc-link:nth-child(2) { background: #f3e5f5; }
+        .doc-link:nth-child(3) { background: #fce4ec; }
+        .doc-link:nth-child(4) { background: #fff3e0; }
+        
+        body.dark .doc-link:nth-child(1) { background: #2a2d3a; }
+        body.dark .doc-link:nth-child(2) { background: #2d2a3a; }
+        body.dark .doc-link:nth-child(3) { background: #3a2a2d; }
+        body.dark .doc-link:nth-child(4) { background: #3a352a; }
+        
+        .doc-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.12);
+        }
+        
+        .doc-content h2 {
+            color: #2a2a2a;
+            font-size: 0.95rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+        
+        body.dark .doc-content h2 { color: #e5e5e5; }
+        
+        .doc-content p {
+            color: #666;
+            font-size: 0.8rem;
+            margin: 0;
+        }
+        
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            padding: 1rem;
+            text-align: center;
+            box-shadow: 0 -1px 3px rgba(0,0,0,0.1);
+        }
+        
+        body.dark .footer { background: #2a2a2a; }
+        
+        .copyright {
+            color: #999;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="top-bar">
+        <div></div>
+        <div style="display: flex; gap: 1rem; align-items: center;">
+            <button class="theme-toggle" onclick="toggleTheme()">
+                <i class="fas fa-moon"></i> <span id="themeText">Dark</span>
+            </button>
+            <div id="userMenu"></div>
+        </div>
+    </div>
+    
+    <div class="container">
+        <h1>Generate RTB-Compliant pedagogical documents in a minutes</h1>
+        <p>Completely Free!</p>
+        
+        <a href="user-guide.html" style="display: inline-block; background: #ff9800; color: white; padding: 0.5rem 1rem; border-radius: 1.5rem; text-decoration: none; font-size: 0.875rem; font-weight: 600; margin-bottom: 2rem;">
+            <i class="fas fa-book-reader"></i> menya uko sisitemu ikora / get to know how system works
+        </a>
+        
+        <div class="buttons">
+            <a href="wizard.html" class="doc-link" onclick="return checkAuth(event)">
+                <div class="doc-content">
+                    <h2>Session Plan</h2>
+                    <p>Create RTB-formatted session plans</p>
+                </div>
+            </a>
+            
+            <a href="scheme-wizard.html" class="doc-link" onclick="return checkAuth(event)">
+                <div class="doc-content">
+                    <h2>Scheme of Work</h2>
+                    <p>Generate comprehensive schemes</p>
+                </div>
+            </a>
+            
+            <a href="assessment-wizard.html" class="doc-link" onclick="return checkAuth(event)">
+                <div class="doc-content">
+                    <h2>Assessment Plan</h2>
+                    <p>Create assessment Plan easily</p>
+                </div>
+            </a>
+            
+            <a href="trainer-report-wizard.html" class="doc-link" onclick="return checkAuth(event)">
+                <div class="doc-content">
+                    <h2>Trainer Assessment Report</h2>
+                    <p>Generate trainer assessment reports</p>
+                </div>
+            </a>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <div class="copyright">© 2026, Owned by none, accessible to all with no price, free forever</div>
+    </div>
+    <script src="config.js"></script>
+    <script src="auth.js"></script>
+    <script>
+        function checkAuth(event) {
+            const session = getCurrentSession();
+            if (!session) {
+                event.preventDefault();
+                alert('Please login first to create documents!');
+                window.location.href = 'login.html';
+                return false;
+            }
+            return true;
+        }
+        
+        function toggleTheme() {
+            document.body.classList.toggle('dark');
+            const isDark = document.body.classList.contains('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeText').textContent = isDark ? 'Light' : 'Dark';
+            document.querySelector('.theme-toggle i').className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+        }
+        
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.classList.add('dark');
+            document.getElementById('themeText').textContent = 'Light';
+            document.querySelector('.theme-toggle i').className = 'fas fa-sun';
+        }
+    </script>
+    <script src="notifications.js"></script>
+    <script>
+        (function() {
+            function preventBackAfterLogout() {
+                if (localStorage.getItem('rtb_logged_out') || sessionStorage.getItem('rtb_logged_out')) {
+                    window.location.replace('login-select.html');
+                    return;
+                }
+            }
+            
+            window.addEventListener('pageshow', function(event) {
+                if (event.persisted) {
+                    preventBackAfterLogout();
+                }
+            });
+            
+            window.addEventListener('popstate', function() {
+                preventBackAfterLogout();
+            });
+            
+            preventBackAfterLogout();
+        })();
+    </script>
+    <script>
+        const session = getCurrentSession();
+        const userMenu = document.getElementById('userMenu');
+        
+        if (session) {
+            userMenu.innerHTML = `
+                <div style="background: white; padding: 0.75rem 1.25rem; border-radius: 2rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1); display: flex; align-items: center; gap: 1rem;">
+                    <span style="color: #333; font-weight: 600; font-size: 0.875rem;"><i class="fas fa-user-circle" style="color: #6366f1;"></i> ${session.name}</span>
+                    ${session.role === 'admin' ? '<a href="admin-fixed.html" style="padding: 0.5rem 1rem; background: #6366f1; color: white; text-decoration: none; border-radius: 0.5rem; font-weight: 600; font-size: 0.875rem;"><i class="fas fa-shield-alt"></i> Admin</a>' : ''}
+                    <button onclick="logoutUser()" style="padding: 0.5rem 1rem; background: #ef4444; color: white; border: none; border-radius: 0.5rem; cursor: pointer; font-weight: 600; font-size: 0.875rem;"><i class="fas fa-sign-out-alt"></i> Logout</button>
+                </div>
+            `;
+        } else {
+            userMenu.innerHTML = `
+                <div style="display: flex; gap: 1rem;">
+                    <a href="login-select.html" style="padding: 0.5rem 1rem; background: white; color: #333; text-decoration: none; border-radius: 1.5rem; font-weight: 600; font-size: 0.875rem; box-shadow: 0 2px 8px rgba(0,0,0,0.1);"><i class="fas fa-sign-in-alt"></i> Sign In</a>
+                    <a href="register.html" style="padding: 0.5rem 1rem; background: #6366f1; color: white; text-decoration: none; border-radius: 1.5rem; font-weight: 600; font-size: 0.875rem;"><i class="fas fa-user-plus"></i> Register</a>
+                </div>
+            `;
+        }
+    </script>
+</body>
+</html>

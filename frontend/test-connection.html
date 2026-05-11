@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Connection Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-result {
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .info { background: #d1ecf1; color: #0c5460; }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        button:hover { background: #0056b3; }
+        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Backend Connection Test</h1>
+    <div id="results"></div>
+    <button onclick="runTests()">Run Tests</button>
+
+    <script src="config.js"></script>
+    <script>
+        const API_URL = CONFIG?.API_URL || 'https://web-production-df3e5.up.railway.app';
+        const results = document.getElementById('results');
+
+        async function runTests() {
+            results.innerHTML = '<div class="test-result info">Running tests...</div>';
+            
+            // Test 1: Health endpoint
+            await testEndpoint('/health', 'GET');
+            
+            // Test 2: API info
+            await testEndpoint('/api', 'GET');
+            
+            // Test 3: Register endpoint (OPTIONS for CORS)
+            await testCORS('/users/register');
+        }
+
+        async function testEndpoint(endpoint, method = 'GET') {
+            const url = `${API_URL}${endpoint}`;
+            try {
+                const response = await fetch(url, { method });
+                const data = await response.json();
+                results.innerHTML += `
+                    <div class="test-result success">
+                        <strong>✅ ${method} ${endpoint}</strong><br>
+                        Status: ${response.status}<br>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="test-result error">
+                        <strong>❌ ${method} ${endpoint}</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        async function testCORS(endpoint) {
+            const url = `${API_URL}${endpoint}`;
+            try {
+                const response = await fetch(url, {
+                    method: 'OPTIONS',
+                    headers: {
+                        'Origin': window.location.origin,
+                        'Access-Control-Request-Method': 'POST',
+                        'Access-Control-Request-Headers': 'Content-Type'
+                    }
+                });
+                results.innerHTML += `
+                    <div class="test-result success">
+                        <strong>✅ CORS Preflight ${endpoint}</strong><br>
+                        Status: ${response.status}<br>
+                        Headers: ${response.headers.get('access-control-allow-origin')}
+                    </div>
+                `;
+            } catch (error) {
+                results.innerHTML += `
+                    <div class="test-result error">
+                        <strong>❌ CORS Preflight ${endpoint}</strong><br>
+                        Error: ${error.message}
+                    </div>
+                `;
+            }
+        }
+
+        // Auto-run on load
+        runTests();
+    </script>
+</body>
+</html>

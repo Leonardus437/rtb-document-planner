@@ -1,0 +1,109 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║     🚀 RTB DOCUMENT PLANNER - DEPLOYMENT CHECKLIST 🚀         ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+PRE-DEPLOYMENT
+═══════════════════════════════════════════════════════════════
+[ ] Run test_system.bat - All tests pass
+[ ] System works locally
+[ ] All files committed
+
+GITHUB SETUP
+═══════════════════════════════════════════════════════════════
+[ ] Create GitHub account (if needed)
+[ ] Create new repository: rtb-planner
+[ ] Run: git init
+[ ] Run: git add .
+[ ] Run: git commit -m "Production ready"
+[ ] Run: git remote add origin YOUR_REPO_URL
+[ ] Run: git push -u origin main
+
+BACKEND DEPLOYMENT (Railway)
+═══════════════════════════════════════════════════════════════
+[ ] Go to: https://railway.app
+[ ] Sign up with GitHub
+[ ] Click: New Project → Deploy from GitHub repo
+[ ] Select: rtb-planner repository
+[ ] Add PostgreSQL database (click + New)
+[ ] Wait for deployment (3-5 min)
+[ ] Copy backend URL: _________________________________
+
+FRONTEND CONFIGURATION
+═══════════════════════════════════════════════════════════════
+[ ] Run: prepare_deploy.bat
+[ ] Enter backend URL when prompted
+[ ] Run: git add frontend/config.js
+[ ] Run: git commit -m "Update API URL"
+[ ] Run: git push origin main
+
+FRONTEND DEPLOYMENT (Cloudflare)
+═══════════════════════════════════════════════════════════════
+[ ] Go to: https://dash.cloudflare.com
+[ ] Workers & Pages → Create → Pages
+[ ] Connect GitHub repository
+[ ] Project name: rtb-planner
+[ ] Build output: frontend
+[ ] Click: Save and Deploy
+[ ] Wait for deployment (2-3 min)
+[ ] Copy frontend URL: _________________________________
+
+CORS UPDATE
+═══════════════════════════════════════════════════════════════
+[ ] Edit backend/main.py
+[ ] Add your Cloudflare URL to allow_origins
+[ ] Run: git add backend/main.py
+[ ] Run: git commit -m "Update CORS"
+[ ] Run: git push origin main
+[ ] Wait for Railway auto-redeploy (2-3 min)
+
+TESTING
+═══════════════════════════════════════════════════════════════
+[ ] Visit your frontend URL
+[ ] Register test account
+[ ] Login successfully
+[ ] Create session plan
+[ ] Download DOCX file
+[ ] Create scheme of work
+[ ] Download DOCX file
+[ ] Test admin login: +250789751597 / admin123
+[ ] View admin dashboard
+
+FINAL CHECKS
+═══════════════════════════════════════════════════════════════
+[ ] No CORS errors in browser console
+[ ] Documents generate correctly
+[ ] Database persists data
+[ ] Both services show "Running" status
+
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║                    🎉 DEPLOYMENT COMPLETE! 🎉                  ║
+║                                                                ║
+║  Your RTB Document Planner is now LIVE and serving teachers!  ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+YOUR LIVE URLS:
+═══════════════════════════════════════════════════════════════
+Frontend: ___________________________________________________
+
+Backend:  ___________________________________________________
+
+Database: PostgreSQL on Railway (Auto-managed)
+
+Cost:     FREE ($5 credit/month on Railway + Cloudflare free)
+
+═══════════════════════════════════════════════════════════════
+
+SHARE WITH TEACHERS:
+═══════════════════════════════════════════════════════════════
+"Visit [YOUR_FRONTEND_URL] to create professional RTB session 
+plans and schemes of work - completely FREE!"
+
+═══════════════════════════════════════════════════════════════
+
+© 2026 Official RTB Document Planner
+Developed for TVET Excellence - DEVELOPED BY Trainer Leon
+Made with ❤️ for TVET Excellence in Rwanda 🇷🇼

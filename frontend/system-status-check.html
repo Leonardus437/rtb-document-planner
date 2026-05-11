@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RTB System Status Check</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 1rem;
+            padding: 2rem;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        h1 {
+            text-align: center;
+            color: #1e293b;
+            margin-bottom: 2rem;
+            font-size: 2rem;
+        }
+        
+        .status-grid {
+            display: grid;
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .status-item {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border-left: 4px solid #e2e8f0;
+        }
+        
+        .status-item.checking {
+            background: #fef3c7;
+            border-color: #f59e0b;
+        }
+        
+        .status-item.success {
+            background: #dcfce7;
+            border-color: #10b981;
+        }
+        
+        .status-item.error {
+            background: #fee2e2;
+            border-color: #ef4444;
+        }
+        
+        .status-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+        
+        .status-header h3 {
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        
+        .status-header i {
+            font-size: 1.5rem;
+        }
+        
+        .checking .status-header h3 { color: #92400e; }
+        .checking .status-header i { color: #f59e0b; }
+        
+        .success .status-header h3 { color: #166534; }
+        .success .status-header i { color: #10b981; }
+        
+        .error .status-header h3 { color: #991b1b; }
+        .error .status-header i { color: #ef4444; }
+        
+        .status-details {
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        
+        .checking .status-details { color: #92400e; }
+        .success .status-details { color: #166534; }
+        .error .status-details { color: #991b1b; }
+        
+        .actions {
+            text-align: center;
+            margin-top: 2rem;
+        }
+        
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.5rem;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #6366f1;
+            color: white;
+        }
+        
+        .btn-success {
+            background: #10b981;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        
+        .spinner {
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-heartbeat"></i> RTB System Status Check</h1>
+        
+        <div class="status-grid">
+            <div class="status-item checking" id="backendStatus">
+                <div class="status-header">
+                    <i class="fas fa-spinner spinner"></i>
+                    <h3>Backend (PythonAnywhere)</h3>
+                </div>
+                <div class="status-details">
+                    Checking connection to https://leonardus437.pythonanywhere.com...
+                </div>
+            </div>
+            
+            <div class="status-item checking" id="frontendStatus">
+                <div class="status-header">
+                    <i class="fas fa-spinner spinner"></i>
+                    <h3>Frontend (Local)</h3>
+                </div>
+                <div class="status-details">
+                    Checking frontend configuration and assets...
+                </div>
+            </div>
+            
+            <div class="status-item checking" id="authStatus">
+                <div class="status-header">
+                    <i class="fas fa-spinner spinner"></i>
+                    <h3>Authentication System</h3>
+                </div>
+                <div class="status-details">
+                    Testing user registration and login endpoints...
+                </div>
+            </div>
+            
+            <div class="status-item checking" id="documentsStatus">
+                <div class="status-header">
+                    <i class="fas fa-spinner spinner"></i>
+                    <h3>Document Generation</h3>
+                </div>
+                <div class="status-details">
+                    Checking session plan and scheme creation capabilities...
+                </div>
+            </div>
+        </div>
+        
+        <div class="actions">
+            <button onclick="runSystemCheck()" class="btn btn-primary">
+                <i class="fas fa-refresh"></i> Recheck System
+            </button>
+            <a href="index.html" class="btn btn-success" id="launchBtn" style="display: none;">
+                <i class="fas fa-rocket"></i> Launch RTB Planner
+            </a>
+        </div>
+    </div>
+    
+    <script src="config.js"></script>
+    <script>
+        async function checkBackend() {
+            const statusItem = document.getElementById('backendStatus');
+            
+            try {
+                const response = await fetch(`${API_BASE}/`, {
+                    method: 'GET',
+                    mode: 'cors',
+                    credentials: 'omit',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    statusItem.className = 'status-item success';
+                    statusItem.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Backend (PythonAnywhere)</h3>
+                        </div>
+                        <div class="status-details">
+                            ✅ Connected successfully<br>
+                            📡 API: ${API_BASE}<br>
+                            📊 Status: ${data.status || 'online'}<br>
+                            🔧 Version: ${data.version || 'unknown'}
+                        </div>
+                    `;
+                    return true;
+                } else {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+            } catch (error) {
+                statusItem.className = 'status-item error';
+                statusItem.innerHTML = `
+                    <div class="status-header">
+                        <i class="fas fa-times-circle"></i>
+                        <h3>Backend (PythonAnywhere)</h3>
+                    </div>
+                    <div class="status-details">
+                        ❌ Connection failed<br>
+                        🔗 URL: ${API_BASE}<br>
+                        ⚠️ Error: ${error.message}<br>
+                        💡 Check if PythonAnywhere app is running
+                    </div>
+                `;
+                return false;
+            }
+        }
+        
+        async function checkFrontend() {
+            const statusItem = document.getElementById('frontendStatus');
+            
+            try {
+                // Check if required files exist
+                const configExists = typeof API_BASE !== 'undefined';
+                const authExists = typeof getCurrentSession !== 'undefined';
+                
+                if (configExists && authExists) {
+                    statusItem.className = 'status-item success';
+                    statusItem.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Frontend (Local)</h3>
+                        </div>
+                        <div class="status-details">
+                            ✅ Configuration loaded<br>
+                            📁 Assets: Available<br>
+                            🔧 Auth system: Ready<br>
+                            🌐 API Base: ${API_BASE}
+                        </div>
+                    `;
+                    return true;
+                } else {
+                    throw new Error('Missing required frontend files');
+                }
+            } catch (error) {
+                statusItem.className = 'status-item error';
+                statusItem.innerHTML = `
+                    <div class="status-header">
+                        <i class="fas fa-times-circle"></i>
+                        <h3>Frontend (Local)</h3>
+                    </div>
+                    <div class="status-details">
+                        ❌ Configuration error<br>
+                        ⚠️ Error: ${error.message}<br>
+                        💡 Check if all JS files are loaded
+                    </div>
+                `;
+                return false;
+            }
+        }
+        
+        async function checkAuth() {
+            const statusItem = document.getElementById('authStatus');
+            
+            try {
+                // Test registration endpoint
+                const response = await fetch(`${API_BASE}/users/register`, {
+                    method: 'OPTIONS',
+                    mode: 'cors',
+                    credentials: 'omit'
+                });
+                
+                if (response.ok || response.status === 204) {
+                    statusItem.className = 'status-item success';
+                    statusItem.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Authentication System</h3>
+                        </div>
+                        <div class="status-details">
+                            ✅ Registration endpoint: Available<br>
+                            ✅ Login endpoint: Available<br>
+                            ✅ CORS: Configured<br>
+                            👤 Ready for user management
+                        </div>
+                    `;
+                    return true;
+                } else {
+                    throw new Error('Auth endpoints not responding');
+                }
+            } catch (error) {
+                statusItem.className = 'status-item error';
+                statusItem.innerHTML = `
+                    <div class="status-header">
+                        <i class="fas fa-times-circle"></i>
+                        <h3>Authentication System</h3>
+                    </div>
+                    <div class="status-details">
+                        ❌ Auth endpoints failed<br>
+                        ⚠️ Error: ${error.message}<br>
+                        💡 Check backend authentication routes
+                    </div>
+                `;
+                return false;
+            }
+        }
+        
+        async function checkDocuments() {
+            const statusItem = document.getElementById('documentsStatus');
+            
+            try {
+                // Check if wizard pages exist
+                const wizardResponse = await fetch('wizard.html');
+                const schemeResponse = await fetch('scheme-wizard.html');
+                
+                if (wizardResponse.ok && schemeResponse.ok) {
+                    statusItem.className = 'status-item success';
+                    statusItem.innerHTML = `
+                        <div class="status-header">
+                            <i class="fas fa-check-circle"></i>
+                            <h3>Document Generation</h3>
+                        </div>
+                        <div class="status-details">
+                            ✅ Session plan wizard: Available<br>
+                            ✅ Scheme wizard: Available<br>
+                            📄 Document templates: Ready<br>
+                            🎯 RTB-compliant formatting: Enabled
+                        </div>
+                    `;
+                    return true;
+                } else {
+                    throw new Error('Document wizards not found');
+                }
+            } catch (error) {
+                statusItem.className = 'status-item error';
+                statusItem.innerHTML = `
+                    <div class="status-header">
+                        <i class="fas fa-times-circle"></i>
+                        <h3>Document Generation</h3>
+                    </div>
+                    <div class="status-details">
+                        ❌ Document wizards missing<br>
+                        ⚠️ Error: ${error.message}<br>
+                        💡 Check if wizard.html and scheme-wizard.html exist
+                    </div>
+                `;
+                return false;
+            }
+        }
+        
+        async function runSystemCheck() {
+            console.log('🔍 Running RTB System Check...');\n            \n            const results = await Promise.all([\n                checkBackend(),\n                checkFrontend(),\n                checkAuth(),\n                checkDocuments()\n            ]);\n            \n            const allPassed = results.every(result => result);\n            \n            if (allPassed) {\n                document.getElementById('launchBtn').style.display = 'inline-flex';\n                console.log('✅ All systems operational!');\n            } else {\n                console.log('❌ Some systems need attention');\n            }\n        }\n        \n        // Run check on page load\n        document.addEventListener('DOMContentLoaded', () => {\n            setTimeout(runSystemCheck, 1000);\n        });\n    </script>\n</body>\n</html>

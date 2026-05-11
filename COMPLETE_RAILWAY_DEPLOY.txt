@@ -1,0 +1,100 @@
+╔════════════════════════════════════════════════════════════════╗
+║                                                                ║
+║     ✅ COMPLETE YOUR RAILWAY DEPLOYMENT - 3 STEPS             ║
+║                                                                ║
+╚════════════════════════════════════════════════════════════════╝
+
+YOUR RAILWAY PROJECT IS ALREADY DEPLOYED!
+═══════════════════════════════════════════════════════════════
+
+Project: https://railway.com/project/4f2bd0e5-4c93-4d3f-8970-f1c0c1a47dc8
+
+
+STEP 1: GET YOUR RAILWAY BACKEND URL
+═══════════════════════════════════════════════════════════════
+1. Go to your Railway project (link above)
+2. Click on your service
+3. Go to: Settings → Domains
+4. Click: "Generate Domain" (if no domain exists)
+5. Copy your URL (example: rtb-planner.up.railway.app)
+
+Your Railway URL: web-production-df3e5.up.railway.app
+
+
+STEP 2: UPDATE FRONTEND CONFIGURATION
+═══════════════════════════════════════════════════════════════
+Run this command:
+
+    prepare_deploy.bat
+
+When prompted, paste your Railway URL from Step 1
+
+Then push to GitHub:
+
+    git add frontend/config.js
+    git commit -m "Connect to Railway backend"
+    git push origin main
+
+
+STEP 3: DEPLOY FRONTEND TO CLOUDFLARE
+═══════════════════════════════════════════════════════════════
+1. Go to: https://dash.cloudflare.com
+2. Click: Workers & Pages → Create → Pages
+3. Connect to Git → Select your GitHub repo
+4. Settings:
+   - Build output directory: frontend
+   - Root directory: /
+5. Click: Save and Deploy
+6. Wait 2-3 minutes
+7. Copy your Cloudflare URL
+
+Your Cloudflare URL: _________________________________________
+
+
+STEP 4: UPDATE CORS (IMPORTANT!)
+═══════════════════════════════════════════════════════════════
+Edit: backend/main.py (around line 20)
+
+Change:
+    allow_origins=["*"],
+
+To:
+    allow_origins=[
+        "https://YOUR-CLOUDFLARE-URL.pages.dev",
+        "http://localhost:5173",
+    ],
+
+Then push:
+    git add backend/main.py
+    git commit -m "Update CORS for production"
+    git push origin main
+
+Railway will auto-redeploy in 2-3 minutes.
+
+
+✅ DONE! TEST YOUR APP
+═══════════════════════════════════════════════════════════════
+1. Visit your Cloudflare URL
+2. Register a test account
+3. Login
+4. Create a session plan
+5. Download the DOCX file
+6. Test admin: +250789751597 / admin123
+
+
+YOUR LIVE APP:
+═══════════════════════════════════════════════════════════════
+Frontend: https://[YOUR-CLOUDFLARE-URL].pages.dev
+Backend:  https://[YOUR-RAILWAY-URL].up.railway.app
+Database: PostgreSQL on Railway
+
+
+SHARE WITH TEACHERS:
+═══════════════════════════════════════════════════════════════
+"Visit https://[YOUR-URL].pages.dev to create professional 
+RTB session plans and schemes of work - completely FREE!"
+
+
+© 2026 Official RTB Document Planner
+Developed for TVET Excellence - DEVELOPED BY Trainer Leon
+Made with ❤️ for TVET Excellence in Rwanda 🇷🇼

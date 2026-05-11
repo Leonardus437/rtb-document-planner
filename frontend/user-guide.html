@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Guide - Session Plans & Schemes of Work Generator</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #fef3c7;
+            min-height: 100vh;
+            padding: 1.5rem 1rem;
+            overflow-y: auto;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .back-btn {
+            display: inline-block;
+            background: white;
+            color: #333;
+            padding: 0.5rem 1rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-size: 0.875rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            color: #78350f;
+            font-size: 1.75rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+        
+        .subtitle {
+            color: #92400e;
+            font-size: 0.95rem;
+        }
+        
+        .lang-switch {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+            margin-top: 1rem;
+        }
+        
+        .lang-btn {
+            padding: 0.4rem 1rem;
+            background: white;
+            color: #78350f;
+            border: 2px solid #fbbf24;
+            border-radius: 1.5rem;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+        }
+        
+        .lang-btn.active {
+            background: #fbbf24;
+            color: white;
+        }
+        
+        .accordion {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 0.75rem;
+        }
+        
+        @media (max-width: 768px) {
+            .accordion {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .accordion-item {
+            background: white;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .accordion-header {
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s;
+        }
+        
+        .accordion-item:nth-child(1) .accordion-header { background: #dbeafe; }
+        .accordion-item:nth-child(2) .accordion-header { background: #e0e7ff; }
+        .accordion-item:nth-child(3) .accordion-header { background: #fce7f3; }
+        .accordion-item:nth-child(4) .accordion-header { background: #fef3c7; }
+        .accordion-item:nth-child(5) .accordion-header { background: #fef3c7; }
+        .accordion-item:nth-child(6) .accordion-header { background: #d1fae5; }
+        .accordion-item:nth-child(7) .accordion-header { background: #fce4ec; }
+        .accordion-item:nth-child(8) .accordion-header { background: #e0f2fe; }
+        
+        .accordion-header:hover {
+            opacity: 0.9;
+        }
+        
+        .accordion-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.875rem;
+        }
+        
+        .accordion-icon {
+            color: #64748b;
+            transition: transform 0.3s;
+        }
+        
+        .accordion-item.active .accordion-icon {
+            transform: rotate(180deg);
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .accordion-body {
+            padding: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .description {
+            color: #64748b;
+            font-size: 0.8rem;
+            margin-bottom: 0.75rem;
+            line-height: 1.5;
+        }
+        
+        .features {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .feature {
+            padding: 0.5rem;
+            background: #f8fafc;
+            border-radius: 0.4rem;
+            border-left: 3px solid #3b82f6;
+        }
+        
+        .feature-title {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 0.8rem;
+            margin-bottom: 0.15rem;
+        }
+        
+        .feature-text {
+            color: #64748b;
+            font-size: 0.75rem;
+            line-height: 1.3;
+        }
+        
+        .footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            padding: 1rem;
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .start-btn {
+            display: inline-block;
+            background: #fbbf24;
+            color: white;
+            padding: 0.75rem 2rem;
+            border-radius: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 0.95rem;
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.3);
+        }
+        
+        .start-btn:hover {
+            background: #f59e0b;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <a href="index.html" class="back-btn">← Back to Home</a>
+            <h1 id="title">User Guide</h1>
+            <p class="subtitle" id="subtitle">Learn how to use the system</p>
+            <div class="lang-switch">
+                <button class="lang-btn active" onclick="switchLang('en')">English</button>
+                <button class="lang-btn" onclick="switchLang('rw')">Kinyarwanda</button>
+            </div>
+        </div>
+        
+        <div class="accordion" id="accordion"></div>
+        
+        <div class="footer">
+            <a href="index.html" class="start-btn" id="startBtn">Start Creating Documents →</a>
+        </div>
+    </div>
+    
+    <script>
+        let currentLang = 'en';
+        
+        const content = {
+            en: {
+                title: 'User Guide',
+                subtitle: 'Learn how to use the system',
+                startBtn: 'Start Creating Documents →',
+                steps: [
+                    {
+                        title: 'Welcome to RTB Document Generator',
+                        description: 'This tool helps Rwandan TVET teachers create professional Session Plans and Schemes of Work in minutes.',
+                        features: [
+                            { title: '100% RTB Compliant', text: 'All documents follow official Rwanda Technical Board standards' },
+                            { title: 'Completely Free Forever', text: 'No hidden fees, no premium plans, accessible to all teachers' },
+                            { title: 'Lightning Fast', text: 'Generate documents in minutes instead of hours' }
+                        ]
+                    },
+                    {
+                        title: 'Step 1: Register Your Account',
+                        description: 'Create your free account to start generating documents.',
+                        features: [
+                            { title: 'Use Your Email', text: 'Register with your institutional or personal email address' },
+                            { title: 'Secure Password', text: 'Create a strong password to protect your account' },
+                            { title: 'Institution Name', text: 'Enter your TVET institution name for document headers' }
+                        ]
+                    },
+                    {
+                        title: 'Step 2: Login to Dashboard',
+                        description: 'Access your personal workspace where all the magic happens.',
+                        features: [
+                            { title: 'Personal Dashboard', text: 'Clean interface with four main options: Session Plan, Scheme of Work, Assessment Plan, and Trainer Report' },
+                            { title: 'Always Available', text: 'Login anytime from any device to create documents' },
+                            { title: 'Secure Access', text: 'Your account and data are protected' }
+                        ]
+                    },
+                    {
+                        title: 'Step 3: Create Session Plan',
+                        description: 'Generate RTB-compliant session plans with our wizard.',
+                        features: [
+                            { title: 'Basic Information', text: 'Enter trainer name, module, unit, and session details' },
+                            { title: 'Course Details', text: 'Add learning outcomes, duration, and facilitation technique' },
+                            { title: 'Learning Content', text: 'System generates SMART objectives, activities, and references' },
+                            { title: 'Download DOCX', text: 'Get professional Word document ready to print' }
+                        ]
+                    },
+                    {
+                        title: 'Step 4: Create Scheme of Work',
+                        description: 'Build comprehensive schemes covering entire academic terms.',
+                        features: [
+                            { title: 'Institution Info', text: 'Add school name, department, and module details' },
+                            { title: 'Three Terms', text: 'Plan content for Term 1, Term 2, and Term 3' },
+                            { title: '9-Column Format', text: 'Official RTB layout with all required sections' },
+                            { title: 'Professional Output', text: 'Bookman Old Style 12pt, landscape orientation' }
+                        ]
+                    },
+                    {
+                        title: 'Step 5: Create Assessment Plan',
+                        description: 'Generate RTB assessment plans with module-based wizard.',
+                        features: [
+                            { title: 'Module Cards', text: 'Add multiple modules with individual assessment details' },
+                            { title: '13-Column Format', text: 'Official RTB assessment plan layout' },
+                            { title: 'Complete Details', text: 'Module code, LO, assessment type, trainer, candidates, date, resources' },
+                            { title: 'Landscape DOCX', text: 'Times New Roman 14pt, professional output' }
+                        ]
+                    },
+                    {
+                        title: 'Step 6: Create Trainer Report',
+                        description: 'Upload Excel marks file and generate RTB trainer assessment reports.',
+                        features: [
+                            { title: 'Excel Upload', text: 'Upload student marks from any Excel format' },
+                            { title: 'AI Parser', text: 'Automatically detects columns and normalizes marks to percentages' },
+                            { title: 'RTB Calculations', text: '40% formative + 60% summative with Pass/Fail decisions' },
+                            { title: 'Professional Report', text: '10-column table with summary statistics' }
+                        ]
+                    },
+                    {
+                        title: 'You\'re Ready to Start!',
+                        description: 'Join thousands of Rwandan TVET teachers creating professional documents effortlessly.',
+                        features: [
+                            { title: 'Logo Upload', text: 'Add RTB and school logos to your documents' },
+                            { title: 'Auto-Generated Content', text: 'Smart objectives, activities, and APA references' },
+                            { title: '6 Facilitation Techniques', text: 'Choose from demonstration, discussion, project-based, and more' },
+                            { title: 'No Limits', text: 'Create unlimited documents, forever free' }
+                        ]
+                    }
+                ]
+            },
+            rw: {
+                title: 'Umuyobozi w\'Abakoresha',
+                subtitle: 'Wige uko ukoresha sisitemu',
+                startBtn: 'Tangira Gukora Inyandiko →',
+                steps: [
+                    {
+                        title: 'Murakaza Neza kuri RTB Document Generator',
+                        description: 'Iyi sisitemu ifasha abarimu ba TVET mu Rwanda gukora Session Plans na Schemes of Work mu minota.',
+                        features: [
+                            { title: '100% Ikurikije RTB', text: 'Inyandiko zose zikurikiza amahame yemewe na Rwanda Technical Board' },
+                            { title: 'Ntago Bigarukira Iteka', text: 'Nta mafaranga ahishwe, nta premium, abarimu bose barayibona' },
+                            { title: 'Byihuse Cyane', text: 'Kora inyandiko mu minota aho kuba amasaha' }
+                        ]
+                    },
+                    {
+                        title: 'Intambwe 1: Iyandikishe Konti',
+                        description: 'Fungura konti yawe kubusa kugira ngo utangire gukora inyandiko.',
+                        features: [
+                            { title: 'Koresha Imeri Yawe', text: 'Iyandikishe ukoresheje imeri y\'ikigo cyangwa iyawe bwite' },
+                            { title: 'Ijambo ry\'Ibanga Rikomeye', text: 'Kora ijambo ry\'ibanga rikomeye kugira ngo urinde konti yawe' },
+                            { title: 'Izina ry\'Ikigo', text: 'Andika izina ry\'ikigo cya TVET kugira ngo rigaragare ku nyandiko' }
+                        ]
+                    },
+                    {
+                        title: 'Intambwe 2: Injira kuri Dashboard',
+                        description: 'Injira ku rupapuro rwawe bwite aho byose bikorwa.',
+                        features: [
+                            { title: 'Dashboard Yawe', text: 'Interface isukuye ifite amahitamo ane: Session Plan, Scheme of Work, Assessment Plan, na Trainer Report' },
+                            { title: 'Igihe Cyose', text: 'Injira igihe cyose ukoresheje igikoresho icyo ari cyo cyose' },
+                            { title: 'Umutekano Mwiza', text: 'Konti yawe n\'amakuru yawe birinzwe' }
+                        ]
+                    },
+                    {
+                        title: 'Intambwe 3: Kora Session Plan',
+                        description: 'Kora session plans zikurikije RTB ukoresheje wizard.',
+                        features: [
+                            { title: 'Amakuru y\'Ibanze', text: 'Andika amazina y\'umwarimu, module, unit, na session' },
+                            { title: 'Ibisobanuro by\'Isomo', text: 'Ongeraho intego zo kwiga, igihe, n\'uburyo bwo kwigisha' },
+                            { title: 'Ibigize Kwiga', text: 'Sisitemu ikora intego SMART, ibikorwa, n\'ibitabo' },
+                            { title: 'Pakurura DOCX', text: 'Bona inyandiko ya Word yuzuye iteguye gucapwa' }
+                        ]
+                    },
+                    {
+                        title: 'Intambwe 4: Kora Scheme of Work',
+                        description: 'Kora schemes zuzuye zikubiyemo amaherezo yose y\'ishuri.',
+                        features: [
+                            { title: 'Amakuru y\'Ikigo', text: 'Ongeraho izina ry\'ishuri, ishami, na module' },
+                            { title: 'Amaherezo Atatu', text: 'Tegura ibigize Igihembwe 1, 2, na 3' },
+                            { title: 'Format y\'Inkingi 9', text: 'Imiterere yemewe na RTB ifite ibice byose bisabwa' },
+                            { title: 'Inyandiko Yuzuye', text: 'Bookman Old Style 12pt, landscape orientation' }
+                        ]
+                    },
+                    {
+                        title: 'Intambwe 5: Kora Assessment Plan',
+                        description: 'Kora assessment plans zikurikije RTB ukoresheje wizard.',
+                        features: [  
+                            { title: 'Amakarita ya Module', text: 'Ongeraho modules nyinshi hamwe n\'ibisobanuro bya buri module' },
+                            { title: 'Format y\'Inkingi 13', text: 'Imiterere y\'assessment plan yemewe na RTB' },
+                            { title: 'Ibisobanuro Byuzuye', text: 'Code ya module, LO, ubwoko bw\'assessment, trainer, abanyeshuri, itariki, ibikoresho' },
+                            { title: 'Landscape DOCX', text: 'Times New Roman 14pt, inyandiko yuzuye' }
+                        ]
+                    },
+                    {
+                        title: 'Intambwe 6: Kora Trainer Report',
+                        description: 'Ohereza dosiye ya Excel y\'amanota ukore raporo y\'umwarimu ikurikije RTB.',
+                        features: [
+                            { title: 'Ohereza Excel', text: 'Ohereza amanota y\'abanyeshuri ukoresheje format iyo ari yo yose ya Excel' },
+                            { title: 'AI Parser', text: 'Ikora byonyine gusoma inkingi no guhindura amanota kuri pourcentage' },
+                            { title: 'Imibare ya RTB', text: '40% formative + 60% summative hamwe n\'icyemezo cyo gutsinda cyangwa kunanirwa' },
+                            { title: 'Raporo Yuzuye', text: 'Imbonerahamwe y\'inkingi 10 hamwe n\'imibare y\'incamake' }
+                        ]
+                    },
+                    {
+                        title: 'Witeguye Gutangira!',
+                        description: 'Jya ku barimu b\'ibihumbi ba TVET mu Rwanda bakora inyandiko zuzuye byoroshye.',
+                        features: [
+                            { title: 'Ohereza Ikirango', text: 'Ongeraho ibirango bya RTB n\'ishuri kuri inyandiko' },
+                            { title: 'Ibikora Byonyine', text: 'Intego SMART, ibikorwa, n\'ibitabo bya APA' },
+                            { title: 'Uburyo 6 bwo Kwigisha', text: 'Hitamo muri demonstration, discussion, project-based, n\'ibindi' },
+                            { title: 'Ntago Bigarukira', text: 'Kora inyandiko zitabarika, kubusa iteka' }
+                        ]
+                    }
+                ]
+            }
+        };
+        
+        function renderAccordion() {
+            const lang = content[currentLang];
+            const html = lang.steps.map((step, index) => `
+                <div class="accordion-item">
+                    <div class="accordion-header" onclick="toggleAccordion(${index})">
+                        <span class="accordion-title">${step.title}</span>
+                        <i class="fas fa-chevron-down accordion-icon"></i>
+                    </div>
+                    <div class="accordion-content">
+                        <div class="accordion-body">
+                            <p class="description">${step.description}</p>
+                            <div class="features">
+                                ${step.features.map(f => `
+                                    <div class="feature">
+                                        <div class="feature-title">${f.title}</div>
+                                        <div class="feature-text">${f.text}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            
+            document.getElementById('accordion').innerHTML = html;
+        }
+        
+        function toggleAccordion(index) {
+            const items = document.querySelectorAll('.accordion-item');
+            const item = items[index];
+            const content = item.querySelector('.accordion-content');
+            const isActive = item.classList.contains('active');
+            
+            items.forEach(i => {
+                i.classList.remove('active');
+                i.querySelector('.accordion-content').style.maxHeight = null;
+            });
+            
+            if (!isActive) {
+                item.classList.add('active');
+                content.style.maxHeight = content.scrollHeight + 'px';
+            }
+        }
+        
+        function switchLang(lang) {
+            currentLang = lang;
+            document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('title').textContent = content[lang].title;
+            document.getElementById('subtitle').textContent = content[lang].subtitle;
+            document.getElementById('startBtn').textContent = content[lang].startBtn;
+            renderAccordion();
+        }
+        
+        renderAccordion();
+    </script>
+</body>
+</html>
